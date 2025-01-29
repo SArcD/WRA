@@ -1,0 +1,10 @@
+matplotlib
+numpy
+streamlit
+plotly
+pillow
+noise
+scipy
+#moviepy
+#moviepy==2.1.1
+pandas
