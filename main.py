@@ -144,7 +144,7 @@ if archivo_excel is not None:
         nuevo_df = df[df["CT"] == valor_seleccionado]
 
         st.success(f"Mostrando datos filtrados para CT = {valor_seleccionado}")
-        st.dataframe(nuevo_df)
+        #st.dataframe(nuevo_df)
 
         # Permitir descargar el DataFrame filtrado
         @st.cache_data
@@ -161,6 +161,28 @@ if archivo_excel is not None:
         
 
 
+        # Función para verificar si una celda contiene una combinación inválida o es NaN
+        def es_valor_invalido(valor):
+            #if pd.isna(valor):  # Verifica si es NaN
+            #    return True
+            if isinstance(valor, str):
+                # Verifica si contiene una coma o un espacio adicional después de una coma
+                if "," in valor:
+                    return True
+                # Verifica si contiene caracteres invisibles como saltos de línea
+                #if "\n" in valor or "\r" in valor:
+                #    return True
+            return False
+
+        # Identificar filas con valores inválidos
+        filas_invalidas = nuevo_df.map(es_valor_invalido).any(axis=1)
+
+        # Crear un nuevo DataFrame excluyendo las filas con valores inválidos
+        nuevo_df = nuevo_df[~filas_invalidas].copy()
+
+        # Mostrar el resultado
+        print("DataFrame limpio:")
+        st.dataframe(nuevo_df)
 
 
 
