@@ -15,7 +15,7 @@ if archivo_excel is not None:
         # Mostrar el DataFrame en la aplicación
         st.write("Vista previa de los datos:")
         st.dataframe(df)
-        st.wite("Ahora renombraremos las columnas")
+        st.write("Ahora renombraremos las columnas")
 
         # Diccionario completo con las claves cortas y las descripciones largas
         preguntas = {
