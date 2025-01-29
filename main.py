@@ -185,6 +185,26 @@ if archivo_excel is not None:
 
         st.success(f"Mostrando datos filtrados para P14 = {valor_seleccionado}")
         st.dataframe(nuevo_df2)
+        #########
+
+        # Opciones para P16 (Ser jefe de otros trabajadores)
+        opciones_p16 = {"Sí": "Si", "No": "No"}
+        valor_p16 = st.radio("¿En su trabajo es jefe de otros trabajadores?", list(opciones_p16.keys()))
+
+        # Filtrar por la opción seleccionada en P16
+        valor_seleccionado_p16 = opciones_p16[valor_p16]
+        nuevo_df3 = nuevo_df2[nuevo_df2["P16"] == valor_seleccionado_p16].copy()
+
+        # Si selecciona "No" en P16, asignar 0 a las columnas P17
+        if valor_seleccionado_p16 == "No":
+            columnas_p17 = ['P17_1', 'P17_2', 'P17_3', 'P17_4']
+            for col in columnas_p17:
+                if col in nuevo_df3.columns:
+                    nuevo_df3[col] = 0
+
+        st.success(f"Mostrando datos filtrados para P16 = {valor_seleccionado_p16}")
+        st.dataframe(nuevo_df3)
+
         
 
         ##########
