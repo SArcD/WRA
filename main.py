@@ -109,6 +109,28 @@ if archivo_excel is not None:
 
         # Aplicar el renombrado a las columnas de `df`
         df.columns = [renombrar_columnas(col) for col in df.columns]
+        import pandas as pd
+
+        # Reemplazar "Marca temporal" por una columna "Folio"
+        df["Folio"] = [f"part-{i+1}" for i in range(len(df))]
+    
+        # Reorganizar las columnas para que "Folio" esté al inicio
+        columnas_ordenadas = ["Folio"] + [col for col in df.columns if col != "Folio"]
+        df = df[columnas_ordenadas]
+        import pandas as pd
+
+
+        # Cambiar los nombres de las columnas específicas
+        df.rename(columns={
+            "Selecciona tu centro de trabajo": "CT",
+            "En caso de pertenecer a Oficinas Centrales Indica en cual de las siguientes áreas colaboras.": "Area"
+        }, inplace=True)
+
+        # Reorganizar las columnas para que "Folio" esté al inicio
+        columnas_ordenadas = ["Folio"] + [col for col in df.columns if col != "Folio" and col != "Marca temporal"]
+        df = df[columnas_ordenadas]
+
+        
         st.dataframe(df)
 
 
