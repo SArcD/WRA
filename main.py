@@ -387,6 +387,33 @@ if archivo_excel is not None:
                 mime="text/csv"
             )
 
+
+        ###############
+
+        import streamlit as st
+        import matplotlib.pyplot as plt
+
+        st.title("Distribución de Niveles de Riesgo")
+
+        # Contar los valores únicos en la columna "Nivel de Riesgo"
+        nivel_riesgo_counts = nuevo_df3_resultado["Nivel de Riesgo"].value_counts()
+
+        # Crear un gráfico de pastel
+        fig, ax = plt.subplots(figsize=(8, 8))
+        nivel_riesgo_counts.plot.pie(
+            autopct='%1.1f%%',
+            startangle=90,
+            cmap='tab20',
+            legend=False,
+            title='Distribución por Nivel de Riesgo',
+            ax=ax
+        )
+        ax.set_ylabel('')  # Eliminar el texto del eje y
+        plt.tight_layout()
+
+        # Mostrar la gráfica en Streamlit
+        st.pyplot(fig)
+
         
         
 
