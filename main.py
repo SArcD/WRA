@@ -297,6 +297,29 @@ if archivo_excel is not None:
             st.success("Cálculo de Nivel de Riesgo Completado")
             st.dataframe(nuevo_df3_resultado)
 
+        ####################3
+
+        import streamlit as st
+
+        # Crear una copia del DataFrame original
+        nuevo_df3_resultado_num = nuevo_df3_resultado.copy()
+
+        # Transformar columnas de preguntas Likert a formato numérico
+        for col in nuevo_df3_resultado.columns:
+            if col in preguntas_likert_positiva:
+                nuevo_df3_resultado_num[col] = nuevo_df3_resultado[col].map(escala_likert_positiva).fillna(0)
+            elif col in preguntas_likert_negativa:
+                nuevo_df3_resultado_num[col] = nuevo_df3_resultado[col].map(escala_likert_negativa).fillna(0)
+
+        # Mantener las columnas no numéricas si existen en el DataFrame
+        columnas_no_numericas = ["Folio", "CT", "P1"]
+        columnas_existentes = [col for col in columnas_no_numericas if col in nuevo_df3_resultado.columns]
+        nuevo_df3_resultado_num[columnas_existentes] = nuevo_df3_resultado[columnas_existentes]
+
+        st.success("Transformación de respuestas Likert a formato numérico completada")
+        st.dataframe(nuevo_df3_resultado_num)
+
+
 
         
         
