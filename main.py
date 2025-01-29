@@ -183,7 +183,7 @@ if archivo_excel is not None:
                 if col in nuevo_df2.columns:
                     nuevo_df2[col] = 0
 
-        st.success(f"Mostrando datos filtrados para CT = {valor_ct} y P14 = {valor_seleccionado}")
+        st.success(f"Mostrando datos filtrados para P14 = {valor_seleccionado}")
         st.dataframe(nuevo_df2)
         
 
