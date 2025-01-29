@@ -135,7 +135,6 @@ if archivo_excel is not None:
 
         st.title("Filtrar Datos por CT en Streamlit")
 
-
         # Crear un menú desplegable con los valores únicos de "CT"
         valores_ct = df["CT"].unique()
         valor_seleccionado = st.selectbox("Selecciona un valor de CT:", valores_ct)
@@ -145,21 +144,6 @@ if archivo_excel is not None:
 
         st.success(f"Mostrando datos filtrados para CT = {valor_seleccionado}")
         #st.dataframe(nuevo_df)
-
-        # Permitir descargar el DataFrame filtrado
-        @st.cache_data
-        def convertir_csv(df):
-            return df.to_csv(index=False).encode("utf-8")
-
-        archivo_csv = convertir_csv(nuevo_df)
-
-        st.download_button(
-            label="Descargar datos filtrados (CSV)",
-            data=archivo_csv,
-            file_name=f"datos_CT_{valor_seleccionado}.csv",
-            mime="text/csv")
-        
-
 
         # Función para verificar si una celda contiene una combinación inválida o es NaN
         def es_valor_invalido(valor):
@@ -183,6 +167,19 @@ if archivo_excel is not None:
         # Mostrar el resultado
         print("DataFrame limpio:")
         st.dataframe(nuevo_df)
+
+            # Permitir descargar el DataFrame filtrado
+        @st.cache_data
+        def convertir_csv(df):
+            return df.to_csv(index=False).encode("utf-8")
+
+        archivo_csv = convertir_csv(nuevo_df)
+
+        st.download_button(
+            label="Descargar datos filtrados (CSV)",
+            data=archivo_csv,
+            file_name=f"datos_CT_{valor_seleccionado}.csv",
+            mime="text/csv")
 
 
 
