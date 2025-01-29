@@ -319,7 +319,73 @@ if archivo_excel is not None:
         st.success("Transformación de respuestas Likert a formato numérico completada")
         st.dataframe(nuevo_df3_resultado_num)
 
+        #############
+        import streamlit as st
+        import pandas as pd
+    
+        # Función para generar DataFrames separados
+        def generar_dataframes_separados(df):
+            # Seleccionar las columnas de la escala positiva y negativa junto con las columnas clave
+            columnas_clave = ["Folio", "CT"]
+            columnas_positivas = columnas_clave + preguntas_likert_positiva
+            columnas_negativas = columnas_clave + preguntas_likert_negativa
 
+            # Crear DataFrame para la escala positiva
+            df_positivos = df[columnas_positivas].copy()
+            for col in preguntas_likert_positiva:
+                df_positivos[col] = pd.to_numeric(df_positivos[col], errors="coerce").fillna(0)  # Convertir a numérico y manejar valores faltantes
+            df_positivos["Suma Positiva"] = df_positivos[preguntas_likert_positiva].sum(axis=1)
+            df_positivos["Calificación Total"] = pd.to_numeric(df["Calificación Total"], errors="coerce").fillna(0)
+            df_positivos["Nivel de Riesgo"] = df["Nivel de Riesgo"]
+
+            # Crear DataFrame para la escala negativa
+            df_negativos = df[columnas_negativas].copy()
+            for col in preguntas_likert_negativa:
+                df_negativos[col] = pd.to_numeric(df_negativos[col], errors="coerce").fillna(0)  # Convertir a numérico y manejar valores faltantes
+            df_negativos["Suma Negativa"] = df_negativos[preguntas_likert_negativa].sum(axis=1)
+            df_negativos["Calificación Total"] = pd.to_numeric(df["Calificación Total"], errors="coerce").fillna(0)
+            df_negativos["Nivel de Riesgo"] = df["Nivel de Riesgo"]
+
+            return df_positivos, df_negativos
+
+        # Generar los DataFrames separados    
+        nuevo_df3_resultados_positivos, nuevo_df3_resultados_negativos = generar_dataframes_separados(nuevo_df3_resultado_num)
+
+        # Interfaz en Streamlit para seleccionar la visualización
+        st.title("Visualización de Escalas Likert Positiva y Negativa")
+
+        opcion_visualizacion = st.radio(
+            "Selecciona el tipo de escala Likert a visualizar:",
+            ("Escala Positiva", "Escala Negativa")
+        )
+
+        if opcion_visualizacion == "Escala Positiva":
+            st.success("Mostrando DataFrame con preguntas de Escala Likert Positiva")
+            st.dataframe(nuevo_df3_resultados_positivos)
+
+            # Permitir descarga del DataFrame de escala positiva
+            archivo_csv_positivos = nuevo_df3_resultados_positivos.to_csv(index=False).encode("utf-8")
+
+            st.download_button(
+                label="Descargar datos de Escala Positiva (CSV)",
+                data=archivo_csv_positivos,
+                file_name="datos_escala_positiva.csv",
+                mime="text/csv"
+            )
+
+        else:
+            st.warning("Mostrando DataFrame con preguntas de Escala Likert Negativa")
+            st.dataframe(nuevo_df3_resultados_negativos)
+
+            # Permitir descarga del DataFrame de escala negativa
+            archivo_csv_negativos = nuevo_df3_resultados_negativos.to_csv(index=False).encode("utf-8")
+
+            st.download_button(
+                label="Descargar datos de Escala Negativa (CSV)",
+                data=archivo_csv_negativos,
+                file_name="datos_escala_negativa.csv",
+                mime="text/csv"
+            )
 
         
         
