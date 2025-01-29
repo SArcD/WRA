@@ -168,7 +168,29 @@ if archivo_excel is not None:
         print("DataFrame limpio:")
         st.dataframe(nuevo_df)
 
-            # Permitir descargar el DataFrame filtrado
+        # Opciones para P14
+        opciones_p14 = {"Sí": "Si", "No": "No"}
+        valor_p14 = st.radio("Indique si en su trabajo debe brindar servicio a clientes o usuarios:", list(opciones_p14.keys()))
+
+        # Filtrar por la opción de P14
+        valor_seleccionado = opciones_p14[valor_p14]
+        nuevo_df2 = nuevo_df[nuevo_df["P14"] == valor_seleccionado].copy()
+
+        # Si selecciona "No", asignar 0 a las columnas P15
+        if valor_seleccionado == "No":
+            columnas_p15 = ['P15_1', 'P15_2', 'P15_3', 'P15_4']
+            for col in columnas_p15:
+                if col in nuevo_df2.columns:
+                    nuevo_df2[col] = 0
+
+        st.success(f"Mostrando datos filtrados para CT = {valor_ct} y P14 = {valor_seleccionado}")
+        st.dataframe(nuevo_df2)
+        
+
+        ##########
+        
+        
+        # Permitir descargar el DataFrame filtrado
         @st.cache_data
         def convertir_csv(df):
             return df.to_csv(index=False).encode("utf-8")
