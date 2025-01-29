@@ -204,7 +204,101 @@ if archivo_excel is not None:
 
         st.success(f"Mostrando datos filtrados para P16 = {valor_seleccionado_p16}")
         st.dataframe(nuevo_df3)
+        #############
 
+        import streamlit as st
+        import pandas as pd
+    
+        # Definición de escalas Likert y preguntas
+        escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas Veces": 2, "Casi nunca": 1, "Nunca": 0}
+        escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas Veces": 2, "Casi nunca": 3, "Nunca": 4}
+
+        preguntas_likert_positiva = [
+            "P2_1", "P2_4", "P7_1", "P7_2", "P7_3", "P7_4", "P7_5", "P7_6",
+            "P8_2", "P9_1", "P9_2", "P9_3", "P9_4", "P9_5", "P9_6",
+            "P10_1", "P10_2", "P10_3", "P10_4", "P10_5",
+            "P11_1", "P11_2", "P11_3", "P11_4", "P11_5",
+            "P12_1", "P12_2", "P12_3", "P12_4", "P12_5", "P12_6", "P12_7", "P12_8",
+            "P12_9", "P12_10", "P13_1"
+        ]
+
+        preguntas_likert_negativa = [
+            "P2_2", "P2_3", "P2_5", "P3_1", "P3_2", "P3_3",
+            "P4_1", "P4_2", "P4_3", "P4_4", "P5_1", "P5_2", "P5_3", "P5_4",
+            "P6_1", "P6_2", "P6_3", "P6_4", "P6_5", "P6_6", "P8_1",
+            "P13_2", "P13_3", "P13_4", "P13_5", "P13_6", "P13_7", "P13_8",
+            "P15_1", "P15_2", "P15_3", "P15_4",
+            "P17_1", "P17_2", "P17_3", "P17_4"
+        ]
+
+        # Función para transformar respuestas a escala Likert numérica
+        def transformar_respuestas_likert(df):
+            for columna in df.columns:
+                if columna.startswith("P15") or columna.startswith("P17"):
+                    # Dejar intactas las filas con valor 0
+                    df[columna] = df[columna].apply(
+                        lambda x: 0 if x == 0 else (
+                            escala_likert_positiva.get(x) if columna in preguntas_likert_positiva else
+                            escala_likert_negativa.get(x, 0)
+                        )
+                    )
+                elif columna in preguntas_likert_positiva:
+                    df[columna] = df[columna].map(escala_likert_positiva).fillna(0)
+                elif columna in preguntas_likert_negativa:
+                    df[columna] = df[columna].map(escala_likert_negativa).fillna(0)
+            return df
+
+        # Función para calcular niveles de riesgo
+        def calcular_niveles_riesgo_persona(respuestas):
+            niveles_generales = {
+                "Nulo o despreciable": lambda c: c < 50,
+                "Bajo": lambda c: 50 <= c < 75,
+                "Medio": lambda c: 75 <= c < 99,
+                "Alto": lambda c: 99 <= c < 140,
+                "Muy alto": lambda c: c >= 140
+            }
+            puntaje_total = sum(respuestas.values())
+            nivel_general = next(
+                (nivel for nivel, condicion in niveles_generales.items() if condicion(puntaje_total)),
+                "No determinado"
+            )
+            return puntaje_total, nivel_general
+
+        # Transformar las respuestas y calcular puntajes
+        def procesar_dataframe(df):
+            # Seleccionar columnas relevantes para transformar
+            columnas_preguntas = preguntas_likert_positiva + preguntas_likert_negativa
+            df_respuestas = df[columnas_preguntas].copy()
+
+            # Transformar respuestas a escala Likert
+            df_respuestas = transformar_respuestas_likert(df_respuestas)
+
+            # Calcular puntajes y niveles de riesgo
+            calificaciones = []
+            for _, row in df_respuestas.iterrows():
+                respuestas = row.to_dict()
+                puntaje_total, nivel_general = calcular_niveles_riesgo_persona(respuestas)
+                calificaciones.append({
+                    "Calificación Total": puntaje_total,
+                    "Nivel de Riesgo": nivel_general
+                })
+
+            # Convertir calificaciones a DataFrame
+            df_calificaciones = pd.DataFrame(calificaciones)
+
+            # Concatenar resultados con el DataFrame original
+            df_resultados = pd.concat([df.reset_index(drop=True), df_calificaciones], axis=1)
+            return df_resultados
+
+        # Aplicar procesamiento y mostrar en Streamlit
+        if 'nuevo_df3' in locals():
+            nuevo_df3_resultado = procesar_dataframe(nuevo_df3)
+
+            st.success("Cálculo de Nivel de Riesgo Completado")
+            st.dataframe(nuevo_df3_resultado)
+
+
+        
         
 
         ##########
