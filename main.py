@@ -714,7 +714,7 @@ if archivo_excel is not None:
 
             if not df_filtrado.empty:
                 st.success(f"Se encontraron {len(df_filtrado)} empleados con Nivel de Riesgo: {nivel_seleccionado}")
-                st.dataframe(df_filtrado[["Folio", "CT", "Nivel de Riesgo"]])
+                st.dataframe(df_filtrado[["Folio", "Nivel de Riesgo"]])
 
                 # Definir el número de filas y columnas en la cuadrícula de gráficos
                 num_empleados = len(df_filtrado)
