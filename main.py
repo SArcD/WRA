@@ -1029,26 +1029,36 @@ if archivo_excel is not None:
 
 
         #################
+
         import streamlit as st
         import pandas as pd
         import numpy as np
         import networkx as nx
         import matplotlib.pyplot as plt
 
-        st.title("Red de Correlaciones con Umbral Dinámico")
+        st.title("Red de Correlaciones con Umbral Dinámico y Preguntas más Correlacionadas")
 
-        # Input para el umbral de correlación
-        umbral_correlacion = st.number_input("Ingrese el umbral de correlación mínima:", min_value=0.0, max_value=1.0, value=0.5, step=0.05)
+        # Input para el umbral de correlación    
+        umbral_correlacion = st.number_input(
+            "Ingrese el umbral de correlación mínima:",
+            min_value=0.0, max_value=1.0, value=0.5, step=0.05
+        )
+
+        # Diccionario con las descripciones de las preguntas
+#preguntas = {
+#    "P2_1": "El espacio donde trabajo me permite realizar mis actividades de manera segura e higiénica.",
+#    "P2_2": "Mi trabajo me exige hacer mucho esfuerzo físico",
+#    # Agrega el resto del diccionario aquí...
+#}
 
         # Verificar si el DataFrame `df_reductos` está disponible y tiene datos
         if not df_reductos.empty:
-            # Definir escalas Likert positiva y negativa
-            escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas veces": 2, "Casi nunca": 1, "Nunca": 0}
-            escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas veces": 2, "Casi nunca": 3, "Nunca": 4}
+            # Escalas Likert
+            #escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas veces": 2, "Casi nunca": 1, "Nunca": 0}
+            #escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas veces": 2, "Casi nunca": 3, "Nunca": 4}
 
-            # Omitir columnas no numéricas y convertir respuestas a escala Likert numérica
+            # Convertir las respuestas a escala numérica
             df_reductos_numerico = df_reductos.drop(columns=["Folio", "CT"], errors="ignore").copy()
-
             for columna in df_reductos_numerico.columns:
                 if columna in preguntas_likert_positiva:
                     df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_positiva).fillna(np.nan)
@@ -1058,11 +1068,10 @@ if archivo_excel is not None:
             # Calcular la matriz de correlación
             correlaciones = df_reductos_numerico.corr()
 
-            # Crear el gráfico de redes de correlación
+            # Crear la red de correlación
             G = nx.Graph()
-
-            # Añadir nodos (Preguntas) solo si cumplen con el umbral de correlación
             variables_relevantes = set()
+
             for i in correlaciones.columns:
                 for j in correlaciones.columns:
                     if i != j and abs(correlaciones.loc[i, j]) > umbral_correlacion:
@@ -1073,34 +1082,53 @@ if archivo_excel is not None:
             # Añadir nodos relevantes a la red
             G.add_nodes_from(variables_relevantes)
 
+            # Crear lista de colores para los nodos
+            node_colors = [
+                "red" if nodo in preguntas_likert_negativa else "green"
+                for nodo in G.nodes
+            ]
+
             # Dibujar la red de correlación
             fig, ax = plt.subplots(figsize=(12, 10))
-            pos = nx.spring_layout(G, seed=42)  # Disposición de nodos
+            pos = nx.spring_layout(G, seed=42)
 
-            # Dibujar nodos
-            nx.draw_networkx_nodes(G, pos, node_size=700, node_color="lightblue", ax=ax)
-
-            # Dibujar etiquetas
+            nx.draw_networkx_nodes(G, pos, node_size=700, node_color=node_colors, ax=ax)
             nx.draw_networkx_labels(G, pos, font_size=10, ax=ax)
 
-            # Dibujar bordes (aristas)
+            # Dibujar bordes
             edges = G.edges(data=True)
             nx.draw_networkx_edges(G, pos, edgelist=[(u, v) for u, v, d in edges], width=1.5, edge_color="gray", ax=ax)
 
-            # Agregar títulos
+            # Título
             ax.set_title(f"Red de Correlaciones (Umbral > {umbral_correlacion:.2f})", fontsize=14)
             plt.axis("off")
 
-            # Mostrar el gráfico en Streamlit
+            # Mostrar la gráfica en Streamlit
             st.pyplot(fig)
 
-            # Mostrar las variables incluidas en la red
-            st.write(f"Variables incluidas en la red (umbral > {umbral_correlacion:.2f}):")
-            st.write(sorted(variables_relevantes))
+            # Crear DataFrame con las preguntas más correlacionadas
+            preguntas_correlacionadas = []
+            for i in correlaciones.columns:
+                for j in correlaciones.columns:
+                    if i != j and abs(correlaciones.loc[i, j]) > umbral_correlacion:
+                        preguntas_correlacionadas.append({
+                            "Pregunta 1": i,
+                            "Pregunta 1 (Descripción)": preguntas.get(i, "Descripción no disponible"),
+                            "Pregunta 2": j,
+                            "Pregunta 2 (Descripción)": preguntas.get(j, "Descripción no disponible"),
+                            "Índice de Correlación": correlaciones.loc[i, j]
+                        })
+
+            # Convertir a DataFrame
+            df_preguntas_correlacionadas = pd.DataFrame(preguntas_correlacionadas).drop_duplicates(subset=["Pregunta 1", "Pregunta 2"])
+
+            # Mostrar el DataFrame en Streamlit
+            st.write("### Preguntas Más Correlacionadas")
+            st.dataframe(df_preguntas_correlacionadas)
 
         else:
             st.warning("No se ha generado el DataFrame con preguntas reducidas.")
-        
+
         
 
         ##########
