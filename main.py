@@ -943,6 +943,54 @@ if archivo_excel is not None:
 
 
 
+        ##################### mapa
+
+        import streamlit as st
+        import pandas as pd
+        import numpy as np
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+
+        st.title("Mapa de Correlaciones de las Preguntas Reducidas")
+
+        # Verificar si el DataFrame `df_reductos` está disponible y tiene datos
+        if not df_reductos.empty:
+            # Definir las escalas Likert positiva y negativa
+            escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas veces": 2, "Casi nunca": 1, "Nunca": 0}
+            escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas veces": 2, "Casi nunca": 3, "Nunca": 4}
+
+            # Omitir las columnas "Folio" y "CT"
+            df_reductos_numerico = df_reductos.drop(columns=["Folio", "CT"], errors="ignore").copy()
+
+            # Convertir respuestas a valores numéricos según la escala correspondiente
+            for columna in df_reductos_numerico.columns:
+                if columna in preguntas_likert_positiva:
+                    df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_positiva).fillna(np.nan)
+                elif columna in preguntas_likert_negativa:
+                    df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_negativa).fillna(np.nan)
+
+            # Calcular la matriz de correlación
+            correlaciones = df_reductos_numerico.corr()
+
+            #    Crear el mapa de correlaciones
+            fig, ax = plt.subplots(figsize=(10, 8))
+            sns.heatmap(
+                correlaciones, 
+                annot=True, 
+                cmap="coolwarm", 
+                fmt=".2f", 
+                linewidths=0.5, 
+                ax=ax
+            )
+            ax.set_title("Mapa de Correlaciones entre Preguntas Reducidas")
+
+            # Mostrar la gráfica en Streamlit
+            st.pyplot(fig)
+
+        else:
+            st.warning("No se ha generado el DataFrame con preguntas reducidas.")
+
+
 
 
 
