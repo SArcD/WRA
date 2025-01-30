@@ -973,7 +973,7 @@ if archivo_excel is not None:
             correlaciones = df_reductos_numerico.corr()
 
             #    Crear el mapa de correlaciones
-            fig, ax = plt.subplots(figsize=(10, 8))
+            fig, ax = plt.subplots(figsize=(40, 32))
             sns.heatmap(
                 correlaciones, 
                 annot=True, 
