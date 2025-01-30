@@ -1029,18 +1029,17 @@ if archivo_excel is not None:
 
 
         #################
-
         import streamlit as st
         import pandas as pd
         import numpy as np
         import networkx as nx
         import matplotlib.pyplot as plt
 
-        st.title("Red de Correlaciones del DataFrame Reducido")
+        st.title("Red de Correlaciones con Umbral Dinámico")
 
-        umbral_correlacion = st.slider("Seleccione el umbral de correlación mínima:", 0.1, 1.0, 0.5, 0.05)
+        # Input para el umbral de correlación
+        umbral_correlacion = st.number_input("Ingrese el umbral de correlación mínima:", min_value=0.0, max_value=1.0, value=0.5, step=0.05)
 
-        
         # Verificar si el DataFrame `df_reductos` está disponible y tiene datos
         if not df_reductos.empty:
             # Definir escalas Likert positiva y negativa
@@ -1062,16 +1061,17 @@ if archivo_excel is not None:
             # Crear el gráfico de redes de correlación
             G = nx.Graph()
 
-            # Añadir nodos (Preguntas)
-            for col in df_reductos_numerico.columns:
-                G.add_node(col)
-
-            # Añadir conexiones basadas en la correlación
-            #umbral_correlacion = 0.5  # Se visualizarán correlaciones por encima de este umbral
+            # Añadir nodos (Preguntas) solo si cumplen con el umbral de correlación
+            variables_relevantes = set()
             for i in correlaciones.columns:
                 for j in correlaciones.columns:
                     if i != j and abs(correlaciones.loc[i, j]) > umbral_correlacion:
                         G.add_edge(i, j, weight=correlaciones.loc[i, j])
+                        variables_relevantes.add(i)
+                        variables_relevantes.add(j)
+
+            # Añadir nodos relevantes a la red
+            G.add_nodes_from(variables_relevantes)
 
             # Dibujar la red de correlación
             fig, ax = plt.subplots(figsize=(12, 10))
@@ -1088,16 +1088,18 @@ if archivo_excel is not None:
             nx.draw_networkx_edges(G, pos, edgelist=[(u, v) for u, v, d in edges], width=1.5, edge_color="gray", ax=ax)
 
             # Agregar títulos
-            ax.set_title("Red de Correlaciones (Umbral > 0.5)", fontsize=14)
+            ax.set_title(f"Red de Correlaciones (Umbral > {umbral_correlacion:.2f})", fontsize=14)
             plt.axis("off")
 
             # Mostrar el gráfico en Streamlit
             st.pyplot(fig)
 
+            # Mostrar las variables incluidas en la red
+            st.write(f"Variables incluidas en la red (umbral > {umbral_correlacion:.2f}):")
+            st.write(sorted(variables_relevantes))
+
         else:
             st.warning("No se ha generado el DataFrame con preguntas reducidas.")
-
-
         
         
 
