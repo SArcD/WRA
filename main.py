@@ -416,6 +416,101 @@ if archivo_excel is not None:
 
         ##########
 
+        # Diccionario de dominios reales y las preguntas que los conforman
+        dominios_reales = {
+            "Condiciones en el ambiente de trabajo": ["P2_1", "P2_2", "P2_3", "P2_4", "P2_5"],
+            "Carga de trabajo": ["P3_1", "P3_2", "P3_3", "P4_1", "P4_2", "P4_3", "P4_4",
+                         "P15_1", "P15_2", "P15_3", "P15_4", "P5_1", "P5_2", "P5_3", "P5_4"],
+            "Falta de control sobre el trabajo": ["P7_1", "P7_2", "P7_3", "P7_4", "P7_5",
+                                          "P7_6", "P8_1", "P8_2", "P9_5", "P9_6"],
+            "Jornada de trabajo": ["P6_1", "P6_2"],
+            "Interferencia en la relación trabajo-familia": ["P6_3", "P6_4", "P6_5", "P6_6"],
+            "Liderazgo": ["P9_1", "P9_2", "P9_3", "P9_4", "P10_1", "P10_2", "P10_3", "P10_4", "P10_5"],
+            "Relaciones en el trabajo": ["P11_1", "P11_2", "P11_3", "P11_4", "P11_5",
+                                 "P17_1", "P17_2", "P17_3", "P17_4"],
+            "Violencia": ["P13_1", "P13_2", "P13_3", "P13_4", "P13_5", "P13_6", "P13_7", "P13_8"],
+            "Reconocimiento del desempeño": ["P12_1", "P12_2", "P12_3", "P12_4", "P12_5", "P12_6"],
+            "Insuficiente sentido de pertenencia e inestabilidad": ["P12_7", "P12_8", "P12_9", "P12_10"]
+        }
+
+        # Puntos de corte de niveles por dominio
+        niveles_dominio_cortes = {
+            "Condiciones en el ambiente de trabajo": {
+                "Nulo o despreciable": lambda c: c < 3,
+                "Bajo": lambda c: 3 <= c < 5,
+                "Medio": lambda c: 5 <= c < 7,
+                "Alto": lambda c: 7 <= c < 9,
+                "Muy alto": lambda c: c >= 9
+            },
+            "Carga de trabajo": {
+                "Nulo o despreciable": lambda c: c < 12,
+                "Bajo": lambda c: 12 <= c < 16,
+                "Medio": lambda c: 16 <= c < 20,
+                "Alto": lambda c: 20 <= c < 24,
+                "Muy alto": lambda c: c >= 24
+            },
+            "Falta de control sobre el trabajo": {
+                "Nulo o despreciable": lambda c: c < 5,
+                "Bajo": lambda c: 5 <= c < 8,
+                "Medio": lambda c: 8 <= c < 11,
+                "Alto": lambda c: 11 <= c < 14,
+                "Muy alto": lambda c: c >= 14
+            },
+            "Jornada de trabajo": {
+                "Nulo o despreciable": lambda c: c < 1,
+                "Bajo": lambda c: 1 <= c < 2,
+                "Medio": lambda c: 2 <= c < 4,
+                "Alto": lambda c: 4 <= c < 6,
+                "Muy alto": lambda c: c >= 6
+            },
+            "Interferencia en la relación trabajo-familia": {
+                "Nulo o despreciable": lambda c: c < 1,
+                "Bajo": lambda c: 1 <= c < 2,
+                "Medio": lambda c: 2 <= c < 4,
+                "Alto": lambda c: 4 <= c < 6,
+                "Muy alto": lambda c: c >= 6
+            },
+            "Liderazgo": {
+                "Nulo o despreciable": lambda c: c < 3,
+                "Bajo": lambda c: 3 <= c < 5,
+                "Medio": lambda c: 5 <= c < 8,
+                "Alto": lambda c: 8 <= c < 11,
+                "Muy alto": lambda c: c >= 11
+            },
+            "Relaciones en el trabajo": {
+                "Nulo o despreciable": lambda c: c < 10,
+                "Bajo": lambda c: 10 <= c < 13,
+                "Medio": lambda c: 13 <= c < 17,
+                "Alto": lambda c: 17 <= c < 21,
+                "Muy alto": lambda c: c >= 21
+            },
+            "Violencia": {
+                "Nulo o despreciable": lambda c: c < 7,
+                "Bajo": lambda c: 7 <= c < 10,
+                "Medio": lambda c: 10 <= c < 13,
+                "Alto": lambda c: 13 <= c < 16,
+                "Muy alto": lambda c: c >= 16
+            },
+            "Reconocimiento del desempeño": {
+                "Nulo o despreciable": lambda c: c < 5,
+                "Bajo": lambda c: 5 <= c < 8,
+                "Medio": lambda c: 8 <= c < 11,
+                "Alto": lambda c: 11 <= c < 14,
+                "Muy alto": lambda c: c >= 14
+            },
+            "Insuficiente sentido de pertenencia e inestabilidad": {
+                "Nulo o despreciable": lambda c: c < 7,
+                "Bajo": lambda c: 7 <= c < 10,
+                "Medio": lambda c: 10 <= c < 13,
+                "Alto": lambda c: 13 <= c < 16,
+                "Muy alto": lambda c: c >= 16
+            }
+        }
+
+
+
+        
+        
         st.title("Cálculo de Puntajes y Niveles de Riesgo por Dominio")
 
         # Crear un nuevo DataFrame con las columnas deseadas
