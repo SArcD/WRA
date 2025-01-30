@@ -631,6 +631,8 @@ if archivo_excel is not None:
                 ax.set_yticklabels(["Nulo", "Bajo", "Medio", "Alto", "Muy Alto"], fontsize=10)
                 ax.set_xticks(angles[:-1])
                 ax.set_xticklabels(dominios, fontsize=10, rotation=45, ha="right")
+                ax.set_xticklabels([""] * len(dominios))  # Ocultar etiquetas originales
+
 
                 # Ajustar la posición de los nombres de los dominios para evitar superposición
                 for angle, label in zip(angles[:-1], dominios):
