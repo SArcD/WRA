@@ -860,6 +860,52 @@ if archivo_excel is not None:
             st.write(f"Dominio: {domain}, Reducto: {reducto}")
 
 
+        #########################
+
+
+        import streamlit as st
+        import matplotlib.pyplot as plt
+        from matplotlib_venn import venn2
+
+        # Función para generar un diagrama de Venn comparando dos clasificaciones
+        def generate_venn(original_partition, reduced_partition, domain_name):
+            # Convertir particiones en conjuntos únicos
+            original_sets = set(frozenset(group) for group in original_partition)
+            reduced_sets = set(frozenset(group) for group in reduced_partition)
+
+            # Intersección, solo en el original, solo en el reducido
+            only_original = len(original_sets - reduced_sets)
+            only_reduced = len(reduced_sets - original_sets)
+            intersection = len(original_sets & reduced_sets)
+
+            # Crear diagrama de Venn
+            fig, ax = plt.subplots(figsize=(6, 6))
+            venn = venn2(
+                subsets=(only_original, only_reduced, intersection),
+                set_labels=("Lista completa", "Reducto"),
+                ax=ax
+            )
+            ax.set_title(f"Comparación: {domain_name}", fontsize=12)
+    
+            return fig
+
+        st.title("Comparación de Clasificaciones con Diagramas de Venn")
+
+        # Selección del dominio para generar el diagrama
+        dominio_seleccionado = st.selectbox("Seleccione un dominio:", list(dominios_reales.keys()))
+
+        if dominio_seleccionado:
+            # Obtener clasificaciones usando la lista completa de preguntas
+            original_partition = indiscernibility(dominios_reales[dominio_seleccionado], nuevo_df3_resultado)
+
+            # Obtener clasificaciones usando el reducto
+            reduced_partition = indiscernibility(reductos[dominio_seleccionado], nuevo_df3_resultado)
+
+            # Generar y mostrar el diagrama de Venn
+            fig = generate_venn(original_partition, reduced_partition, dominio_seleccionado)
+            st.pyplot(fig)
+
+
 
 
 
