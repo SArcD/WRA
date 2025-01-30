@@ -414,6 +414,55 @@ if archivo_excel is not None:
         # Mostrar la gráfica en Streamlit
         st.pyplot(fig)
 
+        ##########
+
+        st.title("Cálculo de Puntajes y Niveles de Riesgo por Dominio")
+
+        # Crear un nuevo DataFrame con las columnas deseadas
+        dominio_puntajes_niveles = []
+
+        # Calcular puntajes y niveles de riesgo por dominio
+        nuevo_df3_result_num = nuevo_df3_resultado_num.copy()
+
+        for dominio, preguntas in dominios_reales.items():
+            # Calcular el puntaje total por dominio
+            nuevo_df3_result_num[dominio + "_Puntaje"] = nuevo_df3_result_num[preguntas].sum(axis=1)
+
+            # Calcular el nivel de riesgo por dominio
+            nuevo_df3_result_num[dominio + "_Nivel de Riesgo"] = nuevo_df3_result_num[dominio + "_Puntaje"].apply(
+                lambda puntaje: next(
+                    (nivel for nivel, condicion in niveles_dominio_cortes[dominio].items() if condicion(puntaje)),
+                    "No determinado"
+                )
+            )
+
+        # Seleccionar columnas relevantes para el nuevo DataFrame
+        columnas_finales = ["Folio", "Calificación Total", "Nivel de Riesgo"] + [
+            col for dominio in dominios_reales.keys() for col in [dominio + "_Puntaje", dominio + "_Nivel de Riesgo"]
+        ]
+
+        # Crear el nuevo DataFrame con los resultados por dominio
+        nuevo_df3_resultado_dominios = nuevo_df3_result_num[columnas_finales]
+
+        # Mostrar el DataFrame en Streamlit
+        st.success("Cálculo de puntajes y niveles de riesgo por dominio completado")
+        st.dataframe(nuevo_df3_resultado_dominios)
+
+        # Permitir descarga del DataFrame con los datos por dominio
+        @st.cache_data    
+        def convertir_csv(df):
+            return df.to_csv(index=False).encode("utf-8")
+
+        archivo_csv_dominios = convertir_csv(nuevo_df3_resultado_dominios)
+
+        st.download_button(
+            label="Descargar datos de Puntajes y Niveles de Riesgo por Dominio (CSV)",
+            data=archivo_csv_dominios,
+            file_name="datos_puntajes_niveles_dominios.csv",
+            mime="text/csv"
+        )
+
+
         
         
 
