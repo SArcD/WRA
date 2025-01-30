@@ -907,6 +907,39 @@ if archivo_excel is not None:
 
 
 
+        import streamlit as st
+        import pandas as pd
+
+        st.title("Reducción de Preguntas por Dominio")
+
+        # Crear un nuevo DataFrame con solo las preguntas que están en los reductos
+        columnas_reducto = ["Folio", "CT"]  # Mantener las columnas clave
+        for dominio, preguntas_reducto in reductos.items():
+            columnas_reducto.extend(preguntas_reducto)
+
+        # Verificar que las columnas existan en el DataFrame    
+        columnas_existentes = [col for col in columnas_reducto if col in nuevo_df3_resultado.columns]
+
+        # Filtrar el DataFrame con las preguntas seleccionadas en los reductos
+        df_reductos = nuevo_df3_resultado[columnas_existentes].copy()
+
+        # Mostrar el DataFrame en Streamlit
+        st.success("Se ha generado el DataFrame con las preguntas reducidas por dominio.")
+        st.dataframe(df_reductos)
+
+        # Permitir descarga del DataFrame con los reductos
+        @st.cache_data
+        def convertir_csv(df):
+            return df.to_csv(index=False).encode("utf-8")
+
+        archivo_csv_reductos = convertir_csv(df_reductos)
+
+        st.download_button(
+            label="Descargar datos con preguntas reducidas (CSV)",
+            data=archivo_csv_reductos,
+            file_name="datos_reductos.csv",
+            mime="text/csv"
+        )
 
 
 
