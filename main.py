@@ -990,6 +990,42 @@ if archivo_excel is not None:
         else:
             st.warning("No se ha generado el DataFrame con preguntas reducidas.")
 
+        #################
+
+        import streamlit as st
+        import pandas as pd
+        import numpy as np
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+
+        st.title("Mapa de Correlaciones de Puntajes por Dominio")
+
+        # Verificar si el DataFrame `nuevo_df3_resultado_dominios` está disponible y tiene datos
+        if not nuevo_df3_resultado_dominios.empty:
+            # Omitir columnas no numéricas ("Folio" y "Nivel de Riesgo")
+            columnas_a_excluir = ["Folio"] + [col for col in nuevo_df3_resultado_dominios.columns if "Nivel de Riesgo" in col]
+            df_puntajes_numerico = nuevo_df3_resultado_dominios.drop(columns=columnas_a_excluir, errors="ignore").copy()
+
+            # Calcular la matriz de correlación
+            correlaciones = df_puntajes_numerico.corr()
+
+            # Crear el mapa de correlaciones
+            fig, ax = plt.subplots(figsize=(10, 8))
+            sns.heatmap(
+                correlaciones, 
+                annot=True, 
+                cmap="coolwarm", 
+                fmt=".2f", 
+                linewidths=0.5, 
+                ax=ax
+            )
+            ax.set_title("Mapa de Correlaciones entre Puntajes por Dominio")
+
+            # Mostrar la gráfica en Streamlit
+            st.pyplot(fig)
+
+        else:
+            st.warning("No se ha generado el DataFrame con puntajes por dominio.")
 
 
 
