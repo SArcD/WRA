@@ -632,11 +632,11 @@ if archivo_excel is not None:
                 ax.set_xticks(angles[:-1])
                 ax.set_xticklabels(dominios, fontsize=10, rotation=45, ha="right")
 
-                # Separar más los labels de los dominios con desplazamiento radial
-                for angle, label, value in zip(angles[:-1], dominios, niveles_riesgo[:-1]):
-                    x_offset = 1.1 * np.cos(angle)  # Ajuste de separación
-                    y_offset = 1.1 * np.sin(angle)
-                    ax.text(x_offset, y_offset, label, ha="center", va="center", fontsize=9, wrap=True)
+                # Ajustar la posición de los nombres de los dominios para evitar superposición
+                for angle, label in zip(angles[:-1], dominios):
+                    x_offset = 1.3 * np.cos(angle)  # Ajuste de separación radial
+                    y_offset = 1.3 * np.sin(angle)
+                    ax.text(x_offset, y_offset, label, ha="center", va="center", fontsize=10, weight='bold')
 
 
                 
