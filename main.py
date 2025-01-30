@@ -759,26 +759,26 @@ if archivo_excel is not None:
 
 
         def indiscernibility(attr, table):
-        u_ind = {}  # un diccionario vacío para almacenar los elementos de la relación de indiscernibilidad (U/IND({conjunto de atributos}))
-        attr_values = []  # una lista vacía para almacenar los valores de los atributos
+            u_ind = {}  # un diccionario vacío para almacenar los elementos de la relación de indiscernibilidad (U/IND({conjunto de atributos}))
+            attr_values = []  # una lista vacía para almacenar los valores de los atributos
 
-        for i in table.index:
-            attr_values = []
-            for j in attr:
-                attr_values.append(table.loc[i, j])  # encontrar el valor de la tabla en la fila correspondiente y el atributo deseado y agregarlo a la lista attr_values
+            for i in table.index:
+                attr_values = []
+                for j in attr:
+                    attr_values.append(table.loc[i, j])  # encontrar el valor de la tabla en la fila correspondiente y el atributo deseado y agregarlo a la lista attr_values
 
-            # convertir la lista en una cadena y verificar si ya es una clave en el diccionario
-            key = ''.join(str(k) for k in attr_values)
+                # convertir la lista en una cadena y verificar si ya es una clave en el diccionario
+                key = ''.join(str(k) for k in attr_values)
 
-            if key in u_ind:  # si la clave ya existe en el diccionario
-                u_ind[key].add(i)
-            else:  # si la clave aún no existe en el diccionario
-                u_ind[key] = set()
-                u_ind[key].add(i)
+                if key in u_ind:  # si la clave ya existe en el diccionario
+                    u_ind[key].add(i)
+                else:  # si la clave aún no existe en el diccionario
+                    u_ind[key] = set()
+                    u_ind[key].add(i)
 
-        # Ordenar la relación de indiscernibilidad por la longitud de cada conjunto
-        u_ind_sorted = sorted(u_ind.values(), key=len, reverse=True)
-        return u_ind_sorted
+            # Ordenar la relación de indiscernibilidad por la longitud de cada conjunto
+            u_ind_sorted = sorted(u_ind.values(), key=len, reverse=True)
+            return u_ind_sorted
 
 
 
