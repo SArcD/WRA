@@ -1038,32 +1038,52 @@ if archivo_excel is not None:
 
         st.title("Red de Correlaciones con Umbral Dinámico y Preguntas más Correlacionadas")
 
-        # Input para el umbral de correlación    
+        # Input para el umbral de correlación
         umbral_correlacion = st.number_input(
             "Ingrese el umbral de correlación mínima:",
             min_value=0.0, max_value=1.0, value=0.5, step=0.05
         )
 
         # Diccionario con las descripciones de las preguntas
-#preguntas = {
-#    "P2_1": "El espacio donde trabajo me permite realizar mis actividades de manera segura e higiénica.",
-#    "P2_2": "Mi trabajo me exige hacer mucho esfuerzo físico",
-#    # Agrega el resto del diccionario aquí...
-#}
+        preguntas = {
+            "P2_1": "El espacio donde trabajo me permite realizar mis actividades de manera segura e higiénica.",
+            "P2_2": "Mi trabajo me exige hacer mucho esfuerzo físico",
+            "P2_3": "Me preocupa sufrir un accidente en mi trabajo",
+            "P2_4": "Considero que en mi trabajo se aplican las normas de seguridad y salud en el trabajo",
+            "P2_5": "Considero que las actividades que realizo son peligrosas",
+            # Agrega todas las demás preguntas...
+        }
 
+        # Escalas Likert
+        preguntas_likert_positiva = [
+            "P2_1", "P2_4", "P7_1", "P7_2", "P7_3", "P7_4", "P7_5", "P7_6",
+            "P8_2", "P9_1", "P9_2", "P9_3", "P9_4", "P9_5", "P9_6",
+            "P10_1", "P10_2", "P10_3", "P10_4", "P10_5", "P11_1", "P11_2",
+            "P11_3", "P11_4", "P11_5", "P12_1", "P12_2", "P12_3", "P12_4",
+            "P12_5", "P12_6", "P12_7", "P12_8", "P12_9", "P12_10", "P13_1"
+        ]
+
+        preguntas_likert_negativa = [
+            "P2_2", "P2_3", "P2_5", "P3_1", "P3_2", "P3_3", "P4_1", "P4_2",
+            "P4_3", "P4_4", "P5_1", "P5_2", "P5_3", "P5_4", "P6_1", "P6_2",
+            "P6_3", "P6_4", "P6_5", "P6_6", "P8_1", "P13_2", "P13_3", "P13_4",
+            "P13_5", "P13_6", "P13_7", "P13_8", "P15_1", "P15_2", "P15_3",
+            "P15_4", "P17_1", "P17_2", "P17_3", "P17_4"
+        ]
+        
         # Verificar si el DataFrame `df_reductos` está disponible y tiene datos
         if not df_reductos.empty:
-            # Escalas Likert
-            #escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas veces": 2, "Casi nunca": 1, "Nunca": 0}
-            #escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas veces": 2, "Casi nunca": 3, "Nunca": 4}
-
             # Convertir las respuestas a escala numérica
             df_reductos_numerico = df_reductos.drop(columns=["Folio", "CT"], errors="ignore").copy()
             for columna in df_reductos_numerico.columns:
                 if columna in preguntas_likert_positiva:
-                    df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_positiva).fillna(np.nan)
+                    df_reductos_numerico[columna] = df_reductos_numerico[columna].map({
+                        "Siempre": 4, "Casi siempre": 3, "Algunas veces": 2, "Casi nunca": 1, "Nunca": 0
+                    }).fillna(np.nan)
                 elif columna in preguntas_likert_negativa:
-                    df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_negativa).fillna(np.nan)
+                    df_reductos_numerico[columna] = df_reductos_numerico[columna].map({
+                        "Siempre": 0, "Casi siempre": 1, "Algunas veces": 2, "Casi nunca": 3, "Nunca": 4
+                    }).fillna(np.nan)
 
             # Calcular la matriz de correlación
             correlaciones = df_reductos_numerico.corr()
@@ -1129,7 +1149,6 @@ if archivo_excel is not None:
         else:
             st.warning("No se ha generado el DataFrame con preguntas reducidas.")
 
-        
 
         ##########
         
