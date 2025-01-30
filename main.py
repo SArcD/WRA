@@ -557,6 +557,25 @@ if archivo_excel is not None:
             mime="text/csv"
         )
 
+        ###################
+
+        st.title("Búsqueda de Empleado por Folio o CT")
+
+        # Ingresar el número de Folio o CT para buscar
+        criterio_busqueda = st.radio("Buscar empleado por:", ("Folio", "CT"))
+        valor_busqueda = st.text_input(f"Ingrese el {criterio_busqueda} del empleado:")
+
+        # Filtrar el DataFrame según la búsqueda
+        if valor_busqueda:
+            df_filtrado = nuevo_df3_resultado_dominios[nuevo_df3_resultado_dominios[criterio_busqueda].astype(str) == valor_busqueda]
+
+            if not df_filtrado.empty:
+                st.success(f"Empleado encontrado con {criterio_busqueda} = {valor_busqueda}")
+                st.dataframe(df_filtrado)
+            else:
+                st.warning(f"No se encontró ningún empleado con {criterio_busqueda} = {valor_busqueda}")
+
+
 
         
         
