@@ -10,4 +10,5 @@ scipy
 pandas
 openpyxl
 matplotlib-venn
+seaborn
 
