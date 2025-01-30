@@ -755,10 +755,109 @@ if archivo_excel is not None:
             else:
                 st.warning(f"No se encontraron empleados con Nivel de Riesgo: {nivel_seleccionado}")
 
+        ####################
+
+
+        def indiscernibility(attr, table):
+        u_ind = {}  # un diccionario vacío para almacenar los elementos de la relación de indiscernibilidad (U/IND({conjunto de atributos}))
+        attr_values = []  # una lista vacía para almacenar los valores de los atributos
+
+        for i in table.index:
+            attr_values = []
+            for j in attr:
+                attr_values.append(table.loc[i, j])  # encontrar el valor de la tabla en la fila correspondiente y el atributo deseado y agregarlo a la lista attr_values
+
+            # convertir la lista en una cadena y verificar si ya es una clave en el diccionario
+            key = ''.join(str(k) for k in attr_values)
+
+            if key in u_ind:  # si la clave ya existe en el diccionario
+                u_ind[key].add(i)
+            else:  # si la clave aún no existe en el diccionario
+                u_ind[key] = set()
+                u_ind[key].add(i)
+
+        # Ordenar la relación de indiscernibilidad por la longitud de cada conjunto
+        u_ind_sorted = sorted(u_ind.values(), key=len, reverse=True)
+        return u_ind_sorted
 
 
 
+        ####################
 
+
+        import pandas as pd
+        from itertools import combinations
+
+        # Función para calcular la relación de indiscernibilidad
+        def indiscernibility(attr, table):
+            u_ind = {}
+            for i in table.index:
+                attr_values = tuple(table.loc[i, attr])
+                if attr_values in u_ind:
+                    u_ind[attr_values].add(i)
+                else:
+                    u_ind[attr_values] = {i}
+            return list(u_ind.values())
+
+        # Función para calcular la similitud entre particiones usando Jaccard
+        def compare_partitions(original, test):
+            score = 0
+            for orig_set in original:
+                best_match = 0
+                for test_set in test:
+                    similarity = len(orig_set.intersection(test_set)) / len(orig_set.union(test_set))
+                    best_match = max(best_match, similarity)
+                score += best_match * len(orig_set)
+            total_size = sum(len(group) for group in original)
+            return score / total_size if total_size > 0 else 0
+
+        # Función para encontrar el reducto para un dominio
+        def find_reduct_for_domain(domain_questions, df, threshold=0.9):
+            best_match = 0
+            best_subset = None
+            original_partition = indiscernibility(domain_questions, df)
+
+            for i in range(1, len(domain_questions) + 1):
+                for subset in combinations(domain_questions, i):
+                    test_partition = indiscernibility(list(subset), df)
+                    match_score = compare_partitions(original_partition, test_partition)
+                    if match_score > best_match:
+                        best_match = match_score
+                        best_subset = subset
+                    if best_match >= threshold:
+                        st.write(f"Reducto encontrado para umbral {threshold}: {best_subset} (Coincidencia: {best_match:.2%})")
+                        return list(best_subset)
+
+            st.write(f"No se encontró reducto con umbral {threshold}. Mejor coincidencia: {best_match:.2%}")
+            return list(best_subset)
+
+        # Diccionario de dominios y preguntas
+        dominios_reales = {
+            "Condiciones en el ambiente de trabajo": ["P2_1", "P2_2", "P2_3", "P2_4", "P2_5"],
+            "Carga de trabajo": ["P3_1", "P3_2", "P3_3", "P4_1", "P4_2", "P4_3", "P4_4",
+                         "P15_1", "P15_2", "P15_3", "P15_4", "P5_1", "P5_2", "P5_3", "P5_4"],
+            "Falta de control sobre el trabajo": ["P7_1", "P7_2", "P7_3", "P7_4", "P7_5",
+                                          "P7_6", "P8_1", "P8_2", "P9_5", "P9_6"],
+            "Jornada de trabajo": ["P6_1", "P6_2"],
+            "Interferencia en la relación trabajo-familia": ["P6_3", "P6_4", "P6_5", "P6_6"],
+            "Liderazgo": ["P9_1", "P9_2", "P9_3", "P9_4", "P10_1", "P10_2", "P10_3", "P10_4", "P10_5"],
+            "Relaciones en el trabajo": ["P11_1", "P11_2", "P11_3", "P11_4", "P11_5",
+                                 "P17_1", "P17_2", "P17_3", "P17_4"],
+            "Violencia": ["P13_1", "P13_2", "P13_3", "P13_4", "P13_5", "P13_6", "P13_7", "P13_8"],
+            "Reconocimiento del desempeño": ["P12_1", "P12_2", "P12_3", "P12_4", "P12_5", "P12_6"],
+            "Insuficiente sentido de pertenencia e inestabilidad": ["P12_7", "P12_9", "P12_10", "P12_8"]
+        }
+
+        # Aplicar el proceso de reducción para cada dominio
+        reductos = {}
+        for domain, questions in dominios_reales.items():
+            #print(f"Buscando reducto para el dominio: {domain}")
+            reducto = find_reduct_for_domain(questions, nuevo_df3_resultado, threshold=0.9)
+            reductos[domain] = reducto
+
+        # Mostrar los reductos para cada dominio
+        for domain, reducto in reductos.items():
+            st.write(f"Dominio: {domain}, Reducto: {reducto}")
 
 
 
