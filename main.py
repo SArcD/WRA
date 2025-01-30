@@ -1045,14 +1045,14 @@ if archivo_excel is not None:
         )
 
         # Diccionario con las descripciones de las preguntas
-        preguntas = {
-            "P2_1": "El espacio donde trabajo me permite realizar mis actividades de manera segura e higiénica.",
-            "P2_2": "Mi trabajo me exige hacer mucho esfuerzo físico",
-            "P2_3": "Me preocupa sufrir un accidente en mi trabajo",
-            "P2_4": "Considero que en mi trabajo se aplican las normas de seguridad y salud en el trabajo",
-            "P2_5": "Considero que las actividades que realizo son peligrosas",
-            # Agrega todas las demás preguntas...
-        }
+        #preguntas = {
+        #    "P2_1": "El espacio donde trabajo me permite realizar mis actividades de manera segura e higiénica.",
+        #    "P2_2": "Mi trabajo me exige hacer mucho esfuerzo físico",
+        #    "P2_3": "Me preocupa sufrir un accidente en mi trabajo",
+        #    "P2_4": "Considero que en mi trabajo se aplican las normas de seguridad y salud en el trabajo",
+        #    "P2_5": "Considero que las actividades que realizo son peligrosas",
+        #    # Agrega todas las demás preguntas...
+        #}
 
         # Escalas Likert
         preguntas_likert_positiva = [
