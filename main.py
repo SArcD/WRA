@@ -638,7 +638,7 @@ if archivo_excel is not None:
                 for angle, label in zip(angles[:-1], dominios):
                     x_offset = 1.3 * np.cos(angle)  # Ajuste de separación radial
                     y_offset = 1.3 * np.sin(angle)
-                    ax.text(x_offset, y_offset, label, ha="right", va="right", fontsize=10, weight='bold')
+                    ax.text(x_offset, y_offset, label, ha="right", va="top", fontsize=10, weight='bold')
 
 
                 
