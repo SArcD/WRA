@@ -1038,6 +1038,9 @@ if archivo_excel is not None:
 
         st.title("Red de Correlaciones del DataFrame Reducido")
 
+        umbral_correlacion = st.slider("Seleccione el umbral de correlación mínima:", 0.1, 1.0, 0.5, 0.05)
+
+        
         # Verificar si el DataFrame `df_reductos` está disponible y tiene datos
         if not df_reductos.empty:
             # Definir escalas Likert positiva y negativa
@@ -1064,7 +1067,7 @@ if archivo_excel is not None:
                 G.add_node(col)
 
             # Añadir conexiones basadas en la correlación
-            umbral_correlacion = 0.5  # Se visualizarán correlaciones por encima de este umbral
+            #umbral_correlacion = 0.5  # Se visualizarán correlaciones por encima de este umbral
             for i in correlaciones.columns:
                 for j in correlaciones.columns:
                     if i != j and abs(correlaciones.loc[i, j]) > umbral_correlacion:
