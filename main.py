@@ -1205,19 +1205,39 @@ if archivo_excel is not None:
             # Mostrar la gráfica en Streamlit
             st.pyplot(fig)
 
+            ## Crear DataFrame con las preguntas más correlacionadas
+            #preguntas_correlacionadas = []
+            #for i in correlaciones.columns:
+            #    for j in correlaciones.columns:
+            #        if i != j and abs(correlaciones.loc[i, j]) > umbral_correlacion:
+            #            preguntas_correlacionadas.append({
+            #                "Pregunta 1": i,
+            #                "Pregunta 1 (Descripción)": preguntas.get(i, "Descripción no disponible"),
+            #                "Pregunta 2": j,
+            #                "Pregunta 2 (Descripción)": preguntas.get(j, "Descripción no disponible"),
+            #                "Índice de Correlación": correlaciones.loc[i, j]
+            #            })
+
             # Crear DataFrame con las preguntas más correlacionadas
             preguntas_correlacionadas = []
+            pares_vistos = set()  # Para evitar duplicados
+
             for i in correlaciones.columns:
                 for j in correlaciones.columns:
                     if i != j and abs(correlaciones.loc[i, j]) > umbral_correlacion:
-                        preguntas_correlacionadas.append({
-                            "Pregunta 1": i,
-                            "Pregunta 1 (Descripción)": preguntas.get(i, "Descripción no disponible"),
-                            "Pregunta 2": j,
-                            "Pregunta 2 (Descripción)": preguntas.get(j, "Descripción no disponible"),
-                            "Índice de Correlación": correlaciones.loc[i, j]
-                        })
+                        par = tuple(sorted([i, j]))
+                        if par not in pares_vistos:
+                            preguntas_correlacionadas.append({
+                                "Pregunta 1": i,
+                                "Pregunta 1 (Descripción)": preguntas.get(i, "Descripción no disponible"),
+                                "Pregunta 2": j,
+                                "Pregunta 2 (Descripción)": preguntas.get(j, "Descripción no disponible"),
+                                "Índice de Correlación": correlaciones.loc[i, j]
+                            })
+                            pares_vistos.add(par)
 
+
+            
             # Convertir a DataFrame
             df_preguntas_correlacionadas = pd.DataFrame(preguntas_correlacionadas).drop_duplicates(subset=["Pregunta 1", "Pregunta 2"])
 
