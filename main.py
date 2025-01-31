@@ -4,6 +4,22 @@ import pandas as pd
 st.title("Carga de Archivo Excel en Streamlit Cloud")
 
 st.markdown("""
+## Objetivo de la Aplicación
+
+Esta aplicación tiene como objetivo facilitar la identificación, análisis y prevención de los **factores de riesgo psicosocial** en los centros de trabajo, de acuerdo con los lineamientos establecidos en la **NOM-035-STPS-2018**. A través de la evaluación de respuestas a un cuestionario estandarizado, la aplicación permite:
+
+- **Automatizar la captura y procesamiento de datos** del cuestionario de evaluación.
+- **Generar reportes individuales y organizacionales** sobre niveles de riesgo psicosocial.
+- **Visualizar mapas de correlación y redes de relaciones** entre factores de riesgo.
+- **Identificar dominios críticos** y sugerir áreas de intervención para mejorar el entorno organizacional.
+- **Comparar clasificaciones y realizar análisis de reducción de preguntas**, facilitando una evaluación más eficiente.
+
+La herramienta está dirigida a **empresas, organizaciones y profesionales en seguridad laboral**, permitiendo tomar decisiones basadas en datos para la mejora del bienestar de los trabajadores.
+""")
+
+
+
+st.markdown("""
 Por favor suba aqui el archivo de .xlsx con los datos de la Encuesta para la Determinación de factores de riesgo laborales.
 """)
 
