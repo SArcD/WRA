@@ -35,7 +35,7 @@ if archivo_excel is not None:
         st.success("Archivo cargado exitosamente")
         
         # Mostrar el DataFrame en la aplicación
-        st.write("Vista previa de los datos:")
+        st.write("**Vista previa de los datos:**")
         st.dataframe(df)
         st.write("Ahora renombraremos las columnas")
 
