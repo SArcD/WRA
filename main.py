@@ -220,7 +220,12 @@ if archivo_excel is not None:
         st.markdown("""Este es el dataframe con el que se realizará el análisis de datos:""")
         
         st.dataframe(df)
+        # Mostrar el número de filas y columnas
+        num_filas, num_columnas = nuevo_df3.shape
+        st.markdown(f"""El DataFrame tiene {num_filas} filas y {num_columnas} columnas.""")
 
+
+        
         st.title("Filtrar Datos por CT en Streamlit")
 
         # Crear un menú desplegable con los valores únicos de "CT"
