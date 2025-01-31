@@ -19,7 +19,7 @@ Esta aplicación tiene como objetivo facilitar la identificación, análisis y p
 La herramienta está dirigida a **empresas, organizaciones y profesionales en seguridad laboral**, permitiendo tomar decisiones basadas en datos para la mejora del bienestar de los trabajadores.
 """, unsafe_allow_html=True)
 
-
+st.subheader("Carga de arhivos")
 
 st.markdown("""
 Por favor suba aqui el archivo de .xlsx con los datos de la Encuesta para la Determinación de factores de riesgo laborales.
