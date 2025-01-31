@@ -121,7 +121,7 @@ if archivo_excel is not None:
                 }
             # Convertir a un DataFrame
             df_preguntas = pd.DataFrame(list(preguntas.items()), columns=["Clave de Pregunta", "Enunciado"])
-            pd.dataframe(df_preguntas)
+            st.dataframe(df_preguntas)
 
         # Invertir el diccionario para mapear nombres largos a claves cortas
         nombres_invertidos = {v: k for k, v in preguntas.items()}
