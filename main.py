@@ -224,6 +224,29 @@ if archivo_excel is not None:
         num_filas, num_columnas = df.shape
         st.markdown(f"""El DataFrame tiene {num_filas} filas y {num_columnas} columnas.""")
 
+        import pandas as pd
+        import streamlit as st
+        from io import BytesIO
+
+        # Función para convertir DataFrame a Excel
+        def convertir_df_a_excel(df):
+            output = BytesIO()
+            with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
+                df.to_excel(writer, index=False, sheet_name="Datos")
+            processed_data = output.getvalue()
+            return processed_data
+
+        # Convertir DataFrame a archivo Excel
+        excel_data = convertir_df_a_excel(df)
+
+        # Botón de descarga
+        st.download_button(
+            label="📥 Descargar Excel",
+            data=excel_data,
+            file_name="dataframe.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+
 
         
         st.title("Filtrar Datos por CT en Streamlit")
