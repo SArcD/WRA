@@ -22,7 +22,7 @@ La herramienta está dirigida a **empresas, organizaciones y profesionales en se
 st.subheader("Carga de arhivos")
 
 st.markdown("""
-Por favor suba aqui el archivo de .xlsx con los datos de la Encuesta para la Determinación de factores de riesgo laborales.
+Por favor suba aqui el archivo de **.xlsx** con los datos de la Encuesta para la Determinación de factores de riesgo laborales.
 """)
 
 # Cargar el archivo desde la interfaz de usuario
