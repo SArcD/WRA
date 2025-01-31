@@ -123,7 +123,36 @@ if archivo_excel is not None:
             df_preguntas = pd.DataFrame(list(preguntas.items()), columns=["Clave de Pregunta", "Enunciado"])
             st.dataframe(df_preguntas)
 
-        # Invertir el diccionario para mapear nombres largos a claves cortas
+            # Crear DataFrames para cada tipo de escala Likert
+            df_likert_positiva = pd.DataFrame(
+            [{"Clave de Pregunta": clave, "Enunciado": preguntas[clave]} for clave in preguntas_likert_positiva],
+            columns=["Clave de Pregunta", "Enunciado"]
+            )
+    
+            df_likert_negativa = pd.DataFrame(
+                [{"Clave de Pregunta": clave, "Enunciado": preguntas[clave]} for clave in preguntas_likert_negativa],
+                columns=["Clave de Pregunta", "Enunciado"]
+            )
+
+            # Agregar valores de las escalas Likert
+            df_escala_positiva = pd.DataFrame(escala_likert_positiva.items(), columns=["Respuesta", "Valor"])
+            df_escala_negativa = pd.DataFrame(escala_likert_negativa.items(), columns=["Respuesta", "Valor"])
+
+            # Mostrar las tablas en Streamlit
+            st.title("Preguntas y Escalas Likert")
+
+            st.subheader("Preguntas en Escala Likert Positiva")
+            st.dataframe(df_likert_positiva)
+
+            st.subheader("Preguntas en Escala Likert Negativa")
+            st.dataframe(df_likert_negativa)
+
+            st.subheader("Valores de Escala Likert Positiva")
+            st.table(df_escala_positiva)
+
+            st.subheader("Valores de Escala Likert Negativa")
+            st.table(df_escala_negativa)        # Invertir el diccionario para mapear nombres largos a claves cortas
+        
         nombres_invertidos = {v: k for k, v in preguntas.items()}
 
         # Función para renombrar las columnas
