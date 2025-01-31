@@ -300,7 +300,7 @@ if archivo_excel is not None:
                     nuevo_df2[col] = 0
 
         st.success(f"Mostrando datos filtrados para P14 = {valor_seleccionado}")
-        st.dataframe(nuevo_df2)
+        #st.dataframe(nuevo_df2)
         #########
 
         # Opciones para P16 (Ser jefe de otros trabajadores)
@@ -319,7 +319,7 @@ if archivo_excel is not None:
                     nuevo_df3[col] = 0
 
         st.success(f"Mostrando datos filtrados para P16 = {valor_seleccionado_p16}")
-        st.dataframe(nuevo_df3)
+        #st.dataframe(nuevo_df3)
         #############
 
         import streamlit as st
