@@ -172,6 +172,11 @@ if archivo_excel is not None:
             st.subheader("Preguntas en Escala Likert Negativa")
             st.dataframe(df_likert_negativa)
 
+            st.markdown("""
+            A continuación se muestran los valores de las escalas likert positiva y negativa:
+            """)
+
+            
             st.subheader("Valores de Escala Likert Positiva")
             st.table(df_escala_positiva)
 
