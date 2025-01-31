@@ -119,6 +119,23 @@ if archivo_excel is not None:
             "P17_3": "Cooperan poco cuando se necesita",
             "P17_4": "Ignoran las sugerencias para mejorar su trabajo"
                 }
+
+                    # Escalas Likert
+            preguntas_likert_positiva = [
+            "P2_1", "P2_4", "P7_1", "P7_2", "P7_3", "P7_4", "P7_5", "P7_6",
+            "P8_2", "P9_1", "P9_2", "P9_3", "P9_4", "P9_5", "P9_6",
+            "P10_1", "P10_2", "P10_3", "P10_4", "P10_5", "P11_1", "P11_2",
+            "P11_3", "P11_4", "P11_5", "P12_1", "P12_2", "P12_3", "P12_4",
+            "P12_5", "P12_6", "P12_7", "P12_8", "P12_9", "P12_10", "P13_1"
+                ]
+
+            preguntas_likert_negativa = [
+            "P2_2", "P2_3", "P2_5", "P3_1", "P3_2", "P3_3", "P4_1", "P4_2",
+            "P4_3", "P4_4", "P5_1", "P5_2", "P5_3", "P5_4", "P6_1", "P6_2",
+            "P6_3", "P6_4", "P6_5", "P6_6", "P8_1", "P13_2", "P13_3", "P13_4",
+            "P13_5", "P13_6", "P13_7", "P13_8", "P15_1", "P15_2", "P15_3",
+            "P15_4", "P17_1", "P17_2", "P17_3", "P17_4"
+            ]
             # Convertir a un DataFrame
             df_preguntas = pd.DataFrame(list(preguntas.items()), columns=["Clave de Pregunta", "Enunciado"])
             st.dataframe(df_preguntas)
