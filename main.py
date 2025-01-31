@@ -249,8 +249,8 @@ if archivo_excel is not None:
 
 
         
-        st.title("Filtrar Datos por CT en Streamlit")
-
+        st.subheader("Filtrar datos por Centro de trabajo y puesto")
+        st.markdown("""En esta sección se puede seleccionar el centro de trabajo a analizar. Además es posible analizar por separado las respuestas tanto del personal que está a cargo de otros empleados como de los que no.""")
         # Crear un menú desplegable con los valores únicos de "CT"
         valores_ct = df["CT"].unique()
         valor_seleccionado = st.selectbox("Selecciona un valor de CT:", valores_ct)
