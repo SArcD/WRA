@@ -249,11 +249,11 @@ if archivo_excel is not None:
 
 
         
-        st.subheader("Filtrar datos por Centro de trabajo y puesto")
-        st.markdown("""En esta sección se puede seleccionar el centro de trabajo a analizar. Además es posible analizar por separado las respuestas tanto del personal que está a cargo de otros empleados como de los que no.""")
+        st.subheader("Filtrar datos por Centro de trabajo, atención a clientes y puesto")
+        st.markdown("""En esta sección se puede seleccionar el **Centro de trabajo** a analizar. Además es posible analizar por separado las respuestas tanto del personal que brinda **atención a clientes** y/o que está **a cargo de otros empleados.**""")
         # Crear un menú desplegable con los valores únicos de "CT"
         valores_ct = df["CT"].unique()
-        valor_seleccionado = st.selectbox("Selecciona un valor de CT:", valores_ct)
+        valor_seleccionado = st.selectbox("Selecciona un valor de **Centro de trabajo (CT)**:", valores_ct)
 
         # Filtrar el DataFrame según la selección
         nuevo_df = df[df["CT"] == valor_seleccionado]
@@ -286,7 +286,7 @@ if archivo_excel is not None:
 
         # Opciones para P14
         opciones_p14 = {"Sí": "Si", "No": "No"}
-        valor_p14 = st.radio("Indique si en su trabajo debe brindar servicio a clientes o usuarios:", list(opciones_p14.keys()))
+        valor_p14 = st.radio("Indique si en su trabajo debe **brindar servicio a clientes o usuarios**:", list(opciones_p14.keys()))
 
         # Filtrar por la opción de P14
         valor_seleccionado = opciones_p14[valor_p14]
@@ -305,7 +305,7 @@ if archivo_excel is not None:
 
         # Opciones para P16 (Ser jefe de otros trabajadores)
         opciones_p16 = {"Sí": "Si", "No": "No"}
-        valor_p16 = st.radio("¿En su trabajo es jefe de otros trabajadores?", list(opciones_p16.keys()))
+        valor_p16 = st.radio("¿En su trabajo es **jefe de otros trabajadores**?", list(opciones_p16.keys()))
 
         # Filtrar por la opción seleccionada en P16
         valor_seleccionado_p16 = opciones_p16[valor_p16]
