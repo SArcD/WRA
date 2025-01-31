@@ -15,7 +15,7 @@ Esta aplicación tiene como objetivo facilitar la identificación, análisis y p
 - **Comparar clasificaciones y realizar análisis de reducción de preguntas**, facilitando una evaluación más eficiente.
 
 La herramienta está dirigida a **empresas, organizaciones y profesionales en seguridad laboral**, permitiendo tomar decisiones basadas en datos para la mejora del bienestar de los trabajadores.
-""")
+""", unsafe_allow_html=True)
 
 
 
