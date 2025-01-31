@@ -12,5 +12,6 @@ openpyxl
 matplotlib-venn
 seaborn
 networkx
+xlsxwriter
 
 
