@@ -36,6 +36,7 @@ if archivo_excel is not None:
         
         # Mostrar el DataFrame en la aplicación
         with st.expander("**Vista previa de los datos cargados**"):
+            st.markdown("A continuación se muestra el archivo con los datos cargados a la aplicación. Si da doble click en la columna esta se puede reordenar de manera ascendente o descendente.")
             st.dataframe(df)
         #st.write("Ahora renombraremos las columnas")
 
