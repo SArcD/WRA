@@ -35,9 +35,9 @@ if archivo_excel is not None:
         st.success("Archivo cargado exitosamente")
         
         # Mostrar el DataFrame en la aplicación
-        st.write("**Vista previa de los datos:**")
-        st.dataframe(df)
-        st.write("Ahora renombraremos las columnas")
+        with st.expander("**Vista previa de los datos cargados**"):
+            st.dataframe(df)
+        #st.write("Ahora renombraremos las columnas")
 
         # Diccionario completo con las claves cortas y las descripciones largas
         preguntas = {
