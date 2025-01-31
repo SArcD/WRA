@@ -143,8 +143,11 @@ if archivo_excel is not None:
             ]
             # Convertir a un DataFrame
             df_preguntas = pd.DataFrame(list(preguntas.items()), columns=["Clave de Pregunta", "Enunciado"])
+            st.markdown("""Listado de preguntas en la encuesta y su clave alfanumérica:""")
             st.dataframe(df_preguntas)
 
+
+            st.markdown("""Las preguntas están divididas en dos grupos: uno en el que la intensidad de las respuestas va en escala positiva y otro en el que van en escala negativa. A continuación de muestran agrupadas de acuerdo a su escala""")
             # Crear DataFrames para cada tipo de escala Likert
             df_likert_positiva = pd.DataFrame(
             [{"Clave de Pregunta": clave, "Enunciado": preguntas[clave]} for clave in preguntas_likert_positiva],
@@ -161,7 +164,7 @@ if archivo_excel is not None:
             df_escala_negativa = pd.DataFrame(escala_likert_negativa.items(), columns=["Respuesta", "Valor"])
 
             # Mostrar las tablas en Streamlit
-            st.title("Preguntas y Escalas Likert")
+            #st.title("Preguntas y Escalas Likert")
 
             st.subheader("Preguntas en Escala Likert Positiva")
             st.dataframe(df_likert_positiva)
