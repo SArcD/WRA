@@ -36,12 +36,13 @@ if archivo_excel is not None:
         
         # Mostrar el DataFrame en la aplicación
         with st.expander("**Vista previa de los datos cargados**"):
-            st.markdown("A continuación se muestra el archivo con los datos cargados a la aplicación. Si da doble click en la columna esta se puede reordenar de manera ascendente o descendente.")
+            st.markdown("""A continuación se muestra el archivo con los datos cargados a la aplicación. Si da doble click en la columna esta se puede reordenar de manera ascendente o descendente.""")
             st.dataframe(df)
-        #st.write("Ahora renombraremos las columnas")
-
-        # Diccionario completo con las claves cortas y las descripciones largas
-        preguntas = {
+        with st.expander("**Depuración de datos**"):
+            st.markdown("""En esta sección se agrega la columna Folio, en la que se le asigna una clave alfanumérica ("part-##") como identificador a cada participante de la encuesta. Además se reemplaza el nombre de la columna "selecciona tu centro de trabajo" por "CT" por brevedad. De igual forma, los enunciados de cada pregunta se reemplazaron por una clave. Cada clave y su pregunta correspondiente se puede consultar en la siguiente tabla:   
+            """)
+            # Diccionario completo con las claves cortas y las descripciones largas
+            preguntas = {
             "P1": "En caso de pertenecer a Oficinas Centrales Indica en cual de las siguientes áreas colaboras.",
             "P2_1": "El espacio donde trabajo me permite realizar mis actividades de manera segura e higiénica",
             "P2_2": "Mi trabajo me exige hacer mucho esfuerzo físico",
@@ -118,6 +119,10 @@ if archivo_excel is not None:
             "P17_3": "Cooperan poco cuando se necesita",
             "P17_4": "Ignoran las sugerencias para mejorar su trabajo"
                 }
+            # Convertir a un DataFrame
+            df_preguntas = pd.DataFrame(list(preguntas.items()), columns=["Clave de Pregunta", "Enunciado"])
+            pd.dataframe(df_preguntas)
+
         # Invertir el diccionario para mapear nombres largos a claves cortas
         nombres_invertidos = {v: k for k, v in preguntas.items()}
 
