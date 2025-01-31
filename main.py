@@ -3,6 +3,10 @@ import pandas as pd
 
 st.title("Carga de Archivo Excel en Streamlit Cloud")
 
+st.markdown("""
+Por favor suba aqui el archivo de .xlsx con los datos de la Encuesta para la Determinación de factores de riesgo laborales.
+""")
+
 # Cargar el archivo desde la interfaz de usuario
 archivo_excel = st.file_uploader("Sube tu archivo Excel", type=["xlsx"])
 
