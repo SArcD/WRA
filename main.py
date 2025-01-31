@@ -217,6 +217,7 @@ if archivo_excel is not None:
         columnas_ordenadas = ["Folio"] + [col for col in df.columns if col != "Folio" and col != "Marca temporal"]
         df = df[columnas_ordenadas]
 
+        st.markdown("""Este es el dataframe con el que se realizará el análisis de datos:""")
         
         st.dataframe(df)
 
