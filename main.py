@@ -221,7 +221,7 @@ if archivo_excel is not None:
         
         st.dataframe(df)
         # Mostrar el número de filas y columnas
-        num_filas, num_columnas = nuevo_df3.shape
+        num_filas, num_columnas = df.shape
         st.markdown(f"""El DataFrame tiene {num_filas} filas y {num_columnas} columnas.""")
 
 
