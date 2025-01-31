@@ -120,7 +120,12 @@ if archivo_excel is not None:
             "P17_4": "Ignoran las sugerencias para mejorar su trabajo"
                 }
 
-                    # Escalas Likert
+
+            # Definición de escalas Likert y preguntas
+            escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas Veces": 2, "Casi nunca": 1, "Nunca": 0}
+            escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas Veces": 2, "Casi nunca": 3, "Nunca": 4}
+            
+            # Escalas Likert
             preguntas_likert_positiva = [
             "P2_1", "P2_4", "P7_1", "P7_2", "P7_3", "P7_4", "P7_5", "P7_6",
             "P8_2", "P9_1", "P9_2", "P9_3", "P9_4", "P9_5", "P9_6",
