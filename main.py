@@ -1724,6 +1724,95 @@ if archivo_excel is not None:
             st.warning("No se ha generado el DataFrame con preguntas reducidas.")
 
 
+####################################
+
+        import streamlit as st
+        import pandas as pd
+        import numpy as np
+        from sklearn.tree import DecisionTreeClassifier, plot_tree
+        import matplotlib.pyplot as plt
+
+        # Escalas Likert
+        escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas Veces": 2, "Casi nunca": 1, "Nunca": 0}
+        escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas Veces": 2, "Casi nunca": 3, "Nunca": 4}
+
+        # Preguntas en las escalas Likert positiva y negativa
+        preguntas_likert_positiva = [
+            "P2_1", "P2_4", "P7_1", "P7_2", "P7_3", "P7_4", "P7_5", "P7_6",
+            "P8_2", "P9_1", "P9_2", "P9_3", "P9_4", "P9_5", "P9_6",
+            "P10_1", "P10_2", "P10_3", "P10_4", "P10_5", "P11_1", "P11_2",
+            "P11_3", "P11_4", "P11_5", "P12_1", "P12_2", "P12_3", "P12_4",
+            "P12_5", "P12_6", "P12_7", "P12_8", "P12_9", "P12_10", "P13_1"
+        ]
+
+        preguntas_likert_negativa = [
+            "P2_2", "P2_3", "P2_5", "P3_1", "P3_2", "P3_3", "P4_1", "P4_2",
+            "P4_3", "P4_4", "P5_1", "P5_2", "P5_3", "P5_4", "P6_1", "P6_2",
+            "P6_3", "P6_4", "P6_5", "P6_6", "P8_1", "P13_2", "P13_3", "P13_4",
+            "P13_5", "P13_6", "P13_7", "P13_8", "P15_1", "P15_2", "P15_3",
+            "P15_4", "P17_1", "P17_2", "P17_3", "P17_4"
+        ]
+
+        # Diccionario de dominios
+        dominios_reales = {
+            "Condiciones en el ambiente de trabajo": ["P2_1", "P2_2", "P2_3", "P2_4", "P2_5"],
+            "Carga de trabajo": ["P3_1", "P3_2", "P3_3", "P4_1", "P4_2", "P4_3", "P4_4",
+                         "P15_1", "P15_2", "P15_3", "P15_4", "P5_1", "P5_2", "P5_3", "P5_4"],
+            "Falta de control sobre el trabajo": ["P7_1", "P7_2", "P7_3", "P7_4", "P7_5",
+                                          "P7_6", "P8_1", "P8_2", "P9_5", "P9_6"],
+            "Jornada de trabajo": ["P6_1", "P6_2"],
+            "Interferencia en la relación trabajo-familia": ["P6_3", "P6_4", "P6_5", "P6_6"],
+            "Liderazgo": ["P9_1", "P9_2", "P9_3", "P9_4", "P10_1", "P10_2", "P10_3", "P10_4", "P10_5"],
+            "Relaciones en el trabajo": ["P11_1", "P11_2", "P11_3", "P11_4", "P11_5",
+                                 "P17_1", "P17_2", "P17_3", "P17_4"],
+            "Violencia": ["P13_1", "P13_2", "P13_3", "P13_4", "P13_5", "P13_6", "P13_7", "P13_8"],
+            "Reconocimiento del desempeño": ["P12_1", "P12_2", "P12_3", "P12_4", "P12_5", "P12_6"],
+            "Insuficiente sentido de pertenencia e inestabilidad": ["P12_7", "P12_9", "P12_10", "P12_8"]
+        }
+
+        st.title("Árboles de Decisión para Predecir el Nivel de Riesgo por Dominio")
+
+        # Selección del dominio
+        dominio_seleccionado = st.selectbox("Seleccione un dominio:", list(dominios_reales.keys()))
+
+        # Filtrar preguntas del dominio seleccionado
+        preguntas_dominio = dominios_reales[dominio_seleccionado]
+
+        # Convertir el DataFrame
+        if not df_reductos.empty:
+            # Excluir columnas irrelevantes
+            df_dominio = df_reductos[preguntas_dominio + ["Nivel de Riesgo"]].copy()
+
+            # Convertir respuestas a escala numérica
+            for columna in df_dominio.columns:
+                if columna in preguntas_likert_positiva:
+                    df_dominio[columna] = df_dominio[columna].map(escala_likert_positiva).fillna(0)
+                elif columna in preguntas_likert_negativa:
+                    df_dominio[columna] = df_dominio[columna].map(escala_likert_negativa).fillna(0)
+
+            # Separar características (X) y variable objetivo (y)
+            X = df_dominio.drop(columns=["Nivel de Riesgo"])
+            y = df_dominio["Nivel de Riesgo"]
+
+            # Crear el modelo del árbol de decisión
+            model = DecisionTreeClassifier(max_depth=4, random_state=42)
+            model.fit(X, y)
+
+            # Visualizar el árbol de decisión
+            fig, ax = plt.subplots(figsize=(12, 8))
+            plot_tree(
+                model,
+                feature_names=X.columns,
+                class_names=model.classes_.astype(str),
+                filled=True,
+                rounded=True,
+                fontsize=10,
+                ax=ax
+            )
+            ax.set_title(f"Árbol de Decisión - {dominio_seleccionado}")
+            st.pyplot(fig)
+        else:
+            st.warning("El DataFrame está vacío o no contiene datos suficientes.")
 
 
 
