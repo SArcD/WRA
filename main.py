@@ -280,7 +280,7 @@ if archivo_excel is not None:
         # Filtrar el DataFrame según la selección
         nuevo_df = df[df["CT"] == valor_seleccionado]
 
-        st.success(f"Mostrando datos filtrados para CT = {valor_seleccionado}")
+        #st.success(f"Mostrando datos filtrados para CT = {valor_seleccionado}")
         #st.dataframe(nuevo_df)
 
 
