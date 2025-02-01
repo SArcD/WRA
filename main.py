@@ -442,9 +442,9 @@ if archivo_excel is not None:
 
         # Botón de descarga
         st.download_button(
-            label="📥 Descargar Excel",
+            label="📥 Descarga Dataframe filtrado",
             data=excel_data_2,
-            file_name="dataframe.xlsx",
+            file_name="dataframe_filtrado.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
 
