@@ -483,40 +483,40 @@ if archivo_excel is not None:
         nuevo_df3_resultados_positivos, nuevo_df3_resultados_negativos = generar_dataframes_separados(nuevo_df3_resultado_num)
 
         # Interfaz en Streamlit para seleccionar la visualización
-        st.title("Visualización de Escalas Likert Positiva y Negativa")
+        with st.expander("Visualización de Escalas Likert Positiva y Negativa"):
 
-        opcion_visualizacion = st.radio(
-            "Selecciona el tipo de escala Likert a visualizar:",
-            ("Escala Positiva", "Escala Negativa")
-        )
-
-        if opcion_visualizacion == "Escala Positiva":
-            st.success("Mostrando DataFrame con preguntas de Escala Likert Positiva")
-            st.dataframe(nuevo_df3_resultados_positivos)
-
-            # Permitir descarga del DataFrame de escala positiva
-            archivo_csv_positivos = nuevo_df3_resultados_positivos.to_csv(index=False).encode("utf-8")
-
-            st.download_button(
-                label="Descargar datos de Escala Positiva (CSV)",
-                data=archivo_csv_positivos,
-                file_name="datos_escala_positiva.csv",
-                mime="text/csv"
+            opcion_visualizacion = st.radio(
+                "Selecciona el tipo de escala Likert a visualizar:",
+                ("Escala Positiva", "Escala Negativa")
             )
 
-        else:
-            st.warning("Mostrando DataFrame con preguntas de Escala Likert Negativa")
-            st.dataframe(nuevo_df3_resultados_negativos)
+            if opcion_visualizacion == "Escala Positiva":
+                st.success("Mostrando DataFrame con preguntas de Escala Likert Positiva")
+                st.dataframe(nuevo_df3_resultados_positivos)
 
-            # Permitir descarga del DataFrame de escala negativa
-            archivo_csv_negativos = nuevo_df3_resultados_negativos.to_csv(index=False).encode("utf-8")
+                # Permitir descarga del DataFrame de escala positiva
+                archivo_csv_positivos = nuevo_df3_resultados_positivos.to_csv(index=False).encode("utf-8")
 
-            st.download_button(
-                label="Descargar datos de Escala Negativa (CSV)",
-                data=archivo_csv_negativos,
-                file_name="datos_escala_negativa.csv",
-                mime="text/csv"
-            )
+                st.download_button(
+                    label="Descargar datos de Escala Positiva (CSV)",
+                    data=archivo_csv_positivos,
+                    file_name="datos_escala_positiva.csv",
+                    mime="text/csv"
+                )
+
+            else:
+                st.warning("Mostrando DataFrame con preguntas de Escala Likert Negativa")
+                st.dataframe(nuevo_df3_resultados_negativos)
+
+                # Permitir descarga del DataFrame de escala negativa
+                archivo_csv_negativos = nuevo_df3_resultados_negativos.to_csv(index=False).encode("utf-8")
+
+                st.download_button(
+                    label="Descargar datos de Escala Negativa (CSV)",
+                    data=archivo_csv_negativos,
+                    file_name="datos_escala_negativa.csv",
+                    mime="text/csv"
+                )
 
 
         ###############
@@ -524,7 +524,7 @@ if archivo_excel is not None:
         import streamlit as st
         import matplotlib.pyplot as plt
 
-        st.title("Distribución de Niveles de Riesgo")
+        st.subheader("Distribución de Niveles de Riesgo")
 
         # Contar los valores únicos en la columna "Nivel de Riesgo"
         nivel_riesgo_counts = nuevo_df3_resultado["Nivel de Riesgo"].value_counts()
