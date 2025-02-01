@@ -956,7 +956,7 @@ if archivo_excel is not None:
             else:
                 st.warning(f"No se encontraron empleados con Nivel de Riesgo: {nivel_seleccionado}")
 
-        with st.expander("¿Qué es un gráfico de radar y cómo se interpreta?"):
+        with st.expander("**¿Qué es un gráfico de radar y cómo se interpreta?**"):
             st.markdown("""
             Un gráfico de radar, también conocido como gráfico de araña o gráfico polar, es una representación gráfica que permite visualizar datos multivariados en un formato bidimensional. Se utiliza para mostrar valores de diferentes variables en un sistema de coordenadas radiales, donde cada eje representa una variable.
 
@@ -973,6 +973,7 @@ if archivo_excel is not None:
         
         ####################
 
+        st.subheader("Minimización de items del cuestionario y estudio de corrlaciones entre variables")
 
         def indiscernibility(attr, table):
             u_ind = {}  # un diccionario vacío para almacenar los elementos de la relación de indiscernibilidad (U/IND({conjunto de atributos}))
