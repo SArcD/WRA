@@ -217,6 +217,33 @@ if archivo_excel is not None:
         columnas_ordenadas = ["Folio"] + [col for col in df.columns if col != "Folio" and col != "Marca temporal"]
         df = df[columnas_ordenadas]
 
+
+        # Función para verificar si una celda contiene una combinación inválida o es NaN
+        def es_valor_invalido(valor):
+            #if pd.isna(valor):  # Verifica si es NaN
+            #    return True
+            if isinstance(valor, str):
+                # Verifica si contiene una coma o un espacio adicional después de una coma
+                if "," in valor:
+                    return True
+                # Verifica si contiene caracteres invisibles como saltos de línea
+                #if "\n" in valor or "\r" in valor:
+                #    return True
+            return False
+
+        # Identificar filas con valores inválidos
+        filas_invalidas = nuevo_df.map(es_valor_invalido).any(axis=1)
+
+        # Crear un nuevo DataFrame excluyendo las filas con valores inválidos
+        nuevo_df = nuevo_df[~filas_invalidas].copy()
+
+        # Mostrar el resultado
+        print("DataFrame limpio:")
+        st.dataframe(nuevo_df)
+
+
+
+        
         st.markdown("""Este es el dataframe con el que se realizará el análisis de datos:""")
         
         st.dataframe(df)
@@ -261,28 +288,6 @@ if archivo_excel is not None:
         st.success(f"Mostrando datos filtrados para CT = {valor_seleccionado}")
         #st.dataframe(nuevo_df)
 
-        # Función para verificar si una celda contiene una combinación inválida o es NaN
-        def es_valor_invalido(valor):
-            #if pd.isna(valor):  # Verifica si es NaN
-            #    return True
-            if isinstance(valor, str):
-                # Verifica si contiene una coma o un espacio adicional después de una coma
-                if "," in valor:
-                    return True
-                # Verifica si contiene caracteres invisibles como saltos de línea
-                #if "\n" in valor or "\r" in valor:
-                #    return True
-            return False
-
-        # Identificar filas con valores inválidos
-        filas_invalidas = nuevo_df.map(es_valor_invalido).any(axis=1)
-
-        # Crear un nuevo DataFrame excluyendo las filas con valores inválidos
-        nuevo_df = nuevo_df[~filas_invalidas].copy()
-
-        # Mostrar el resultado
-        print("DataFrame limpio:")
-        st.dataframe(nuevo_df)
 
         # Opciones para P14
         opciones_p14 = {"Sí": "Si", "No": "No"}
