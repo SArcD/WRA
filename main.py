@@ -644,6 +644,32 @@ if archivo_excel is not None:
         
         st.title("Cálculo de Puntajes y Niveles de Riesgo por Dominio")
 
+
+        import streamlit as st
+
+        st.markdown("""
+        ## Nivel de Riesgo Laboral según la NOM-035-STPS-2018
+
+        La **Norma Oficial Mexicana NOM-035-STPS-2018** establece los lineamientos para la identificación, análisis y prevención de factores de riesgo psicosocial en los centros de trabajo en México.
+
+        ### Definición:
+        El **nivel de riesgo laboral** se refiere a la **exposición de los trabajadores a factores de riesgo psicosocial**, tales como condiciones inseguras en el ambiente de trabajo, cargas excesivas de trabajo, falta de control sobre las tareas, liderazgo negativo, jornadas prolongadas, violencia laboral, entre otros.
+
+        ### Cálculo del Nivel de Riesgo:
+        Para determinar el nivel de riesgo psicosocial en un centro de trabajo, la NOM-035 establece la aplicación de cuestionarios específicos que evalúan distintos factores de riesgo. Con base en la puntuación obtenida, se clasifican los niveles de riesgo en:
+
+        - **Nulo o despreciable:** No requiere intervención.
+        - **Bajo:** Se recomienda mantener las medidas de control.
+        - **Medio:** Se requieren intervenciones preventivas.
+        - **Alto:** Se deben adoptar medidas correctivas y de intervención.
+        - **Muy alto:** Se requiere una acción inmediata y un análisis profundo de las condiciones laborales.
+
+        La norma también señala que los centros de trabajo con más de 50 trabajadores deben realizar **evaluaciones periódicas** para detectar y mitigar los factores de riesgo psicosocial.
+
+        Fuente: *Norma Oficial Mexicana NOM-035-STPS-2018, Factores de riesgo psicosocial en el trabajo - Identificación, análisis y prevención*.
+        """)
+
+        
         # Crear un nuevo DataFrame con las columnas deseadas
         dominio_puntajes_niveles = []
 
