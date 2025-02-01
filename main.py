@@ -1609,6 +1609,8 @@ if archivo_excel is not None:
         from sklearn.model_selection import train_test_split
         from sklearn.metrics import accuracy_score
 
+        st.dataframe(df_reductos)
+
         # Definir las escalas Likert
         escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas veces": 2, "Casi nunca": 1, "Nunca": 0}
         escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas veces": 2, "Casi nunca": 3, "Nunca": 4}
