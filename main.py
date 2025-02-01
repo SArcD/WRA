@@ -271,7 +271,7 @@ if archivo_excel is not None:
 
 
         st.subheader("Filtrar datos por Centro de trabajo, atención a clientes y puesto")
-        st.markdown("""En esta sección se puede seleccionar el **Centro de trabajo** a analizar. Además es posible analizar por separado las respuestas tanto del personal que brinda **atención a clientes** y/o que está **a cargo de otros empleados.**""")
+        st.markdown("""En esta sección se puede seleccionar el **Centro de trabajo** a analizar. Además es posible analizar por separado las respuestas tanto del personal que brinda **atención a clientes** y/o que está **a cargo de otros empleados.**. En el siguiente menú desplegable, busque el centro de trabajo que desea analizar y, debajo de este menu, indique si el tipo de personal brinda atención a clientes y son jefes de otros trabajadores:""")
         # Crear un menú desplegable con los valores únicos de "CT"
         valores_ct = df["CT"].unique()
         valor_seleccionado = st.selectbox("Selecciona un valor de **Centro de trabajo (CT)**:", valores_ct)
