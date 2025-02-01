@@ -1108,6 +1108,7 @@ if archivo_excel is not None:
         }
 
         # Aplicar el proceso de reducción para cada dominio
+        @st.cache_data    
         reductos = {}
         for domain, questions in dominios_reales.items():
             #print(f"Buscando reducto para el dominio: {domain}")
@@ -1168,13 +1169,8 @@ if archivo_excel is not None:
             fig = generate_venn(original_partition, reduced_partition, dominio_seleccionado)
             st.pyplot(fig)
 
-
-
-        import streamlit as st
-        import pandas as pd
-
-        st.title("Reducción de Preguntas por Dominio")
-
+        st.markdown("""**El Cuestionario reducido se muestra a continuación:**""")
+        
         # Crear un nuevo DataFrame con solo las preguntas que están en los reductos
         columnas_reducto = ["Folio", "CT"]  # Mantener las columnas clave
         for dominio, preguntas_reducto in reductos.items():
