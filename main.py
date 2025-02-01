@@ -183,67 +183,61 @@ if archivo_excel is not None:
             st.subheader("Valores de Escala Likert Negativa")
             st.table(df_escala_negativa)        # Invertir el diccionario para mapear nombres largos a claves cortas
         
-        nombres_invertidos = {v: k for k, v in preguntas.items()}
+            nombres_invertidos = {v: k for k, v in preguntas.items()}
 
-        # Función para renombrar las columnas
-        def renombrar_columnas(col):
-            # Conservar columnas específicas
-            if col in ["Marca temporal", "Selecciona tu centro de trabajo"]:
-                return col
-            # Eliminar corchetes y mapear a clave corta si está en el diccionario
-            col_limpia = col.strip(" []")
-            return nombres_invertidos.get(col_limpia, col)
+            # Función para renombrar las columnas
+            def renombrar_columnas(col):
+                # Conservar columnas específicas
+                if col in ["Marca temporal", "Selecciona tu centro de trabajo"]:
+                    return col
+                # Eliminar corchetes y mapear a clave corta si está en el diccionario
+                col_limpia = col.strip(" []")
+                return nombres_invertidos.get(col_limpia, col)
 
-        # Aplicar el renombrado a las columnas de `df`
-        df.columns = [renombrar_columnas(col) for col in df.columns]
-        import pandas as pd
+            # Aplicar el renombrado a las columnas de `df`
+            df.columns = [renombrar_columnas(col) for col in df.columns]
+        
+            import pandas as pd
 
-        # Reemplazar "Marca temporal" por una columna "Folio"
-        df["Folio"] = [f"part-{i+1}" for i in range(len(df))]
+            # Reemplazar "Marca temporal" por una columna "Folio"
+            df["Folio"] = [f"part-{i+1}" for i in range(len(df))]
     
-        # Reorganizar las columnas para que "Folio" esté al inicio
-        columnas_ordenadas = ["Folio"] + [col for col in df.columns if col != "Folio"]
-        df = df[columnas_ordenadas]
+            # Reorganizar las columnas para que "Folio" esté al inicio
+            columnas_ordenadas = ["Folio"] + [col for col in df.columns if col != "Folio"]
+            df = df[columnas_ordenadas]
         
         
-        import pandas as pd
+            import pandas as pd
 
-        # Cambiar los nombres de las columnas específicas
-        df.rename(columns={
-            "Selecciona tu centro de trabajo": "CT",
-            "En caso de pertenecer a Oficinas Centrales Indica en cual de las siguientes áreas colaboras.": "Area"
-        }, inplace=True)
+            # Cambiar los nombres de las columnas específicas
+            df.rename(columns={
+                "Selecciona tu centro de trabajo": "CT",
+                "En caso de pertenecer a Oficinas Centrales Indica en cual de las siguientes áreas colaboras.": "Area"
+            }, inplace=True)
 
-        # Reorganizar las columnas para que "Folio" esté al inicio
-        columnas_ordenadas = ["Folio"] + [col for col in df.columns if col != "Folio" and col != "Marca temporal"]
-        df = df[columnas_ordenadas]
+            # Reorganizar las columnas para que "Folio" esté al inicio
+            columnas_ordenadas = ["Folio"] + [col for col in df.columns if col != "Folio" and col != "Marca temporal"]
+            df = df[columnas_ordenadas]
 
 
-        # Función para verificar si una celda contiene una combinación inválida o es NaN
-        def es_valor_invalido(valor):
-            #if pd.isna(valor):  # Verifica si es NaN
-            #    return True
-            if isinstance(valor, str):
-                # Verifica si contiene una coma o un espacio adicional después de una coma
-                if "," in valor:
-                    return True
-                # Verifica si contiene caracteres invisibles como saltos de línea
-                #if "\n" in valor or "\r" in valor:
+            # Función para verificar si una celda contiene una combinación inválida o es NaN
+            def es_valor_invalido(valor):
+                #if pd.isna(valor):  # Verifica si es NaN
                 #    return True
-            return False
+                if isinstance(valor, str):
+                    # Verifica si contiene una coma o un espacio adicional después de una coma
+                    if "," in valor:
+                        return True
+                    # Verifica si contiene caracteres invisibles como saltos de línea
+                    #if "\n" in valor or "\r" in valor:
+                    #    return True
+                return False
 
-        # Identificar filas con valores inválidos
-        filas_invalidas = df.map(es_valor_invalido).any(axis=1)
+            # Identificar filas con valores inválidos
+            filas_invalidas = df.map(es_valor_invalido).any(axis=1)
 
-        # Crear un nuevo DataFrame excluyendo las filas con valores inválidos
-        df = df[~filas_invalidas].copy()
-
-        # Mostrar el resultado
-        #print("DataFrame limpio:")
-        st.dataframe(df)
-
-
-
+            # Crear un nuevo DataFrame excluyendo las filas con valores inválidos
+            df = df[~filas_invalidas].copy()
         
         st.markdown("""Este es el dataframe con el que se realizará el análisis de datos:""")
         
