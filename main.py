@@ -433,6 +433,8 @@ if archivo_excel is not None:
         nuevo_df3_resultado_num[columnas_existentes] = nuevo_df3_resultado[columnas_existentes]
 
         #st.success("Transformación de respuestas Likert a formato numérico completada")
+        
+        st.markdown("""A Continuación se muestra el **dataframe filtrado** con las respuestas cambiadas a una escala numérica:""")
         st.dataframe(nuevo_df3_resultado_num)
 
         #############
