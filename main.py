@@ -1609,7 +1609,6 @@ if archivo_excel is not None:
         from sklearn.model_selection import train_test_split
         from sklearn.metrics import accuracy_score
 
-        st.dataframe(df_reductos)
 
         # Definir las escalas Likert
         escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas veces": 2, "Casi nunca": 1, "Nunca": 0}
@@ -1637,7 +1636,7 @@ if archivo_excel is not None:
         # Verificar si el DataFrame `df_reductos` está disponible y tiene datos
         if not df_reductos.empty:
             # Excluir columnas irrelevantes
-            columnas_a_excluir = ["Folio", "CT", "Calificacion"]
+            columnas_a_excluir = ["Folio", "CT"]
             df_reductos_numerico = df_reductos.drop(columns=columnas_a_excluir, errors="ignore").copy()
 
             # Convertir preguntas a valores numéricos según la escala Likert correspondiente
@@ -1646,7 +1645,7 @@ if archivo_excel is not None:
                     df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_positiva).fillna(np.nan)
                 elif columna in preguntas_likert_negativa:
                     df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_negativa).fillna(np.nan)
-
+            st.dataframe(df_reductos_numerico)
             # Verificar si la columna 'Nivel de Riesgo' está presente
             if "Nivel de Riesgo" in df_reductos_numerico.columns:
                 # Separar características (X) y variable objetivo (y)
