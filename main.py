@@ -1150,8 +1150,10 @@ if archivo_excel is not None:
     
             return fig
 
-        st.title("Comparación de Clasificaciones con Diagramas de Venn")
-
+        #st.title("Comparación de Clasificaciones con Diagramas de Venn")
+        
+        st.markdown("""A continuación se muestran los diagramas de Venn para el grado de coincidencia entre los reductos de cada dominio y la lista completa de preguntas. En el siguiente menú puede seleccionar el dominio a visualizar:""")
+        
         # Selección del dominio para generar el diagrama
         dominio_seleccionado = st.selectbox("Seleccione un dominio:", list(dominios_reales.keys()))
 
