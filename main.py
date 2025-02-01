@@ -1724,7 +1724,7 @@ if archivo_excel is not None:
             st.warning("No se ha generado el DataFrame con preguntas reducidas.")
 
 
-####################################
+        ####################################
 
         import streamlit as st
         import pandas as pd
@@ -1733,7 +1733,7 @@ if archivo_excel is not None:
         import matplotlib.pyplot as plt
 
         # Escalas Likert
-        escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas Veces": 2, "Casi nunca": 1, "Nunca": 0}
+        escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas Veces": 2, "Casi nunca": 1, "Nunca": 0}    
         escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas Veces": 2, "Casi nunca": 3, "Nunca": 4}
 
         # Preguntas en las escalas Likert positiva y negativa
@@ -1775,13 +1775,23 @@ if archivo_excel is not None:
         # Selección del dominio
         dominio_seleccionado = st.selectbox("Seleccione un dominio:", list(dominios_reales.keys()))
 
-        # Filtrar preguntas del dominio seleccionado que están presentes en `df_reductos`
-        if not df_reductos.empty:
+        # Nombre de la columna objetivo en `nuevo_df3_resultado_dominios`
+        columna_objetivo = f"{dominio_seleccionado}_Nivel de Riesgo"
+
+        # Verificar si la columna objetivo está en `nuevo_df3_resultado_dominios`
+        if columna_objetivo in nuevo_df3_resultado_dominios.columns:
+            # Unir `df_reductos` con `nuevo_df3_resultado_dominios` por `Folio`
+            df_combinado = df_reductos.merge(
+                nuevo_df3_resultado_dominios[["Folio", columna_objetivo]], 
+                on="Folio", 
+                how="inner"
+            )
+
+            # Filtrar preguntas del dominio que están en `df_reductos`
             preguntas_dominio = [p for p in dominios_reales[dominio_seleccionado] if p in df_reductos.columns]
 
             if preguntas_dominio:
-                # Filtrar el DataFrame para incluir solo las preguntas relevantes y "Nivel de Riesgo"
-                df_dominio = df_reductos[preguntas_dominio + ["Nivel de Riesgo"]].copy()
+                df_dominio = df_combinado[preguntas_dominio + [columna_objetivo]].copy()
 
                 # Convertir respuestas a escala numérica
                 for columna in df_dominio.columns:
@@ -1791,8 +1801,8 @@ if archivo_excel is not None:
                         df_dominio[columna] = df_dominio[columna].map(escala_likert_negativa).fillna(0)
 
                 # Separar características (X) y variable objetivo (y)
-                X = df_dominio.drop(columns=["Nivel de Riesgo"])
-                y = df_dominio["Nivel de Riesgo"]
+                X = df_dominio.drop(columns=[columna_objetivo])
+                y = df_dominio[columna_objetivo]
 
                 # Crear el modelo del árbol de decisión
                 model = DecisionTreeClassifier(max_depth=4, random_state=42)
@@ -1814,9 +1824,7 @@ if archivo_excel is not None:
             else:
                 st.warning(f"No hay preguntas disponibles para el dominio '{dominio_seleccionado}' en el DataFrame.")
         else:
-            st.warning("El DataFrame está vacío o no contiene datos suficientes.")
-
-
+            st.warning(f"La columna '{columna_objetivo}' no está en `nuevo_df3_resultado_dominios`.")
 
 
 
