@@ -437,6 +437,19 @@ if archivo_excel is not None:
         st.markdown("""A Continuación se muestra el **dataframe filtrado** con las respuestas cambiadas a una escala numérica:""")
         st.dataframe(nuevo_df3_resultado_num)
 
+        # Convertir DataFrame a archivo Excel
+        excel_data_2 = convertir_df_a_excel(nuevo_df3_resultado_num)
+
+        # Botón de descarga
+        st.download_button(
+            label="📥 Descargar Excel",
+            data=excel_data_2,
+            file_name="dataframe.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+
+
+        
         #############
         import streamlit as st
         import pandas as pd
