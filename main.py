@@ -1666,6 +1666,23 @@ if archivo_excel is not None:
                 # Mostrar la precisión del modelo
                 st.write(f"### Precisión del modelo en datos de prueba: {accuracy:.2%}")
 
+
+                # Identificar las características utilizadas en el modelo
+                features_importances = model.feature_importances_
+                features_usadas = np.array(X.columns)[features_importances > 0]
+                importances_usadas = features_importances[features_importances > 0]
+
+                # Crear un DataFrame con las preguntas relevantes y su importancia
+                preguntas_utilizadas = pd.DataFrame({
+                    "Pregunta": features_usadas,
+                    "Importancia": importances_usadas,
+                    "Descripción": [preguntas.get(col, "Descripción no disponible") for col in features_usadas]
+                }).sort_values(by="Importancia", ascending=False)
+
+                st.write("### Preguntas Utilizadas en el Modelo (Con Importancia)")
+                st.dataframe(preguntas_utilizadas)
+
+                
                 # Visualizar el árbol de decisión
                 fig, ax = plt.subplots(figsize=(12, 8))
                 plot_tree(
