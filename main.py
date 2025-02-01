@@ -1602,31 +1602,50 @@ if archivo_excel is not None:
 
 
         import streamlit as st
-        import pandas as pd    
+        import pandas as pd
         import numpy as np
         import matplotlib.pyplot as plt
-        import seaborn as sns
         from sklearn.tree import DecisionTreeClassifier, plot_tree
         from sklearn.model_selection import train_test_split
         from sklearn.metrics import accuracy_score
+
+        # Definir las escalas Likert
+        escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas veces": 2, "Casi nunca": 1, "Nunca": 0}
+        escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas veces": 2, "Casi nunca": 3, "Nunca": 4}
+
+        # Preguntas en las escalas positiva y negativa
+        preguntas_likert_positiva = [
+            "P2_1", "P2_4", "P7_1", "P7_2", "P7_3", "P7_4", "P7_5", "P7_6",
+            "P8_2", "P9_1", "P9_2", "P9_3", "P9_4", "P9_5", "P9_6",
+            "P10_1", "P10_2", "P10_3", "P10_4", "P10_5", "P11_1", "P11_2",
+            "P11_3", "P11_4", "P11_5", "P12_1", "P12_2", "P12_3", "P12_4",
+            "P12_5", "P12_6", "P12_7", "P12_8", "P12_9", "P12_10", "P13_1"
+        ]
+
+        preguntas_likert_negativa = [
+            "P2_2", "P2_3", "P2_5", "P3_1", "P3_2", "P3_3", "P4_1", "P4_2",
+            "P4_3", "P4_4", "P5_1", "P5_2", "P5_3", "P5_4", "P6_1", "P6_2",
+            "P6_3", "P6_4", "P6_5", "P6_6", "P8_1", "P13_2", "P13_3", "P13_4",
+            "P13_5", "P13_6", "P13_7", "P13_8", "P15_1", "P15_2", "P15_3",
+            "P15_4", "P17_1", "P17_2", "P17_3", "P17_4"
+        ]
 
         st.title("Árbol de Decisión para Predecir el Nivel de Riesgo")
 
         # Verificar si el DataFrame `df_reductos` está disponible y tiene datos
         if not df_reductos.empty:
-            # Convertir las respuestas a escala numérica
-            df_reductos_numerico = df_reductos.drop(columns=["Folio", "CT"], errors="ignore").copy()
+            # Excluir columnas irrelevantes
+            columnas_a_excluir = ["Folio", "CT", "Calificacion"]
+            df_reductos_numerico = df_reductos.drop(columns=columnas_a_excluir, errors="ignore").copy()
+
+            # Convertir preguntas a valores numéricos según la escala Likert correspondiente
             for columna in df_reductos_numerico.columns:
                 if columna in preguntas_likert_positiva:
-                    df_reductos_numerico[columna] = df_reductos_numerico[columna].map({
-                        "Siempre": 4, "Casi siempre": 3, "Algunas veces": 2, "Casi nunca": 1, "Nunca": 0
-                    }).fillna(np.nan)
+                    df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_positiva).fillna(np.nan)
                 elif columna in preguntas_likert_negativa:
-                    df_reductos_numerico[columna] = df_reductos_numerico[columna].map({
-                        "Siempre": 0, "Casi siempre": 1, "Algunas veces": 2, "Casi nunca": 3, "Nunca": 4
-                    }).fillna(np.nan)
+                    df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_negativa).fillna(np.nan)
 
-            # Asegurarse de que existe la columna 'Nivel de Riesgo' como variable objetivo
+            # Verificar si la columna 'Nivel de Riesgo' está presente
             if "Nivel de Riesgo" in df_reductos_numerico.columns:
                 # Separar características (X) y variable objetivo (y)
                 X = df_reductos_numerico.drop(columns=["Nivel de Riesgo"])
@@ -1660,32 +1679,31 @@ if archivo_excel is not None:
                 ax.set_title("Árbol de Decisión para Predecir el Nivel de Riesgo")
                 st.pyplot(fig)
 
-                # Permitir descargar las preguntas más relevantes utilizadas en el modelo
-                preguntas_relevantes = pd.DataFrame({
+                # Mostrar preguntas utilizadas
+                preguntas_utilizadas = pd.DataFrame({
                     "Pregunta": X.columns,
                     "Descripción": [preguntas.get(col, "Descripción no disponible") for col in X.columns]
                 })
 
                 st.write("### Preguntas Utilizadas en el Modelo")
-                st.dataframe(preguntas_relevantes)
+                st.dataframe(preguntas_utilizadas)
 
-                # Descargar como CSV
+                # Descargar preguntas como CSV
                 @st.cache_data
                 def convertir_csv(df):
                     return df.to_csv(index=False).encode("utf-8")
 
-                archivo_csv = convertir_csv(preguntas_relevantes)
+                archivo_csv = convertir_csv(preguntas_utilizadas)
                 st.download_button(
                     label="Descargar preguntas utilizadas (CSV)",
                     data=archivo_csv,
-                    file_name="preguntas_relevantes.csv",
+                    file_name="preguntas_utilizadas.csv",
                     mime="text/csv"
                 )
             else:
-                st.warning("El DataFrame no contiene la columna 'Nivel de Riesgo'.")
+                st.warning("El DataFrame no contiene la columna 'Nivel de Riesgo'.")    
         else:
             st.warning("No se ha generado el DataFrame con preguntas reducidas.")
-
 
 
 
