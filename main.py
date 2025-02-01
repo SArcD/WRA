@@ -204,8 +204,9 @@ if archivo_excel is not None:
         # Reorganizar las columnas para que "Folio" esté al inicio
         columnas_ordenadas = ["Folio"] + [col for col in df.columns if col != "Folio"]
         df = df[columnas_ordenadas]
+        
+        
         import pandas as pd
-
 
         # Cambiar los nombres de las columnas específicas
         df.rename(columns={
@@ -232,14 +233,14 @@ if archivo_excel is not None:
             return False
 
         # Identificar filas con valores inválidos
-        filas_invalidas = nuevo_df.map(es_valor_invalido).any(axis=1)
+        filas_invalidas = df.map(es_valor_invalido).any(axis=1)
 
         # Crear un nuevo DataFrame excluyendo las filas con valores inválidos
-        nuevo_df = nuevo_df[~filas_invalidas].copy()
+        df = df[~filas_invalidas].copy()
 
         # Mostrar el resultado
-        print("DataFrame limpio:")
-        st.dataframe(nuevo_df)
+        #print("DataFrame limpio:")
+        st.dataframe(df)
 
 
 
