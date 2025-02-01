@@ -1036,9 +1036,9 @@ if archivo_excel is not None:
             - **Menor carga cognitiva**: Facilita la administración del cuestionario.
             - **Eficiencia**: Acelera los procesos de análisis al trabajar con menos variables.
 
-            ### Notas clave sobre el código:
-            - La función `indiscernibility` crea particiones basadas en valores de las preguntas seleccionadas.
-            - La función `compare_partitions` evalúa la similitud entre las particiones usando el índice de Jaccard.
+            ### Orden en el que se calculan las relaciones de indiscernibilidad:
+            - Crea particiones basadas en valores de las preguntas seleccionadas.
+            - Evalúa la similitud entre las particiones usando el índice de Jaccard.
             - El umbral (por defecto 0.9 o 90%) define qué tan representativo debe ser el reducto en comparación con el conjunto completo.
 
             Este enfoque es común en metodologías como la teoría de conjuntos aproximados (Rough Set Theory) y es particularmente útil en contextos donde la reducción de datos es esencial sin comprometer la calidad analítica.
@@ -1067,6 +1067,9 @@ if archivo_excel is not None:
             total_size = sum(len(group) for group in original)
             return score / total_size if total_size > 0 else 0
 
+        st.markdown("""A continuación se muestra el **reducto** para cada uno de los dominios en el cuestionario de **riesgo laboral**""")
+        
+        
         # Función para encontrar el reducto para un dominio
         def find_reduct_for_domain(domain_questions, df, threshold=0.9):
             best_match = 0
@@ -1081,7 +1084,7 @@ if archivo_excel is not None:
                         best_match = match_score
                         best_subset = subset
                     if best_match >= threshold:
-                        st.write(f"Reducto encontrado para umbral {threshold}: {best_subset} (Coincidencia: {best_match:.2%})")
+                        st.write(f"Reducto encontrado para umbral {threshold}: {best_subset} (**Coincidencia: {best_match:.2%})**")
                         return list(best_subset)
 
             st.write(f"No se encontró reducto con umbral {threshold}. Mejor coincidencia: {best_match:.2%}")
