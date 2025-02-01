@@ -1220,7 +1220,7 @@ if archivo_excel is not None:
             escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas veces": 2, "Casi nunca": 3, "Nunca": 4}
 
             # Omitir las columnas "Folio" y "CT"
-            df_reductos_numerico = df_reductos.drop(columns=["Folio", "CT"], errors="ignore").copy()
+            df_reductos_numerico = df_reductos.drop(columns=["Folio", "CT", "Nivel de Riesgo"], errors="ignore").copy()
 
             # Convertir respuestas a valores numéricos según la escala correspondiente
             for columna in df_reductos_numerico.columns:
