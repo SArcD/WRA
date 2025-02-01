@@ -1084,7 +1084,7 @@ if archivo_excel is not None:
                         best_match = match_score
                         best_subset = subset
                     if best_match >= threshold:
-                        st.write(f"Reducto encontrado para umbral {threshold}: {best_subset} (**Coincidencia: {best_match:.2%})**")
+                        st.write(f"Reducto encontrado para el dominio {domain} con umbral {threshold}: {best_subset} (**Coincidencia: {best_match:.2%})**")
                         return list(best_subset)
 
             st.write(f"No se encontró reducto con umbral {threshold}. Mejor coincidencia: {best_match:.2%}")
