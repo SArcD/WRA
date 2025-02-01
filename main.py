@@ -1,12 +1,12 @@
 import streamlit as st
 import pandas as pd
 
-st.title("Carga de Archivo Excel en Streamlit Cloud")
+st.title("Análisis de datos aplicado al riesgo laboral")
+
+st.subheader("""Objetivo de la Aplicación""")
 
 st.markdown("""
 <div class="justificado">
-
-## Objetivo de la Aplicación
 
 Esta aplicación tiene como objetivo facilitar la identificación, análisis y prevención de los **factores de riesgo psicosocial** en los centros de trabajo, de acuerdo con los lineamientos establecidos en la **NOM-035-STPS-2018**. A través de la evaluación de respuestas a un cuestionario estandarizado, la aplicación permite:
 
