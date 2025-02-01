@@ -239,12 +239,12 @@ if archivo_excel is not None:
             # Crear un nuevo DataFrame excluyendo las filas con valores inválidos
             df = df[~filas_invalidas].copy()
         
-        st.markdown("""Este es el dataframe con el que se realizará el análisis de datos:""")
+        st.markdown("""**Este es el dataframe con el que se realizará el análisis de datos:**""")
         
         st.dataframe(df)
         # Mostrar el número de filas y columnas
         num_filas, num_columnas = df.shape
-        st.markdown(f"""El DataFrame tiene {num_filas} filas y {num_columnas} columnas.""")
+        st.markdown(f"""**El DataFrame tiene {num_filas} filas y {num_columnas} columnas.**""")
 
         import pandas as pd
         import streamlit as st
@@ -270,7 +270,6 @@ if archivo_excel is not None:
         )
 
 
-        
         st.subheader("Filtrar datos por Centro de trabajo, atención a clientes y puesto")
         st.markdown("""En esta sección se puede seleccionar el **Centro de trabajo** a analizar. Además es posible analizar por separado las respuestas tanto del personal que brinda **atención a clientes** y/o que está **a cargo de otros empleados.**""")
         # Crear un menú desplegable con los valores únicos de "CT"
