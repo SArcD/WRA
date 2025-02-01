@@ -1117,7 +1117,7 @@ if archivo_excel is not None:
         # Mostrar los reductos para cada dominio
         for domain, reducto in reductos.items():
             st.write(f"Dominio: {domain}, Reducto: {reducto}")
-            st.write(f"Reducto encontrado para umbral {threshold}: (**Coincidencia: {best_match:.2%})**")
+            st.write(f"Reducto encontrado. **Coincidencia: {best_match:.2%}**")
 
 
 
