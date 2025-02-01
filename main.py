@@ -1001,9 +1001,48 @@ if archivo_excel is not None:
 
         ####################
 
-
-        import pandas as pd
         from itertools import combinations
+
+        with st.expander("**¿Qué es el reducto de un cuestionario y cómo se calcula?**"):
+            st.markdown("""
+            ### ¿Qué es el reducto de un cuestionario?
+            El reducto de un cuestionario es un conjunto mínimo de preguntas seleccionadas que conservan, de manera eficiente, la capacidad de clasificar o representar la información contenida en el cuestionario original. Es una herramienta útil en análisis de datos, ya que permite simplificar el instrumento manteniendo su representatividad y precisión.
+
+            ### ¿Cómo se calcula el reducto en este código?
+            El proceso de cálculo del reducto en el código proporcionado incluye los siguientes pasos:
+
+            1. **Relación de indiscernibilidad (`indiscernibility`)**:
+               - Agrupa las respuestas de las filas en conjuntos equivalentes basados en los valores de los atributos (preguntas) seleccionados.
+               - Cada conjunto representa una partición de la tabla en base a las similitudes entre los datos.
+
+            2. **Comparación de particiones (`compare_partitions`)**:
+               - Compara la partición original (usando todas las preguntas del dominio) con particiones generadas por subconjuntos de preguntas.
+               - La métrica de similitud utilizada es el índice de Jaccard, que mide la proporción de intersección entre dos conjuntos en relación con su unión.
+
+            3. **Búsqueda del reducto (`find_reduct_for_domain`)**:
+               - Explora todas las combinaciones posibles de preguntas dentro de un dominio.
+               - Evalúa qué subconjunto alcanza un nivel de similitud (umbral) cercano o igual a la partición original.
+               - Si un subconjunto cumple con el umbral, se considera el reducto para ese dominio.
+
+            4. **Aplicación a dominios específicos**:
+               - El cuestionario está dividido en dominios (como "Carga de trabajo" o "Liderazgo"), cada uno con un conjunto de preguntas asociadas.
+               - El proceso se aplica individualmente a cada dominio para encontrar su reducto.
+
+            ### Ejemplo práctico:
+            Supongamos que un dominio tiene 10 preguntas, pero después del análisis, se identifica que solo 3 preguntas son suficientes para mantener la misma estructura de clasificación que las 10 originales. Estas 3 preguntas forman el reducto del dominio.
+
+            ### ¿Por qué es importante?
+            - **Optimización**: Reduce el número de preguntas sin perder la calidad de los datos.
+            - **Menor carga cognitiva**: Facilita la administración del cuestionario.
+            - **Eficiencia**: Acelera los procesos de análisis al trabajar con menos variables.
+
+            ### Notas clave sobre el código:
+            - La función `indiscernibility` crea particiones basadas en valores de las preguntas seleccionadas.
+            - La función `compare_partitions` evalúa la similitud entre las particiones usando el índice de Jaccard.
+            - El umbral (por defecto 0.9 o 90%) define qué tan representativo debe ser el reducto en comparación con el conjunto completo.
+
+            Este enfoque es común en metodologías como la teoría de conjuntos aproximados (Rough Set Theory) y es particularmente útil en contextos donde la reducción de datos es esencial sin comprometer la calidad analítica.
+            """)
 
         # Función para calcular la relación de indiscernibilidad
         def indiscernibility(attr, table):
