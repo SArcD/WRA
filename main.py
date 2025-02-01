@@ -1173,7 +1173,7 @@ if archivo_excel is not None:
         st.markdown("""**El Cuestionario reducido se muestra a continuación:**""")
         
         # Crear un nuevo DataFrame con solo las preguntas que están en los reductos
-        columnas_reducto = ["Folio", "CT"]  # Mantener las columnas clave
+        columnas_reducto = ["Folio", "CT", "Nivel de Riesgo"]  # Mantener las columnas clave
         for dominio, preguntas_reducto in reductos.items():
             columnas_reducto.extend(preguntas_reducto)
 
