@@ -661,17 +661,16 @@ if archivo_excel is not None:
 
         
         
-        st.title("Cálculo de Puntajes y Niveles de Riesgo por Dominio")
-
-
-        import streamlit as st
-
-
+        #st.subheader("Aná")
 
         import streamlit as st
 
         st.markdown("""
-        ## Dominios del Cuestionario de Nivel de Riesgo según la NOM-035-STPS-2018
+        A continuación se evalua el nivel de riesgo en cada dominio definido por la NOM-035-STPS-2018
+        """)
+        
+        with st.expander("Dominios del Cuestionario de Nivel de Riesgo según la NOM-035-STPS-2018"):
+            st.markdown("""
 
         La **NOM-035-STPS-2018** evalúa el nivel de riesgo psicosocial en los centros de trabajo a través de los siguientes **dominios**:
 
