@@ -1280,6 +1280,9 @@ if archivo_excel is not None:
                 ax=ax
             )
             ax.set_title("Mapa de Correlaciones entre Puntajes por Dominio")
+            ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha="right")
+            ax.set_yticklabels(ax.get_yticklabels(), rotation=0)
+
 
             # Mostrar la gráfica en Streamlit
             st.pyplot(fig)
