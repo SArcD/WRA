@@ -1211,46 +1211,84 @@ if archivo_excel is not None:
         import matplotlib.pyplot as plt
         import seaborn as sns
 
-        st.title("Mapa de Correlaciones de las Preguntas Reducidas")
+#        st.title("Mapa de Correlaciones de las Preguntas Reducidas")
+#
+#        # Verificar si el DataFrame `df_reductos` está disponible y tiene datos
+#        if not df_reductos.empty:
+#            # Definir las escalas Likert positiva y negativa
+#            escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas veces": 2, "Casi nunca": 1, "Nunca": 0}
+#            escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas veces": 2, "Casi nunca": 3, "Nunca": 4}
 
-        # Verificar si el DataFrame `df_reductos` está disponible y tiene datos
-        if not df_reductos.empty:
-            # Definir las escalas Likert positiva y negativa
-            escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas veces": 2, "Casi nunca": 1, "Nunca": 0}
-            escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas veces": 2, "Casi nunca": 3, "Nunca": 4}
+#            # Omitir las columnas "Folio" y "CT"
+#            df_reductos_numerico = df_reductos.drop(columns=["Folio", "CT", "Nivel de Riesgo"], errors="ignore").copy()
 
-            # Omitir las columnas "Folio" y "CT"
-            df_reductos_numerico = df_reductos.drop(columns=["Folio", "CT", "Nivel de Riesgo"], errors="ignore").copy()
+#            # Convertir respuestas a valores numéricos según la escala correspondiente
+#            for columna in df_reductos_numerico.columns:
+#                if columna in preguntas_likert_positiva:
+#                    df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_positiva).fillna(np.nan)
+#                elif columna in preguntas_likert_negativa:
+#                    df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_negativa).fillna(np.nan)
 
-            # Convertir respuestas a valores numéricos según la escala correspondiente
-            for columna in df_reductos_numerico.columns:
-                if columna in preguntas_likert_positiva:
-                    df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_positiva).fillna(np.nan)
-                elif columna in preguntas_likert_negativa:
-                    df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_negativa).fillna(np.nan)
+#            # Calcular la matriz de correlación
+#            correlaciones = df_reductos_numerico.corr()
 
-            # Calcular la matriz de correlación
-            correlaciones = df_reductos_numerico.corr()
+#            #    Crear el mapa de correlaciones
+#            fig, ax = plt.subplots(figsize=(40, 32))
+#            sns.heatmap(
+#                correlaciones, 
+#                annot=True, 
+#                cmap="coolwarm", 
+#                fmt=".2f", 
+#                linewidths=0.5, 
+#                ax=ax
+#            )
+#            ax.set_title("Mapa de Correlaciones entre Preguntas Reducidas")
 
-            #    Crear el mapa de correlaciones
-            fig, ax = plt.subplots(figsize=(40, 32))
-            sns.heatmap(
-                correlaciones, 
-                annot=True, 
-                cmap="coolwarm", 
-                fmt=".2f", 
-                linewidths=0.5, 
-                ax=ax
-            )
-            ax.set_title("Mapa de Correlaciones entre Preguntas Reducidas")
+#            # Mostrar la gráfica en Streamlit
+#            st.pyplot(fig)
 
-            # Mostrar la gráfica en Streamlit
-            st.pyplot(fig)
+#        else:
+#            st.warning("No se ha generado el DataFrame con preguntas reducidas.")
 
-        else:
-            st.warning("No se ha generado el DataFrame con preguntas reducidas.")
+#        #################
 
-        #################
+#        import streamlit as st
+#        import pandas as pd
+#        import numpy as np
+#        import matplotlib.pyplot as plt
+#        import seaborn as sns
+
+#        st.title("Mapa de Correlaciones de Puntajes por Dominio")
+
+#        # Verificar si el DataFrame `nuevo_df3_resultado_dominios` está disponible y tiene datos
+#        if not nuevo_df3_resultado_dominios.empty:
+#            # Omitir columnas no numéricas ("Folio" y "Nivel de Riesgo")
+#            columnas_a_excluir = ["Folio"] + [col for col in nuevo_df3_resultado_dominios.columns if "Nivel de Riesgo" in col]
+#            df_puntajes_numerico = nuevo_df3_resultado_dominios.drop(columns=columnas_a_excluir, errors="ignore").copy()
+
+#            # Calcular la matriz de correlación
+#            correlaciones = df_puntajes_numerico.corr()
+
+#            # Crear el mapa de correlaciones
+#            fig, ax = plt.subplots(figsize=(10, 8))
+#            sns.heatmap(
+#                correlaciones, 
+#                annot=True, 
+#                cmap="coolwarm", 
+#                fmt=".2f", 
+#                linewidths=0.5, 
+#                ax=ax
+#            )
+#            ax.set_title("Mapa de Correlaciones entre Puntajes por Dominio")
+#            ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha="right")
+#            ax.set_yticklabels(ax.get_yticklabels(), rotation=0)
+
+
+#            # Mostrar la gráfica en Streamlit
+#            st.pyplot(fig)
+
+#        else:
+#            st.warning("No se ha generado el DataFrame con puntajes por dominio.")
 
         import streamlit as st
         import pandas as pd
@@ -1258,38 +1296,84 @@ if archivo_excel is not None:
         import matplotlib.pyplot as plt
         import seaborn as sns
 
-        st.title("Mapa de Correlaciones de Puntajes por Dominio")
+#st.title("Mapa de Correlaciones")
 
-        # Verificar si el DataFrame `nuevo_df3_resultado_dominios` está disponible y tiene datos
-        if not nuevo_df3_resultado_dominios.empty:
-            # Omitir columnas no numéricas ("Folio" y "Nivel de Riesgo")
-            columnas_a_excluir = ["Folio"] + [col for col in nuevo_df3_resultado_dominios.columns if "Nivel de Riesgo" in col]
-            df_puntajes_numerico = nuevo_df3_resultado_dominios.drop(columns=columnas_a_excluir, errors="ignore").copy()
+        # Opciones para que el usuario elija el tipo de mapa de correlación
+        opcion_mapa = st.radio(
+            "Seleccione el mapa de correlaciones que desea visualizar:",
+            ("Mapa de Correlaciones de Preguntas Reducidas", "Mapa de Correlaciones de Puntajes por Dominio")
+        )
 
-            # Calcular la matriz de correlación
-            correlaciones = df_puntajes_numerico.corr()
+        if opcion_mapa == "Mapa de Correlaciones de Preguntas Reducidas":
+            # Verificar si el DataFrame `df_reductos` está disponible y tiene datos
+            if not df_reductos.empty:
+                # Definir las escalas Likert positiva y negativa
+                escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas veces": 2, "Casi nunca": 1, "Nunca": 0}
+                escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas veces": 2, "Casi nunca": 3, "Nunca": 4}
 
-            # Crear el mapa de correlaciones
-            fig, ax = plt.subplots(figsize=(10, 8))
-            sns.heatmap(
-                correlaciones, 
-                annot=True, 
-                cmap="coolwarm", 
-                fmt=".2f", 
-                linewidths=0.5, 
-                ax=ax
-            )
-            ax.set_title("Mapa de Correlaciones entre Puntajes por Dominio")
-            ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha="right")
-            ax.set_yticklabels(ax.get_yticklabels(), rotation=0)
+                # Omitir las columnas "Folio" y "CT"
+                df_reductos_numerico = df_reductos.drop(columns=["Folio", "CT", "Nivel de Riesgo"], errors="ignore").copy()
+
+                # Convertir respuestas a valores numéricos según la escala correspondiente
+                for columna in df_reductos_numerico.columns:
+                    if columna in preguntas_likert_positiva:
+                        df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_positiva).fillna(np.nan)
+                    elif columna in preguntas_likert_negativa:
+                        df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_negativa).fillna(np.nan)
+
+                # Calcular la matriz de correlación
+                correlaciones = df_reductos_numerico.corr()
+
+                # Crear el mapa de correlaciones
+                fig, ax = plt.subplots(figsize=(40, 32))
+                sns.heatmap(
+                    correlaciones, 
+                    annot=True, 
+                    cmap="coolwarm", 
+                    fmt=".2f", 
+                    linewidths=0.5, 
+                    ax=ax
+                )
+                ax.set_title("Mapa de Correlaciones entre Preguntas Reducidas")
+
+                # Mostrar la gráfica en Streamlit
+                st.pyplot(fig)
+            else:
+                st.warning("No se ha generado el DataFrame con preguntas reducidas.")
+
+        elif opcion_mapa == "Mapa de Correlaciones de Puntajes por Dominio":
+            # Verificar si el DataFrame `nuevo_df3_resultado_dominios` está disponible y tiene datos
+            if not nuevo_df3_resultado_dominios.empty:
+                # Omitir columnas no numéricas ("Folio" y "Nivel de Riesgo")
+                columnas_a_excluir = ["Folio"] + [col for col in nuevo_df3_resultado_dominios.columns if "Nivel de Riesgo" in col]
+                df_puntajes_numerico = nuevo_df3_resultado_dominios.drop(columns=columnas_a_excluir, errors="ignore").copy()
+
+                # Calcular la matriz de correlación
+                correlaciones = df_puntajes_numerico.corr()
+
+                # Crear el mapa de correlaciones
+                fig, ax = plt.subplots(figsize=(10, 8))
+                sns.heatmap(
+                    correlaciones, 
+                    annot=True, 
+                    cmap="coolwarm", 
+                    fmt=".2f", 
+                    linewidths=0.5, 
+                    ax=ax
+                )
+                ax.set_title("Mapa de Correlaciones entre Puntajes por Dominio")
+                ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha="right")
+                ax.set_yticklabels(ax.get_yticklabels(), rotation=0)
+
+                # Mostrar la gráfica en Streamlit
+                st.pyplot(fig)
+            else:
+                st.warning("No se ha generado el DataFrame con puntajes por dominio.")
 
 
-            # Mostrar la gráfica en Streamlit
-            st.pyplot(fig)
 
-        else:
-            st.warning("No se ha generado el DataFrame con puntajes por dominio.")
 
+        
 
         #################
 
