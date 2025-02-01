@@ -1108,7 +1108,8 @@ if archivo_excel is not None:
         }
 
         # Aplicar el proceso de reducción para cada dominio
-        @st.cache_data    
+        #@st.cache_data    
+        
         reductos = {}
         for domain, questions in dominios_reales.items():
             #print(f"Buscando reducto para el dominio: {domain}")
