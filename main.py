@@ -299,7 +299,7 @@ if archivo_excel is not None:
                 if col in nuevo_df2.columns:
                     nuevo_df2[col] = 0
 
-        st.success(f"Mostrando datos filtrados para P14 = {valor_seleccionado}")
+        #st.success(f"Mostrando datos filtrados para P14 = {valor_seleccionado}")
         #st.dataframe(nuevo_df2)
         #########
 
@@ -318,7 +318,7 @@ if archivo_excel is not None:
                 if col in nuevo_df3.columns:
                     nuevo_df3[col] = 0
 
-        st.success(f"Mostrando datos filtrados para P16 = {valor_seleccionado_p16}")
+        #st.success(f"Mostrando datos filtrados para P16 = {valor_seleccionado_p16}")
         #st.dataframe(nuevo_df3)
         #############
 
@@ -410,8 +410,8 @@ if archivo_excel is not None:
         if 'nuevo_df3' in locals():
             nuevo_df3_resultado = procesar_dataframe(nuevo_df3)
 
-            st.success("Cálculo de Nivel de Riesgo Completado")
-            st.dataframe(nuevo_df3_resultado)
+            #st.success("Cálculo de Nivel de Riesgo Completado")
+            #st.dataframe(nuevo_df3_resultado)
 
         ####################3
 
@@ -432,7 +432,7 @@ if archivo_excel is not None:
         columnas_existentes = [col for col in columnas_no_numericas if col in nuevo_df3_resultado.columns]
         nuevo_df3_resultado_num[columnas_existentes] = nuevo_df3_resultado[columnas_existentes]
 
-        st.success("Transformación de respuestas Likert a formato numérico completada")
+        #st.success("Transformación de respuestas Likert a formato numérico completada")
         st.dataframe(nuevo_df3_resultado_num)
 
         #############
