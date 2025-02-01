@@ -738,7 +738,7 @@ if archivo_excel is not None:
         nuevo_df3_resultado_dominios = nuevo_df3_result_num[columnas_finales]
 
         # Mostrar el DataFrame en Streamlit
-        st.success("Cálculo de puntajes y niveles de riesgo por dominio completado")
+        #st.success("Cálculo de puntajes y niveles de riesgo por dominio completado")
         st.dataframe(nuevo_df3_resultado_dominios)
 
         # Permitir descarga del DataFrame con los datos por dominio
@@ -854,8 +854,11 @@ if archivo_excel is not None:
             "Muy alto": 4
         }
 
-        st.title("Evaluación de Riesgo en Diagrama de Radar")
+        st.subheader("Visualización del nivel de riesgo")
 
+        st.markdown("""
+        A continuación puede visualizar los **diagramas de radar** con los resultados para la evaluación del **nivel de riesgo laboral** de uno o mas participantes de la encuesta. A continuación seleccione si quiere visualizar los datos de un participante en particular (tecleando la clave alfa numérica que lo representa) o de todos aquellos que han sido clasificados con el mismo nivel de riesgo.
+        """)
         # Seleccionar tipo de búsqueda
         tipo_busqueda = st.radio("Seleccione el tipo de búsqueda:", ("Por Empleado", "Por Nivel de Riesgo"))
 
