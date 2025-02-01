@@ -1413,7 +1413,7 @@ if archivo_excel is not None:
         # Verificar si el DataFrame `df_reductos` está disponible y tiene datos
         if not df_reductos.empty:
             # Convertir las respuestas a escala numérica
-            df_reductos_numerico = df_reductos.drop(columns=["Folio", "CT"], errors="ignore").copy()
+            df_reductos_numerico = df_reductos.drop(columns=["Folio", "CT", "Nivel de Riesgo"], errors="ignore").copy()
             for columna in df_reductos_numerico.columns:
                 if columna in preguntas_likert_positiva:
                     df_reductos_numerico[columna] = df_reductos_numerico[columna].map({
