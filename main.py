@@ -956,6 +956,21 @@ if archivo_excel is not None:
             else:
                 st.warning(f"No se encontraron empleados con Nivel de Riesgo: {nivel_seleccionado}")
 
+        with st.expander("¿Qué es un gráfico de radar y cómo se interpreta?"):
+            st.markdown("""
+            Un gráfico de radar, también conocido como gráfico de araña o gráfico polar, es una representación gráfica que permite visualizar datos multivariados en un formato bidimensional. Se utiliza para mostrar valores de diferentes variables en un sistema de coordenadas radiales, donde cada eje representa una variable.
+
+            ### Características principales:
+            - **Ejes radiales**: Cada eje radial corresponde a una variable o categoría específica.
+            - **Escala común**: Todas las variables se representan en la misma escala, lo que facilita la comparación.
+            - **Área sombreada**: El área delimitada por la línea que conecta los puntos representa el "perfil" de los datos.
+
+            ### ¿Cómo interpretarlo?
+            - **Forma del gráfico**: La forma del área sombreada indica cómo se distribuyen los valores de las variables. Por ejemplo, un gráfico equilibrado (simétrico) puede indicar uniformidad en las variables, mientras que un gráfico asimétrico resalta diferencias marcadas.
+            - **Valores extremos**: Los puntos más alejados del centro representan valores altos, mientras que los más cercanos al centro indican valores bajos.
+            - **Comparaciones**: Al superponer varios gráficos de radar, es posible comparar perfiles entre diferentes categorías, grupos o individuos.""")
+
+        
         ####################
 
 
