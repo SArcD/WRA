@@ -1775,42 +1775,44 @@ if archivo_excel is not None:
         # Selección del dominio
         dominio_seleccionado = st.selectbox("Seleccione un dominio:", list(dominios_reales.keys()))
 
-        # Filtrar preguntas del dominio seleccionado
-        preguntas_dominio = dominios_reales[dominio_seleccionado]
-
-        # Convertir el DataFrame
+        # Filtrar preguntas del dominio seleccionado que están presentes en `df_reductos`
         if not df_reductos.empty:
-            # Excluir columnas irrelevantes
-            df_dominio = df_reductos[preguntas_dominio + ["Nivel de Riesgo"]].copy()
+            preguntas_dominio = [p for p in dominios_reales[dominio_seleccionado] if p in df_reductos.columns]
 
-            # Convertir respuestas a escala numérica
-            for columna in df_dominio.columns:
-                if columna in preguntas_likert_positiva:
-                    df_dominio[columna] = df_dominio[columna].map(escala_likert_positiva).fillna(0)
-                elif columna in preguntas_likert_negativa:
-                    df_dominio[columna] = df_dominio[columna].map(escala_likert_negativa).fillna(0)
+            if preguntas_dominio:
+                # Filtrar el DataFrame para incluir solo las preguntas relevantes y "Nivel de Riesgo"
+                df_dominio = df_reductos[preguntas_dominio + ["Nivel de Riesgo"]].copy()
 
-            # Separar características (X) y variable objetivo (y)
-            X = df_dominio.drop(columns=["Nivel de Riesgo"])
-            y = df_dominio["Nivel de Riesgo"]
+                # Convertir respuestas a escala numérica
+                for columna in df_dominio.columns:
+                    if columna in preguntas_likert_positiva:
+                        df_dominio[columna] = df_dominio[columna].map(escala_likert_positiva).fillna(0)
+                    elif columna in preguntas_likert_negativa:
+                        df_dominio[columna] = df_dominio[columna].map(escala_likert_negativa).fillna(0)
 
-            # Crear el modelo del árbol de decisión
-            model = DecisionTreeClassifier(max_depth=4, random_state=42)
-            model.fit(X, y)
+                # Separar características (X) y variable objetivo (y)
+                X = df_dominio.drop(columns=["Nivel de Riesgo"])
+                y = df_dominio["Nivel de Riesgo"]
 
-            # Visualizar el árbol de decisión
-            fig, ax = plt.subplots(figsize=(12, 8))
-            plot_tree(
-                model,
-                feature_names=X.columns,
-                class_names=model.classes_.astype(str),
-                filled=True,
-                rounded=True,
-                fontsize=10,
-                ax=ax
-            )
-            ax.set_title(f"Árbol de Decisión - {dominio_seleccionado}")
-            st.pyplot(fig)
+                # Crear el modelo del árbol de decisión
+                model = DecisionTreeClassifier(max_depth=4, random_state=42)
+                model.fit(X, y)
+
+                # Visualizar el árbol de decisión
+                fig, ax = plt.subplots(figsize=(12, 8))
+                plot_tree(
+                    model,
+                    feature_names=X.columns,
+                    class_names=model.classes_.astype(str),
+                    filled=True,
+                    rounded=True,
+                    fontsize=10,
+                    ax=ax
+                )
+                ax.set_title(f"Árbol de Decisión - {dominio_seleccionado}")
+                st.pyplot(fig)
+            else:
+                st.warning(f"No hay preguntas disponibles para el dominio '{dominio_seleccionado}' en el DataFrame.")
         else:
             st.warning("El DataFrame está vacío o no contiene datos suficientes.")
 
