@@ -13,5 +13,6 @@ matplotlib-venn
 seaborn
 networkx
 xlsxwriter
+sklearn
 
 
