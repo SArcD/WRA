@@ -239,7 +239,8 @@ elif paginas == "Cargar datos":
     df = df[columnas_ordenadas]
         
 elif paginas == "Depuración":        
-
+    if 'df' in st.session_state:
+        df = st.session_state['df']
     import pandas as pd
 
     # Cambiar los nombres de las columnas específicas
