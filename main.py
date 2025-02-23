@@ -171,10 +171,10 @@ if archivo_excel is not None:
             # Mostrar las tablas en Streamlit
             #st.title("Preguntas y Escalas Likert")
 
-        st.subsubheader("Preguntas en Escala Likert Positiva")
+        st.markdown("**Preguntas en Escala Likert Positiva**")
         st.dataframe(df_likert_positiva)
 
-        st.subsubheader("Preguntas en Escala Likert Negativa")
+        st.markdown("**Preguntas en Escala Likert Negativa**")
         st.dataframe(df_likert_negativa)
 
         st.markdown("""
@@ -182,10 +182,10 @@ if archivo_excel is not None:
         """)
 
             
-        st.subheader("Valores de Escala Likert Positiva")
+        st.markdown("**Valores de Escala Likert Positiva"**)
         st.table(df_escala_positiva)
 
-        st.subheader("Valores de Escala Likert Negativa")
+        st.markdown("**Valores de Escala Likert Negativa**")
         st.table(df_escala_negativa)        # Invertir el diccionario para mapear nombres largos a claves cortas
         
         nombres_invertidos = {v: k for k, v in preguntas.items()}
