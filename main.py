@@ -949,7 +949,389 @@ elif paginas == "Análisis":
         return u_ind_sorted
 
 
-#aqui
+        ####################
+
+    from itertools import combinations
+
+    with st.expander("**¿Qué es el reducto de un cuestionario y cómo se calcula?**"):
+            st.markdown("""
+            ### ¿Qué es el reducto de un cuestionario?
+            El reducto de un cuestionario es un conjunto mínimo de preguntas seleccionadas que conservan, de manera eficiente, la capacidad de clasificar o representar la información contenida en el cuestionario original. Es una herramienta útil en análisis de datos, ya que permite simplificar el instrumento manteniendo su representatividad y precisión.
+
+            ### ¿Cómo se calcula el reducto en este código?
+            El proceso de cálculo del reducto en el código proporcionado incluye los siguientes pasos:
+
+            1. **Relación de indiscernibilidad (`indiscernibility`)**:
+               - Agrupa las respuestas de las filas en conjuntos equivalentes basados en los valores de los atributos (preguntas) seleccionados.
+               - Cada conjunto representa una partición de la tabla en base a las similitudes entre los datos.
+
+            2. **Comparación de particiones (`compare_partitions`)**:
+               - Compara la partición original (usando todas las preguntas del dominio) con particiones generadas por subconjuntos de preguntas.
+               - La métrica de similitud utilizada es el índice de Jaccard, que mide la proporción de intersección entre dos conjuntos en relación con su unión.
+
+            3. **Búsqueda del reducto (`find_reduct_for_domain`)**:
+               - Explora todas las combinaciones posibles de preguntas dentro de un dominio.
+               - Evalúa qué subconjunto alcanza un nivel de similitud (umbral) cercano o igual a la partición original.
+               - Si un subconjunto cumple con el umbral, se considera el reducto para ese dominio.
+
+            4. **Aplicación a dominios específicos**:
+               - El cuestionario está dividido en dominios (como "Carga de trabajo" o "Liderazgo"), cada uno con un conjunto de preguntas asociadas.
+               - El proceso se aplica individualmente a cada dominio para encontrar su reducto.
+
+            ### Ejemplo práctico:
+            Supongamos que un dominio tiene 10 preguntas, pero después del análisis, se identifica que solo 3 preguntas son suficientes para mantener la misma estructura de clasificación que las 10 originales. Estas 3 preguntas forman el reducto del dominio.
+
+            ### ¿Por qué es importante?
+            - **Optimización**: Reduce el número de preguntas sin perder la calidad de los datos.
+            - **Menor carga cognitiva**: Facilita la administración del cuestionario.
+            - **Eficiencia**: Acelera los procesos de análisis al trabajar con menos variables.
+
+            ### Orden en el que se calculan las relaciones de indiscernibilidad:
+            - Crea particiones basadas en valores de las preguntas seleccionadas.
+            - Evalúa la similitud entre las particiones usando el índice de Jaccard.
+            - El umbral (por defecto 0.9 o 90%) define qué tan representativo debe ser el reducto en comparación con el conjunto completo.
+
+            Este enfoque es común en metodologías como la teoría de conjuntos aproximados (Rough Set Theory) y es particularmente útil en contextos donde la reducción de datos es esencial sin comprometer la calidad analítica.
+            """)
+
+    # Función para calcular la relación de indiscernibilidad
+    def indiscernibility(attr, table):
+        u_ind = {}
+        for i in table.index:
+            attr_values = tuple(table.loc[i, attr])
+            if attr_values in u_ind:
+                u_ind[attr_values].add(i)
+            else:
+                u_ind[attr_values] = {i}
+        return list(u_ind.values())
+
+    # Función para calcular la similitud entre particiones usando Jaccard
+    def compare_partitions(original, test):
+        score = 0
+        for orig_set in original:
+            best_match = 0
+            for test_set in test:
+                similarity = len(orig_set.intersection(test_set)) / len(orig_set.union(test_set))
+                best_match = max(best_match, similarity)
+            score += best_match * len(orig_set)
+        total_size = sum(len(group) for group in original)
+        return score / total_size if total_size > 0 else 0
+
+    st.markdown("""A continuación se muestra el **reducto** para cada uno de los dominios en el cuestionario de **riesgo laboral**""")
+        
+        
+    # Función para encontrar el reducto para un dominio
+    def find_reduct_for_domain(domain_questions, df, threshold=0.9):
+        best_match = 0
+        best_subset = None
+        original_partition = indiscernibility(domain_questions, df)
+
+        for i in range(1, len(domain_questions) + 1):
+            for subset in combinations(domain_questions, i):
+                test_partition = indiscernibility(list(subset), df)
+                match_score = compare_partitions(original_partition, test_partition)
+                if match_score > best_match:
+                    best_match = match_score
+                    best_subset = subset
+                if best_match >= threshold:
+                    st.write(f"Reducto encontrado para el dominio **{domain}** con umbral {threshold}: {best_subset} (**Coincidencia: {best_match:.2%})**")
+                    return list(best_subset)
+
+        st.write(f"No se encontró reducto con umbral {threshold}. Mejor coincidencia: {best_match:.2%}")
+        return list(best_subset)
+
+    # Diccionario de dominios y preguntas
+    dominios_reales = {
+        "Condiciones en el ambiente de trabajo": ["P2_1", "P2_2", "P2_3", "P2_4", "P2_5"],
+        "Carga de trabajo": ["P3_1", "P3_2", "P3_3", "P4_1", "P4_2", "P4_3", "P4_4",
+                        "P15_1", "P15_2", "P15_3", "P15_4", "P5_1", "P5_2", "P5_3", "P5_4"],
+        "Falta de control sobre el trabajo": ["P7_1", "P7_2", "P7_3", "P7_4", "P7_5",
+                                        "P7_6", "P8_1", "P8_2", "P9_5", "P9_6"],
+        "Jornada de trabajo": ["P6_1", "P6_2"],
+        "Interferencia en la relación trabajo-familia": ["P6_3", "P6_4", "P6_5", "P6_6"],
+        "Liderazgo": ["P9_1", "P9_2", "P9_3", "P9_4", "P10_1", "P10_2", "P10_3", "P10_4", "P10_5"],
+        "Relaciones en el trabajo": ["P11_1", "P11_2", "P11_3", "P11_4", "P11_5",
+                                "P17_1", "P17_2", "P17_3", "P17_4"],
+        "Violencia": ["P13_1", "P13_2", "P13_3", "P13_4", "P13_5", "P13_6", "P13_7", "P13_8"],
+        "Reconocimiento del desempeño": ["P12_1", "P12_2", "P12_3", "P12_4", "P12_5", "P12_6"],
+        "Insuficiente sentido de pertenencia e inestabilidad": ["P12_7", "P12_9", "P12_10", "P12_8"]
+    }
+
+    # Aplicar el proceso de reducción para cada dominio
+    #@st.cache_data    
+        
+    reductos = {}
+    for domain, questions in dominios_reales.items():
+        #print(f"Buscando reducto para el dominio: {domain}")
+        reducto = find_reduct_for_domain(questions, nuevo_df3_resultado, threshold=0.9)
+        reductos[domain] = reducto
+
+        # Mostrar los reductos para cada dominio
+        #for domain, reducto in reductos.items():
+            #st.write(f"Dominio: {domain}, Reducto: {reducto}")
+            #st.write(f"Reducto encontrado. **Coincidencia: {best_match:.2%}**")
+
+
+
+        #########################
+
+
+    import streamlit as st
+    import matplotlib.pyplot as plt
+    from matplotlib_venn import venn2
+
+    # Función para generar un diagrama de Venn comparando dos clasificaciones
+    def generate_venn(original_partition, reduced_partition, domain_name):
+        # Convertir particiones en conjuntos únicos
+        original_sets = set(frozenset(group) for group in original_partition)
+        reduced_sets = set(frozenset(group) for group in reduced_partition)
+
+        # Intersección, solo en el original, solo en el reducido
+        only_original = len(original_sets - reduced_sets)
+        only_reduced = len(reduced_sets - original_sets)
+        intersection = len(original_sets & reduced_sets)
+
+        # Crear diagrama de Venn
+        fig, ax = plt.subplots(figsize=(6, 6))
+        venn = venn2(
+            subsets=(only_original, only_reduced, intersection),
+            set_labels=("Lista completa", "Reducto"),
+            ax=ax
+        )
+        ax.set_title(f"Comparación: {domain_name}", fontsize=12)
+    
+        return fig
+
+        #st.title("Comparación de Clasificaciones con Diagramas de Venn")
+        
+    st.markdown("""A continuación se muestran los diagramas de Venn para el grado de coincidencia entre los reductos de cada dominio y la lista completa de preguntas. En el siguiente menú puede seleccionar el dominio a visualizar y debajo se mostrará el diagrama de Venn, donde los numeros representa: la cantidad de indivios contenidos en el cuestionario completo, la intersección y el reducto""")
+        
+    # Selección del dominio para generar el diagrama
+    dominio_seleccionado = st.selectbox("**Seleccione un dominio:**", list(dominios_reales.keys()))
+
+    if dominio_seleccionado:
+        # Obtener clasificaciones usando la lista completa de preguntas
+        original_partition = indiscernibility(dominios_reales[dominio_seleccionado], nuevo_df3_resultado)
+
+        # Obtener clasificaciones usando el reducto
+        reduced_partition = indiscernibility(reductos[dominio_seleccionado], nuevo_df3_resultado)
+
+        # Generar y mostrar el diagrama de Venn
+        fig = generate_venn(original_partition, reduced_partition, dominio_seleccionado)
+        st.pyplot(fig)
+
+    st.markdown("""**El Cuestionario reducido se muestra a continuación:**""")
+        
+    # Crear un nuevo DataFrame con solo las preguntas que están en los reductos
+    columnas_reducto = ["Folio", "CT", "Nivel de Riesgo"]  # Mantener las columnas clave
+    for dominio, preguntas_reducto in reductos.items():
+        columnas_reducto.extend(preguntas_reducto)
+
+    # Verificar que las columnas existan en el DataFrame    
+    columnas_existentes = [col for col in columnas_reducto if col in nuevo_df3_resultado.columns]
+
+    # Filtrar el DataFrame con las preguntas seleccionadas en los reductos
+    df_reductos = nuevo_df3_resultado[columnas_existentes].copy()
+
+    # Mostrar el DataFrame en Streamlit
+    st.success("Se ha generado el DataFrame con las preguntas reducidas por dominio.")
+    st.dataframe(df_reductos)
+
+    # Permitir descarga del DataFrame con los reductos
+    @st.cache_data
+    def convertir_csv(df):
+        return df.to_csv(index=False).encode("utf-8")
+
+    archivo_csv_reductos = convertir_csv(df_reductos)
+
+    st.download_button(
+        label="Descargar datos con preguntas reducidas (CSV)",
+        data=archivo_csv_reductos,
+        file_name="datos_reductos.csv",
+        mime="text/csv"
+    )
+
+
+
+        ##################### mapa
+
+    import streamlit as st
+    import pandas as pd
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+
+#        st.title("Mapa de Correlaciones de las Preguntas Reducidas")
+#
+#        # Verificar si el DataFrame `df_reductos` está disponible y tiene datos
+#        if not df_reductos.empty:
+#            # Definir las escalas Likert positiva y negativa
+#            escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas veces": 2, "Casi nunca": 1, "Nunca": 0}
+#            escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas veces": 2, "Casi nunca": 3, "Nunca": 4}
+
+#            # Omitir las columnas "Folio" y "CT"
+#            df_reductos_numerico = df_reductos.drop(columns=["Folio", "CT", "Nivel de Riesgo"], errors="ignore").copy()
+
+#            # Convertir respuestas a valores numéricos según la escala correspondiente
+#            for columna in df_reductos_numerico.columns:
+#                if columna in preguntas_likert_positiva:
+#                    df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_positiva).fillna(np.nan)
+#                elif columna in preguntas_likert_negativa:
+#                    df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_negativa).fillna(np.nan)
+
+#            # Calcular la matriz de correlación
+#            correlaciones = df_reductos_numerico.corr()
+
+#            #    Crear el mapa de correlaciones
+#            fig, ax = plt.subplots(figsize=(40, 32))
+#            sns.heatmap(
+#                correlaciones, 
+#                annot=True, 
+#                cmap="coolwarm", 
+#                fmt=".2f", 
+#                linewidths=0.5, 
+#                ax=ax
+#            )
+#            ax.set_title("Mapa de Correlaciones entre Preguntas Reducidas")
+
+#            # Mostrar la gráfica en Streamlit
+#            st.pyplot(fig)
+
+#        else:
+#            st.warning("No se ha generado el DataFrame con preguntas reducidas.")
+
+#        #################
+
+#        import streamlit as st
+#        import pandas as pd
+#        import numpy as np
+#        import matplotlib.pyplot as plt
+#        import seaborn as sns
+
+#        st.title("Mapa de Correlaciones de Puntajes por Dominio")
+
+#        # Verificar si el DataFrame `nuevo_df3_resultado_dominios` está disponible y tiene datos
+#        if not nuevo_df3_resultado_dominios.empty:
+#            # Omitir columnas no numéricas ("Folio" y "Nivel de Riesgo")
+#            columnas_a_excluir = ["Folio"] + [col for col in nuevo_df3_resultado_dominios.columns if "Nivel de Riesgo" in col]
+#            df_puntajes_numerico = nuevo_df3_resultado_dominios.drop(columns=columnas_a_excluir, errors="ignore").copy()
+
+#            # Calcular la matriz de correlación
+#            correlaciones = df_puntajes_numerico.corr()
+
+#            # Crear el mapa de correlaciones
+#            fig, ax = plt.subplots(figsize=(10, 8))
+#            sns.heatmap(
+#                correlaciones, 
+#                annot=True, 
+#                cmap="coolwarm", 
+#                fmt=".2f", 
+#                linewidths=0.5, 
+#                ax=ax
+#            )
+#            ax.set_title("Mapa de Correlaciones entre Puntajes por Dominio")
+#            ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha="right")
+#            ax.set_yticklabels(ax.get_yticklabels(), rotation=0)
+
+
+#            # Mostrar la gráfica en Streamlit
+#            st.pyplot(fig)
+
+#        else:
+#            st.warning("No se ha generado el DataFrame con puntajes por dominio.")
+
+    import streamlit as st
+    import pandas as pd
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+
+#st.title("Mapa de Correlaciones")
+
+    # Opciones para que el usuario elija el tipo de mapa de correlación
+    opcion_mapa = st.radio(
+        "Seleccione el mapa de correlaciones que desea visualizar:",
+        ("Mapa de Correlaciones de Preguntas Reducidas", "Mapa de Correlaciones de Puntajes por Dominio")
+    )
+
+    if opcion_mapa == "Mapa de Correlaciones de Preguntas Reducidas":
+        # Verificar si el DataFrame `df_reductos` está disponible y tiene datos
+        if not df_reductos.empty:
+            # Definir las escalas Likert positiva y negativa
+            escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas veces": 2, "Casi nunca": 1, "Nunca": 0}
+            escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas veces": 2, "Casi nunca": 3, "Nunca": 4}
+
+            # Omitir las columnas "Folio" y "CT"
+            df_reductos_numerico = df_reductos.drop(columns=["Folio", "CT", "Nivel de Riesgo"], errors="ignore").copy()
+
+            # Convertir respuestas a valores numéricos según la escala correspondiente
+            for columna in df_reductos_numerico.columns:
+                if columna in preguntas_likert_positiva:
+                    df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_positiva).fillna(np.nan)
+                elif columna in preguntas_likert_negativa:
+                    df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_negativa).fillna(np.nan)
+
+            # Calcular la matriz de correlación
+            correlaciones = df_reductos_numerico.corr()
+
+            # Crear el mapa de correlaciones
+            fig, ax = plt.subplots(figsize=(40, 32))
+            sns.heatmap(
+                correlaciones, 
+                annot=True, 
+                cmap="coolwarm", 
+                fmt=".2f", 
+                linewidths=0.5, 
+                ax=ax
+            )
+            ax.set_title("Mapa de Correlaciones entre Preguntas Reducidas")
+
+            # Mostrar la gráfica en Streamlit
+            st.pyplot(fig)
+        else:
+            st.warning("No se ha generado el DataFrame con preguntas reducidas.")
+
+    elif opcion_mapa == "Mapa de Correlaciones de Puntajes por Dominio":
+        # Verificar si el DataFrame `nuevo_df3_resultado_dominios` está disponible y tiene datos
+        if not nuevo_df3_resultado_dominios.empty:
+            # Omitir columnas no numéricas ("Folio" y "Nivel de Riesgo")
+            columnas_a_excluir = ["Folio"] + [col for col in nuevo_df3_resultado_dominios.columns if "Nivel de Riesgo" in col]
+            df_puntajes_numerico = nuevo_df3_resultado_dominios.drop(columns=columnas_a_excluir, errors="ignore").copy()
+
+            # Calcular la matriz de correlación
+            correlaciones = df_puntajes_numerico.corr()
+
+            # Crear el mapa de correlaciones
+            fig, ax = plt.subplots(figsize=(10, 8))
+            sns.heatmap(
+                correlaciones, 
+                annot=True, 
+                cmap="coolwarm", 
+                fmt=".2f", 
+                linewidths=0.5, 
+                ax=ax
+            )
+            ax.set_title("Mapa de Correlaciones entre Puntajes por Dominio")
+            ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha="right")
+            ax.set_yticklabels(ax.get_yticklabels(), rotation=0)
+
+            # Mostrar la gráfica en Streamlit
+            st.pyplot(fig)
+        else:
+            st.warning("No se ha generado el DataFrame con puntajes por dominio.")
+
+
+
+
+        
+
+        #################
+
+
+
+
+
+
 
 
 
