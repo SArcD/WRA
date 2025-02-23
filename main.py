@@ -324,151 +324,150 @@ elif paginas == "Depuración":
     valor_seleccionado = opciones_p14[valor_p14]
     nuevo_df2 = nuevo_df[nuevo_df["P14"] == valor_seleccionado].copy()
 
-        # Si selecciona "No", asignar 0 a las columnas P15
-        if valor_seleccionado == "No":
-            columnas_p15 = ['P15_1', 'P15_2', 'P15_3', 'P15_4']
-            for col in columnas_p15:
-                if col in nuevo_df2.columns:
-                    nuevo_df2[col] = 0
+    # Si selecciona "No", asignar 0 a las columnas P15
+    if valor_seleccionado == "No":
+        columnas_p15 = ['P15_1', 'P15_2', 'P15_3', 'P15_4']
+        for col in columnas_p15:
+            if col in nuevo_df2.columns:
+                nuevo_df2[col] = 0
 
         #st.success(f"Mostrando datos filtrados para P14 = {valor_seleccionado}")
         #st.dataframe(nuevo_df2)
         #########
 
         # Opciones para P16 (Ser jefe de otros trabajadores)
-        opciones_p16 = {"Sí": "Si", "No": "No"}
-        valor_p16 = st.radio("¿En su trabajo es **jefe de otros trabajadores**?", list(opciones_p16.keys()))
+    opciones_p16 = {"Sí": "Si", "No": "No"}
+    valor_p16 = st.radio("¿En su trabajo es **jefe de otros trabajadores**?", list(opciones_p16.keys()))
 
-        # Filtrar por la opción seleccionada en P16
-        valor_seleccionado_p16 = opciones_p16[valor_p16]
-        nuevo_df3 = nuevo_df2[nuevo_df2["P16"] == valor_seleccionado_p16].copy()
+    # Filtrar por la opción seleccionada en P16
+    valor_seleccionado_p16 = opciones_p16[valor_p16]
+    nuevo_df3 = nuevo_df2[nuevo_df2["P16"] == valor_seleccionado_p16].copy()
 
-        # Si selecciona "No" en P16, asignar 0 a las columnas P17
-        if valor_seleccionado_p16 == "No":
-            columnas_p17 = ['P17_1', 'P17_2', 'P17_3', 'P17_4']
-            for col in columnas_p17:
-                if col in nuevo_df3.columns:
-                    nuevo_df3[col] = 0
+    # Si selecciona "No" en P16, asignar 0 a las columnas P17
+    if valor_seleccionado_p16 == "No":
+        columnas_p17 = ['P17_1', 'P17_2', 'P17_3', 'P17_4']
+        for col in columnas_p17:
+            if col in nuevo_df3.columns:
+                nuevo_df3[col] = 0
 
         #st.success(f"Mostrando datos filtrados para P16 = {valor_seleccionado_p16}")
         #st.dataframe(nuevo_df3)
         #############
 
-        import streamlit as st
-        import pandas as pd
+    import streamlit as st
+    import pandas as pd
     
-        # Definición de escalas Likert y preguntas
-        escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas Veces": 2, "Casi nunca": 1, "Nunca": 0}
-        escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas Veces": 2, "Casi nunca": 3, "Nunca": 4}
+    # Definición de escalas Likert y preguntas
+    escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas Veces": 2, "Casi nunca": 1, "Nunca": 0}
+    escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas Veces": 2, "Casi nunca": 3, "Nunca": 4}
 
-        preguntas_likert_positiva = [
-            "P2_1", "P2_4", "P7_1", "P7_2", "P7_3", "P7_4", "P7_5", "P7_6",
-            "P8_2", "P9_1", "P9_2", "P9_3", "P9_4", "P9_5", "P9_6",
-            "P10_1", "P10_2", "P10_3", "P10_4", "P10_5",
-            "P11_1", "P11_2", "P11_3", "P11_4", "P11_5",
-            "P12_1", "P12_2", "P12_3", "P12_4", "P12_5", "P12_6", "P12_7", "P12_8",
-            "P12_9", "P12_10", "P13_1"
-        ]
+    preguntas_likert_positiva = [
+        "P2_1", "P2_4", "P7_1", "P7_2", "P7_3", "P7_4", "P7_5", "P7_6",
+        "P8_2", "P9_1", "P9_2", "P9_3", "P9_4", "P9_5", "P9_6",
+        "P10_1", "P10_2", "P10_3", "P10_4", "P10_5",
+        "P11_1", "P11_2", "P11_3", "P11_4", "P11_5",
+        "P12_1", "P12_2", "P12_3", "P12_4", "P12_5", "P12_6", "P12_7", "P12_8",
+        "P12_9", "P12_10", "P13_1"
+    ]
 
-        preguntas_likert_negativa = [
-            "P2_2", "P2_3", "P2_5", "P3_1", "P3_2", "P3_3",
-            "P4_1", "P4_2", "P4_3", "P4_4", "P5_1", "P5_2", "P5_3", "P5_4",
-            "P6_1", "P6_2", "P6_3", "P6_4", "P6_5", "P6_6", "P8_1",
-            "P13_2", "P13_3", "P13_4", "P13_5", "P13_6", "P13_7", "P13_8",
-            "P15_1", "P15_2", "P15_3", "P15_4",
-            "P17_1", "P17_2", "P17_3", "P17_4"
-        ]
+    preguntas_likert_negativa = [
+        "P2_2", "P2_3", "P2_5", "P3_1", "P3_2", "P3_3",
+        "P4_1", "P4_2", "P4_3", "P4_4", "P5_1", "P5_2", "P5_3", "P5_4",
+        "P6_1", "P6_2", "P6_3", "P6_4", "P6_5", "P6_6", "P8_1",
+        "P13_2", "P13_3", "P13_4", "P13_5", "P13_6", "P13_7", "P13_8",
+        "P15_1", "P15_2", "P15_3", "P15_4",
+        "P17_1", "P17_2", "P17_3", "P17_4"
+    ]
 
-        # Función para transformar respuestas a escala Likert numérica
-        def transformar_respuestas_likert(df):
-            for columna in df.columns:
-                if columna.startswith("P15") or columna.startswith("P17"):
-                    # Dejar intactas las filas con valor 0
-                    df[columna] = df[columna].apply(
-                        lambda x: 0 if x == 0 else (
-                            escala_likert_positiva.get(x) if columna in preguntas_likert_positiva else
-                            escala_likert_negativa.get(x, 0)
-                        )
+    # Función para transformar respuestas a escala Likert numérica
+    def transformar_respuestas_likert(df):
+        for columna in df.columns:
+            if columna.startswith("P15") or columna.startswith("P17"):
+                # Dejar intactas las filas con valor 0
+                df[columna] = df[columna].apply(
+                    lambda x: 0 if x == 0 else (
+                        escala_likert_positiva.get(x) if columna in preguntas_likert_positiva else
+                        escala_likert_negativa.get(x, 0)
                     )
-                elif columna in preguntas_likert_positiva:
-                    df[columna] = df[columna].map(escala_likert_positiva).fillna(0)
-                elif columna in preguntas_likert_negativa:
-                    df[columna] = df[columna].map(escala_likert_negativa).fillna(0)
-            return df
+                )
+            elif columna in preguntas_likert_positiva:
+                df[columna] = df[columna].map(escala_likert_positiva).fillna(0)
+            elif columna in preguntas_likert_negativa:
+                df[columna] = df[columna].map(escala_likert_negativa).fillna(0)
+        return df
 
-        # Función para calcular niveles de riesgo
-        def calcular_niveles_riesgo_persona(respuestas):
-            niveles_generales = {
-                "Nulo o despreciable": lambda c: c < 50,
-                "Bajo": lambda c: 50 <= c < 75,
-                "Medio": lambda c: 75 <= c < 99,
-                "Alto": lambda c: 99 <= c < 140,
-                "Muy alto": lambda c: c >= 140
-            }
-            puntaje_total = sum(respuestas.values())
-            nivel_general = next(
-                (nivel for nivel, condicion in niveles_generales.items() if condicion(puntaje_total)),
-                "No determinado"
-            )
-            return puntaje_total, nivel_general
+    # Función para calcular niveles de riesgo
+    def calcular_niveles_riesgo_persona(respuestas):
+        niveles_generales = {
+            "Nulo o despreciable": lambda c: c < 50,
+            "Bajo": lambda c: 50 <= c < 75,
+            "Medio": lambda c: 75 <= c < 99,
+            "Alto": lambda c: 99 <= c < 140,
+            "Muy alto": lambda c: c >= 140
+        }
+        puntaje_total = sum(respuestas.values())
+        nivel_general = next(
+            (nivel for nivel, condicion in niveles_generales.items() if condicion(puntaje_total)),
+            "No determinado"
+        )
+        return puntaje_total, nivel_general
 
-        # Transformar las respuestas y calcular puntajes
-        def procesar_dataframe(df):
-            # Seleccionar columnas relevantes para transformar
-            columnas_preguntas = preguntas_likert_positiva + preguntas_likert_negativa
-            df_respuestas = df[columnas_preguntas].copy()
+    # Transformar las respuestas y calcular puntajes
+    def procesar_dataframe(df):
+        # Seleccionar columnas relevantes para transformar
+        columnas_preguntas = preguntas_likert_positiva + preguntas_likert_negativa
+        df_respuestas = df[columnas_preguntas].copy()
 
-            # Transformar respuestas a escala Likert
-            df_respuestas = transformar_respuestas_likert(df_respuestas)
+        # Transformar respuestas a escala Likert
+        df_respuestas = transformar_respuestas_likert(df_respuestas)
 
-            # Calcular puntajes y niveles de riesgo
-            calificaciones = []
-            for _, row in df_respuestas.iterrows():
-                respuestas = row.to_dict()
-                puntaje_total, nivel_general = calcular_niveles_riesgo_persona(respuestas)
-                calificaciones.append({
-                    "Calificación Total": puntaje_total,
-                    "Nivel de Riesgo": nivel_general
-                })
+        # Calcular puntajes y niveles de riesgo
+        calificaciones = []
+        for _, row in df_respuestas.iterrows():
+            respuestas = row.to_dict()
+            puntaje_total, nivel_general = calcular_niveles_riesgo_persona(respuestas)
+            calificaciones.append({
+                "Calificación Total": puntaje_total,
+                "Nivel de Riesgo": nivel_general
+            })
 
-            # Convertir calificaciones a DataFrame
-            df_calificaciones = pd.DataFrame(calificaciones)
+        # Convertir calificaciones a DataFrame
+        df_calificaciones = pd.DataFrame(calificaciones)
 
-            # Concatenar resultados con el DataFrame original
-            df_resultados = pd.concat([df.reset_index(drop=True), df_calificaciones], axis=1)
-            return df_resultados
+        # Concatenar resultados con el DataFrame original
+        df_resultados = pd.concat([df.reset_index(drop=True), df_calificaciones], axis=1)
+        return df_resultados
 
-        # Aplicar procesamiento y mostrar en Streamlit
-        if 'nuevo_df3' in locals():
-            nuevo_df3_resultado = procesar_dataframe(nuevo_df3)
+    # Aplicar procesamiento y mostrar en Streamlit
+    if 'nuevo_df3' in locals():
+        nuevo_df3_resultado = procesar_dataframe(nuevo_df3)
 
             #st.success("Cálculo de Nivel de Riesgo Completado")
             #st.dataframe(nuevo_df3_resultado)
 
         ####################3
 
-        import streamlit as st
+    import streamlit as st
 
-        # Crear una copia del DataFrame original
-        nuevo_df3_resultado_num = nuevo_df3_resultado.copy()
+    # Crear una copia del DataFrame original
+    nuevo_df3_resultado_num = nuevo_df3_resultado.copy()
 
-        # Transformar columnas de preguntas Likert a formato numérico
-        for col in nuevo_df3_resultado.columns:
-            if col in preguntas_likert_positiva:
-                nuevo_df3_resultado_num[col] = nuevo_df3_resultado[col].map(escala_likert_positiva).fillna(0)
-            elif col in preguntas_likert_negativa:
-                nuevo_df3_resultado_num[col] = nuevo_df3_resultado[col].map(escala_likert_negativa).fillna(0)
+    # Transformar columnas de preguntas Likert a formato numérico
+    for col in nuevo_df3_resultado.columns:
+        if col in preguntas_likert_positiva:
+            nuevo_df3_resultado_num[col] = nuevo_df3_resultado[col].map(escala_likert_positiva).fillna(0)
+        elif col in preguntas_likert_negativa:
+            nuevo_df3_resultado_num[col] = nuevo_df3_resultado[col].map(escala_likert_negativa).fillna(0)
 
-        # Mantener las columnas no numéricas si existen en el DataFrame
-        columnas_no_numericas = ["Folio", "CT", "P1"]
-        columnas_existentes = [col for col in columnas_no_numericas if col in nuevo_df3_resultado.columns]
-        nuevo_df3_resultado_num[columnas_existentes] = nuevo_df3_resultado[columnas_existentes]
+    # Mantener las columnas no numéricas si existen en el DataFrame
+    columnas_no_numericas = ["Folio", "CT", "P1"]
+    columnas_existentes = [col for col in columnas_no_numericas if col in nuevo_df3_resultado.columns]
+    nuevo_df3_resultado_num[columnas_existentes] = nuevo_df3_resultado[columnas_existentes]
 
-        #st.success("Transformación de respuestas Likert a formato numérico completada")
+    #st.success("Transformación de respuestas Likert a formato numérico completada")
 
-        with st.expander("Sobre el riesgo laboral segun la NOM-035-STPS-2018"):
-            st.markdown("""
-
+    with st.expander("Sobre el riesgo laboral segun la NOM-035-STPS-2018"):
+        st.markdown("""
         La **Norma Oficial Mexicana NOM-035-STPS-2018** establece los lineamientos para la identificación, análisis y prevención de factores de riesgo psicosocial en los centros de trabajo en México.
 
         ### Definición:
@@ -488,19 +487,19 @@ elif paginas == "Depuración":
         Fuente: *Norma Oficial Mexicana NOM-035-STPS-2018, Factores de riesgo psicosocial en el trabajo - Identificación, análisis y prevención*.
         """)
         
-        st.markdown("""A Continuación se muestra el **dataframe filtrado** con las respuestas cambiadas a una escala numérica:""")
-        st.dataframe(nuevo_df3_resultado_num)
+    st.markdown("""A Continuación se muestra el **dataframe filtrado** con las respuestas cambiadas a una escala numérica:""")
+    st.dataframe(nuevo_df3_resultado_num)
 
-        # Convertir DataFrame a archivo Excel
-        excel_data_2 = convertir_df_a_excel(nuevo_df3_resultado_num)
+    # Convertir DataFrame a archivo Excel
+    excel_data_2 = convertir_df_a_excel(nuevo_df3_resultado_num)
 
-        # Botón de descarga
-        st.download_button(
-            label="📥 Descarga Dataframe filtrado",
-            data=excel_data_2,
-            file_name="dataframe_filtrado.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
+    # Botón de descarga
+    st.download_button(
+        label="📥 Descarga Dataframe filtrado",
+        data=excel_data_2,
+        file_name="dataframe_filtrado.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
         
         #############
         import streamlit as st
