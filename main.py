@@ -501,193 +501,192 @@ elif paginas == "Depuración":
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
         
-        #############
-        import streamlit as st
-        import pandas as pd
+    #############
+    import streamlit as st
+    import pandas as pd
     
-        # Función para generar DataFrames separados
-        def generar_dataframes_separados(df):
-            # Seleccionar las columnas de la escala positiva y negativa junto con las columnas clave
-            columnas_clave = ["Folio", "CT"]
-            columnas_positivas = columnas_clave + preguntas_likert_positiva
-            columnas_negativas = columnas_clave + preguntas_likert_negativa
+    # Función para generar DataFrames separados
+    def generar_dataframes_separados(df):
+        # Seleccionar las columnas de la escala positiva y negativa junto con las columnas clave
+        columnas_clave = ["Folio", "CT"]
+        columnas_positivas = columnas_clave + preguntas_likert_positiva
+        columnas_negativas = columnas_clave + preguntas_likert_negativa
 
-            # Crear DataFrame para la escala positiva
-            df_positivos = df[columnas_positivas].copy()
-            for col in preguntas_likert_positiva:
-                df_positivos[col] = pd.to_numeric(df_positivos[col], errors="coerce").fillna(0)  # Convertir a numérico y manejar valores faltantes
-            df_positivos["Suma Positiva"] = df_positivos[preguntas_likert_positiva].sum(axis=1)
-            df_positivos["Calificación Total"] = pd.to_numeric(df["Calificación Total"], errors="coerce").fillna(0)
-            df_positivos["Nivel de Riesgo"] = df["Nivel de Riesgo"]
+        # Crear DataFrame para la escala positiva
+        df_positivos = df[columnas_positivas].copy()
+        for col in preguntas_likert_positiva:
+            df_positivos[col] = pd.to_numeric(df_positivos[col], errors="coerce").fillna(0)  # Convertir a numérico y manejar valores faltantes
+        df_positivos["Suma Positiva"] = df_positivos[preguntas_likert_positiva].sum(axis=1)
+        df_positivos["Calificación Total"] = pd.to_numeric(df["Calificación Total"], errors="coerce").fillna(0)
+        df_positivos["Nivel de Riesgo"] = df["Nivel de Riesgo"]
 
-            # Crear DataFrame para la escala negativa
-            df_negativos = df[columnas_negativas].copy()
-            for col in preguntas_likert_negativa:
-                df_negativos[col] = pd.to_numeric(df_negativos[col], errors="coerce").fillna(0)  # Convertir a numérico y manejar valores faltantes
-            df_negativos["Suma Negativa"] = df_negativos[preguntas_likert_negativa].sum(axis=1)
-            df_negativos["Calificación Total"] = pd.to_numeric(df["Calificación Total"], errors="coerce").fillna(0)
-            df_negativos["Nivel de Riesgo"] = df["Nivel de Riesgo"]
+        # Crear DataFrame para la escala negativa
+        df_negativos = df[columnas_negativas].copy()
+        for col in preguntas_likert_negativa:
+            df_negativos[col] = pd.to_numeric(df_negativos[col], errors="coerce").fillna(0)  # Convertir a numérico y manejar valores faltantes
+        df_negativos["Suma Negativa"] = df_negativos[preguntas_likert_negativa].sum(axis=1)
+        df_negativos["Calificación Total"] = pd.to_numeric(df["Calificación Total"], errors="coerce").fillna(0)
+        df_negativos["Nivel de Riesgo"] = df["Nivel de Riesgo"]
 
-            return df_positivos, df_negativos
+        return df_positivos, df_negativos
 
-        # Generar los DataFrames separados    
-        nuevo_df3_resultados_positivos, nuevo_df3_resultados_negativos = generar_dataframes_separados(nuevo_df3_resultado_num)
+    # Generar los DataFrames separados    
+    nuevo_df3_resultados_positivos, nuevo_df3_resultados_negativos = generar_dataframes_separados(nuevo_df3_resultado_num)
 
-        # Interfaz en Streamlit para seleccionar la visualización
-        with st.expander("Visualización de Escalas Likert Positiva y Negativa"):
+    # Interfaz en Streamlit para seleccionar la visualización
+    with st.expander("Visualización de Escalas Likert Positiva y Negativa"):
+        opcion_visualizacion = st.radio(
+            "Selecciona el tipo de escala Likert a visualizar:",
+            ("Escala Positiva", "Escala Negativa")
+        )
 
-            opcion_visualizacion = st.radio(
-                "Selecciona el tipo de escala Likert a visualizar:",
-                ("Escala Positiva", "Escala Negativa")
+        if opcion_visualizacion == "Escala Positiva":
+            st.success("Mostrando DataFrame con preguntas de Escala Likert Positiva")
+            st.dataframe(nuevo_df3_resultados_positivos)
+
+            # Permitir descarga del DataFrame de escala positiva
+            archivo_csv_positivos = nuevo_df3_resultados_positivos.to_csv(index=False).encode("utf-8")
+
+            st.download_button(
+                label="Descargar datos de Escala Positiva (CSV)",
+                data=archivo_csv_positivos,
+                file_name="datos_escala_positiva.csv",
+                mime="text/csv"
             )
 
-            if opcion_visualizacion == "Escala Positiva":
-                st.success("Mostrando DataFrame con preguntas de Escala Likert Positiva")
-                st.dataframe(nuevo_df3_resultados_positivos)
+        else:
+            st.warning("Mostrando DataFrame con preguntas de Escala Likert Negativa")
+            st.dataframe(nuevo_df3_resultados_negativos)
 
-                # Permitir descarga del DataFrame de escala positiva
-                archivo_csv_positivos = nuevo_df3_resultados_positivos.to_csv(index=False).encode("utf-8")
+            # Permitir descarga del DataFrame de escala negativa
+            archivo_csv_negativos = nuevo_df3_resultados_negativos.to_csv(index=False).encode("utf-8")
 
-                st.download_button(
-                    label="Descargar datos de Escala Positiva (CSV)",
-                    data=archivo_csv_positivos,
-                    file_name="datos_escala_positiva.csv",
-                    mime="text/csv"
-                )
-
-            else:
-                st.warning("Mostrando DataFrame con preguntas de Escala Likert Negativa")
-                st.dataframe(nuevo_df3_resultados_negativos)
-
-                # Permitir descarga del DataFrame de escala negativa
-                archivo_csv_negativos = nuevo_df3_resultados_negativos.to_csv(index=False).encode("utf-8")
-
-                st.download_button(
-                    label="Descargar datos de Escala Negativa (CSV)",
-                    data=archivo_csv_negativos,
-                    file_name="datos_escala_negativa.csv",
-                    mime="text/csv"
-                )
+            st.download_button(
+                label="Descargar datos de Escala Negativa (CSV)",
+                data=archivo_csv_negativos,
+                file_name="datos_escala_negativa.csv",
+                mime="text/csv"
+            )
 
 
         ###############
 
-        import streamlit as st
-        import matplotlib.pyplot as plt
+    import streamlit as st
+    import matplotlib.pyplot as plt
 
         #st.subheader("Distribución de Niveles de Riesgo")
 
         # Contar los valores únicos en la columna "Nivel de Riesgo"
-        nivel_riesgo_counts = nuevo_df3_resultado["Nivel de Riesgo"].value_counts()
+    nivel_riesgo_counts = nuevo_df3_resultado["Nivel de Riesgo"].value_counts()
 
         # Crear un gráfico de pastel
-        fig, ax = plt.subplots(figsize=(8, 8))
-        nivel_riesgo_counts.plot.pie(
-            autopct='%1.1f%%',
-            startangle=90,
-            cmap='tab20',
-            legend=False,
-            title='Distribución por Nivel de Riesgo',
-            ax=ax
-        )
-        ax.set_ylabel('')  # Eliminar el texto del eje y
-        plt.tight_layout()
+    fig, ax = plt.subplots(figsize=(8, 8))
+    nivel_riesgo_counts.plot.pie(
+        autopct='%1.1f%%',
+        startangle=90,
+        cmap='tab20',
+        legend=False,
+        title='Distribución por Nivel de Riesgo',
+        ax=ax
+    )
+    ax.set_ylabel('')  # Eliminar el texto del eje y
+    plt.tight_layout()
 
-        # Mostrar la gráfica en Streamlit
-        st.pyplot(fig)
+    # Mostrar la gráfica en Streamlit
+    st.pyplot(fig)
 
-        ##########
+    ##########
 
-        # Diccionario de dominios reales y las preguntas que los conforman
-        dominios_reales = {
-            "Condiciones en el ambiente de trabajo": ["P2_1", "P2_2", "P2_3", "P2_4", "P2_5"],
-            "Carga de trabajo": ["P3_1", "P3_2", "P3_3", "P4_1", "P4_2", "P4_3", "P4_4",
-                         "P15_1", "P15_2", "P15_3", "P15_4", "P5_1", "P5_2", "P5_3", "P5_4"],
-            "Falta de control sobre el trabajo": ["P7_1", "P7_2", "P7_3", "P7_4", "P7_5",
+    # Diccionario de dominios reales y las preguntas que los conforman
+    dominios_reales = {
+        "Condiciones en el ambiente de trabajo": ["P2_1", "P2_2", "P2_3", "P2_4", "P2_5"],
+        "Carga de trabajo": ["P3_1", "P3_2", "P3_3", "P4_1", "P4_2", "P4_3", "P4_4",
+                        "P15_1", "P15_2", "P15_3", "P15_4", "P5_1", "P5_2", "P5_3", "P5_4"],
+        "Falta de control sobre el trabajo": ["P7_1", "P7_2", "P7_3", "P7_4", "P7_5",
                                           "P7_6", "P8_1", "P8_2", "P9_5", "P9_6"],
-            "Jornada de trabajo": ["P6_1", "P6_2"],
-            "Interferencia en la relación trabajo-familia": ["P6_3", "P6_4", "P6_5", "P6_6"],
-            "Liderazgo": ["P9_1", "P9_2", "P9_3", "P9_4", "P10_1", "P10_2", "P10_3", "P10_4", "P10_5"],
-            "Relaciones en el trabajo": ["P11_1", "P11_2", "P11_3", "P11_4", "P11_5",
+        "Jornada de trabajo": ["P6_1", "P6_2"],
+        "Interferencia en la relación trabajo-familia": ["P6_3", "P6_4", "P6_5", "P6_6"],
+        "Liderazgo": ["P9_1", "P9_2", "P9_3", "P9_4", "P10_1", "P10_2", "P10_3", "P10_4", "P10_5"],
+        "Relaciones en el trabajo": ["P11_1", "P11_2", "P11_3", "P11_4", "P11_5",
                                  "P17_1", "P17_2", "P17_3", "P17_4"],
-            "Violencia": ["P13_1", "P13_2", "P13_3", "P13_4", "P13_5", "P13_6", "P13_7", "P13_8"],
-            "Reconocimiento del desempeño": ["P12_1", "P12_2", "P12_3", "P12_4", "P12_5", "P12_6"],
-            "Insuficiente sentido de pertenencia e inestabilidad": ["P12_7", "P12_8", "P12_9", "P12_10"]
-        }
+        "Violencia": ["P13_1", "P13_2", "P13_3", "P13_4", "P13_5", "P13_6", "P13_7", "P13_8"],
+        "Reconocimiento del desempeño": ["P12_1", "P12_2", "P12_3", "P12_4", "P12_5", "P12_6"],
+        "Insuficiente sentido de pertenencia e inestabilidad": ["P12_7", "P12_8", "P12_9", "P12_10"]
+    }
 
-        # Puntos de corte de niveles por dominio
-        niveles_dominio_cortes = {
-            "Condiciones en el ambiente de trabajo": {
-                "Nulo o despreciable": lambda c: c < 3,
-                "Bajo": lambda c: 3 <= c < 5,
-                "Medio": lambda c: 5 <= c < 7,
-                "Alto": lambda c: 7 <= c < 9,
-                "Muy alto": lambda c: c >= 9
-            },
-            "Carga de trabajo": {
-                "Nulo o despreciable": lambda c: c < 12,
-                "Bajo": lambda c: 12 <= c < 16,
-                "Medio": lambda c: 16 <= c < 20,
-                "Alto": lambda c: 20 <= c < 24,
-                "Muy alto": lambda c: c >= 24
-            },
-            "Falta de control sobre el trabajo": {
-                "Nulo o despreciable": lambda c: c < 5,
-                "Bajo": lambda c: 5 <= c < 8,
-                "Medio": lambda c: 8 <= c < 11,
-                "Alto": lambda c: 11 <= c < 14,
-                "Muy alto": lambda c: c >= 14
-            },
-            "Jornada de trabajo": {
-                "Nulo o despreciable": lambda c: c < 1,
-                "Bajo": lambda c: 1 <= c < 2,
-                "Medio": lambda c: 2 <= c < 4,
-                "Alto": lambda c: 4 <= c < 6,
-                "Muy alto": lambda c: c >= 6
-            },
-            "Interferencia en la relación trabajo-familia": {
-                "Nulo o despreciable": lambda c: c < 1,
-                "Bajo": lambda c: 1 <= c < 2,
-                "Medio": lambda c: 2 <= c < 4,
-                "Alto": lambda c: 4 <= c < 6,
-                "Muy alto": lambda c: c >= 6
-            },
-            "Liderazgo": {
-                "Nulo o despreciable": lambda c: c < 3,
-                "Bajo": lambda c: 3 <= c < 5,
-                "Medio": lambda c: 5 <= c < 8,
-                "Alto": lambda c: 8 <= c < 11,
-                "Muy alto": lambda c: c >= 11
-            },
-            "Relaciones en el trabajo": {
-                "Nulo o despreciable": lambda c: c < 10,
-                "Bajo": lambda c: 10 <= c < 13,
-                "Medio": lambda c: 13 <= c < 17,
-                "Alto": lambda c: 17 <= c < 21,
-                "Muy alto": lambda c: c >= 21
-            },
-            "Violencia": {
-                "Nulo o despreciable": lambda c: c < 7,
-                "Bajo": lambda c: 7 <= c < 10,
-                "Medio": lambda c: 10 <= c < 13,
-                "Alto": lambda c: 13 <= c < 16,
-                "Muy alto": lambda c: c >= 16
-            },
-            "Reconocimiento del desempeño": {
-                "Nulo o despreciable": lambda c: c < 5,
-                "Bajo": lambda c: 5 <= c < 8,
-                "Medio": lambda c: 8 <= c < 11,
-                "Alto": lambda c: 11 <= c < 14,
-                "Muy alto": lambda c: c >= 14
-            },
-            "Insuficiente sentido de pertenencia e inestabilidad": {
-                "Nulo o despreciable": lambda c: c < 7,
-                "Bajo": lambda c: 7 <= c < 10,
-                "Medio": lambda c: 10 <= c < 13,
-                "Alto": lambda c: 13 <= c < 16,
-                "Muy alto": lambda c: c >= 16
-            }
+    # Puntos de corte de niveles por dominio
+    niveles_dominio_cortes = {
+        "Condiciones en el ambiente de trabajo": {
+            "Nulo o despreciable": lambda c: c < 3,
+            "Bajo": lambda c: 3 <= c < 5,
+            "Medio": lambda c: 5 <= c < 7,
+            "Alto": lambda c: 7 <= c < 9,
+            "Muy alto": lambda c: c >= 9
+        },
+        "Carga de trabajo": {
+            "Nulo o despreciable": lambda c: c < 12,
+            "Bajo": lambda c: 12 <= c < 16,
+            "Medio": lambda c: 16 <= c < 20,
+            "Alto": lambda c: 20 <= c < 24,
+            "Muy alto": lambda c: c >= 24
+        },
+        "Falta de control sobre el trabajo": {
+            "Nulo o despreciable": lambda c: c < 5,
+            "Bajo": lambda c: 5 <= c < 8,
+            "Medio": lambda c: 8 <= c < 11,
+            "Alto": lambda c: 11 <= c < 14,
+            "Muy alto": lambda c: c >= 14
+        },
+        "Jornada de trabajo": {
+            "Nulo o despreciable": lambda c: c < 1,
+            "Bajo": lambda c: 1 <= c < 2,
+            "Medio": lambda c: 2 <= c < 4,
+            "Alto": lambda c: 4 <= c < 6,
+            "Muy alto": lambda c: c >= 6
+        },
+        "Interferencia en la relación trabajo-familia": {
+            "Nulo o despreciable": lambda c: c < 1,
+            "Bajo": lambda c: 1 <= c < 2,
+            "Medio": lambda c: 2 <= c < 4,
+            "Alto": lambda c: 4 <= c < 6,
+            "Muy alto": lambda c: c >= 6
+        },
+        "Liderazgo": {
+            "Nulo o despreciable": lambda c: c < 3,
+            "Bajo": lambda c: 3 <= c < 5,
+            "Medio": lambda c: 5 <= c < 8,
+            "Alto": lambda c: 8 <= c < 11,
+            "Muy alto": lambda c: c >= 11
+        },
+        "Relaciones en el trabajo": {
+            "Nulo o despreciable": lambda c: c < 10,
+            "Bajo": lambda c: 10 <= c < 13,
+            "Medio": lambda c: 13 <= c < 17,
+            "Alto": lambda c: 17 <= c < 21,
+            "Muy alto": lambda c: c >= 21
+        },
+        "Violencia": {
+            "Nulo o despreciable": lambda c: c < 7,
+            "Bajo": lambda c: 7 <= c < 10,
+            "Medio": lambda c: 10 <= c < 13,
+            "Alto": lambda c: 13 <= c < 16,
+            "Muy alto": lambda c: c >= 16
+        },
+        "Reconocimiento del desempeño": {
+            "Nulo o despreciable": lambda c: c < 5,
+            "Bajo": lambda c: 5 <= c < 8,
+            "Medio": lambda c: 8 <= c < 11,
+            "Alto": lambda c: 11 <= c < 14,
+            "Muy alto": lambda c: c >= 14
+        },
+        "Insuficiente sentido de pertenencia e inestabilidad": {
+            "Nulo o despreciable": lambda c: c < 7,
+            "Bajo": lambda c: 7 <= c < 10,
+            "Medio": lambda c: 10 <= c < 13,
+            "Alto": lambda c: 13 <= c < 16,
+            "Muy alto": lambda c: c >= 16
         }
+    }
 
 
 
@@ -695,17 +694,16 @@ elif paginas == "Depuración":
         
         #st.subheader("Aná")
 
-        import streamlit as st
+    import streamlit as st
 
-        st.markdown("""
-        A continuación se evalua el nivel de riesgo en cada dominio definido por la NOM-035-STPS-2018
-        """)
+    st.markdown("""
+    A continuación se evalua el nivel de riesgo en cada dominio definido por la NOM-035-STPS-2018
+    """)
         
-        with st.expander("Dominios del Cuestionario de Nivel de Riesgo según la NOM-035-STPS-2018"):
-            st.markdown("""
-
+    with st.expander("Dominios del Cuestionario de Nivel de Riesgo según la NOM-035-STPS-2018"):
+        st.markdown("""
         La **NOM-035-STPS-2018** evalúa el nivel de riesgo psicosocial en los centros de trabajo a través de los siguientes **dominios**:
-
+        
         1. **Condiciones en el ambiente de trabajo**  
            Evaluación de condiciones físicas y ambientales del lugar de trabajo.
 
@@ -743,1120 +741,50 @@ elif paginas == "Depuración":
 
 
         
-        # Crear un nuevo DataFrame con las columnas deseadas
-        dominio_puntajes_niveles = []
+    # Crear un nuevo DataFrame con las columnas deseadas
+    dominio_puntajes_niveles = []
 
-        # Calcular puntajes y niveles de riesgo por dominio
-        nuevo_df3_result_num = nuevo_df3_resultado_num.copy()
+    # Calcular puntajes y niveles de riesgo por dominio
+    nuevo_df3_result_num = nuevo_df3_resultado_num.copy()
 
-        for dominio, preguntas in dominios_reales.items():
-            # Calcular el puntaje total por dominio
-            nuevo_df3_result_num[dominio + "_Puntaje"] = nuevo_df3_result_num[preguntas].sum(axis=1)
+    for dominio, preguntas in dominios_reales.items():
+        # Calcular el puntaje total por dominio
+        nuevo_df3_result_num[dominio + "_Puntaje"] = nuevo_df3_result_num[preguntas].sum(axis=1)
 
-            # Calcular el nivel de riesgo por dominio
-            nuevo_df3_result_num[dominio + "_Nivel de Riesgo"] = nuevo_df3_result_num[dominio + "_Puntaje"].apply(
-                lambda puntaje: next(
-                    (nivel for nivel, condicion in niveles_dominio_cortes[dominio].items() if condicion(puntaje)),
-                    "No determinado"
-                )
+        # Calcular el nivel de riesgo por dominio
+        nuevo_df3_result_num[dominio + "_Nivel de Riesgo"] = nuevo_df3_result_num[dominio + "_Puntaje"].apply(
+            lambda puntaje: next(
+                (nivel for nivel, condicion in niveles_dominio_cortes[dominio].items() if condicion(puntaje)),
+                "No determinado"
             )
-
-        # Seleccionar columnas relevantes para el nuevo DataFrame
-        columnas_finales = ["Folio", "Calificación Total", "Nivel de Riesgo"] + [
-            col for dominio in dominios_reales.keys() for col in [dominio + "_Puntaje", dominio + "_Nivel de Riesgo"]
-        ]
-
-        # Crear el nuevo DataFrame con los resultados por dominio
-        nuevo_df3_resultado_dominios = nuevo_df3_result_num[columnas_finales]
-
-        # Mostrar el DataFrame en Streamlit
-        #st.success("Cálculo de puntajes y niveles de riesgo por dominio completado")
-        st.dataframe(nuevo_df3_resultado_dominios)
-
-        # Permitir descarga del DataFrame con los datos por dominio
-        @st.cache_data    
-        def convertir_csv(df):
-            return df.to_csv(index=False).encode("utf-8")
-
-        archivo_csv_dominios = convertir_csv(nuevo_df3_resultado_dominios)
-
-        st.download_button(
-            label="Descargar datos de Puntajes y Niveles de Riesgo por Dominio (CSV)",
-            data=archivo_csv_dominios,
-            file_name="datos_puntajes_niveles_dominios.csv",
-            mime="text/csv"
         )
 
-        ###################
+    # Seleccionar columnas relevantes para el nuevo DataFrame
+    columnas_finales = ["Folio", "Calificación Total", "Nivel de Riesgo"] + [
+        col for dominio in dominios_reales.keys() for col in [dominio + "_Puntaje", dominio + "_Nivel de Riesgo"]
+    ]
+
+    # Crear el nuevo DataFrame con los resultados por dominio
+    nuevo_df3_resultado_dominios = nuevo_df3_result_num[columnas_finales]
+
+    # Mostrar el DataFrame en Streamlit
+    #st.success("Cálculo de puntajes y niveles de riesgo por dominio completado")
+    st.dataframe(nuevo_df3_resultado_dominios)
+
+    # Permitir descarga del DataFrame con los datos por dominio
+    @st.cache_data    
+    def convertir_csv(df):
+        return df.to_csv(index=False).encode("utf-8")
+
+    archivo_csv_dominios = convertir_csv(nuevo_df3_resultado_dominios)
+
+    st.download_button(
+        label="Descargar datos de Puntajes y Niveles de Riesgo por Dominio (CSV)",
+        data=archivo_csv_dominios,
+        file_name="datos_puntajes_niveles_dominios.csv",
+        mime="text/csv"
+    )
 
-        #st.title("Búsqueda de Empleado por Folio o CT")
-
-        ## Ingresar el número de Folio o CT para buscar
-        #criterio_busqueda = st.radio("Buscar empleado por:", ("Folio", "CT"))
-        #valor_busqueda = st.text_input(f"Ingrese el {criterio_busqueda} del empleado:")
-
-        ## Filtrar el DataFrame según la búsqueda
-        #if valor_busqueda:
-        #    df_filtrado = nuevo_df3_resultado_dominios[nuevo_df3_resultado_dominios[criterio_busqueda].astype(str) == valor_busqueda]
-
-       #     if not df_filtrado.empty:
-       #         st.success(f"Empleado encontrado con {criterio_busqueda} = {valor_busqueda}")
-       #         st.dataframe(df_filtrado)
-       #     else:
-       #         st.warning(f"No se encontró ningún empleado con {criterio_busqueda} = {valor_busqueda}")
-
-
-        ########################
-
-#        import streamlit as st
-#        import pandas as pd
-#        import numpy as np
-#        import matplotlib.pyplot as plt
-
-#        # Mapeo de niveles de riesgo a valores numéricos
-#        nivel_riesgo_valores = {
-#            "Nulo o despreciable": 0,
-#            "Bajo": 1,
-#            "Medio": 2,
-#            "Alto": 3,
-#            "Muy alto": 4
-#        }
-
-#        st.title("Búsqueda de Empleado y Evaluación de Riesgo en Diagrama de Radar")
-
-#        # Ingresar el número de Folio o CT para buscar
-#        criterio_busqueda = st.radio("Buscar empleado por:", ("Folio", "CT"))
-#        valor_busqueda = st.text_input(f"Ingrese el {criterio_busqueda} del empleado:")
-
-#        if valor_busqueda:
-#            df_filtrado = nuevo_df3_resultado_dominios[nuevo_df3_resultado_dominios[criterio_busqueda].astype(str) == valor_busqueda]
-
-#            if not df_filtrado.empty:
-#                st.success(f"Empleado encontrado con {criterio_busqueda} = {valor_busqueda}")
-#                st.dataframe(df_filtrado)
-
-#                # Extraer los valores de nivel de riesgo por dominio y convertirlos a valores numéricos
-#                niveles_riesgo = []
-#                dominios = list(dominios_reales.keys())
-
-#                for dominio in dominios:
-#                    nivel_str = df_filtrado[f"{dominio}_Nivel de Riesgo"].values[0]
-#                    niveles_riesgo.append(nivel_riesgo_valores.get(nivel_str, 0))
-
-#                # Crear el gráfico de radar
-#                num_vars = len(dominios)
-
-#                # Ángulos de cada eje en el gráfico de radar
-#                angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
-#                niveles_riesgo += niveles_riesgo[:1]  # Cerrar el gráfico
-#                angles += angles[:1]
-
-#                # Crear la figura del radar
-#                fig, ax = plt.subplots(figsize=(8, 8), subplot_kw=dict(polar=True))
-#                ax.fill(angles, niveles_riesgo, color='red', alpha=0.25)
-#                ax.plot(angles, niveles_riesgo, color='red', linewidth=2)
-
-#                # Configurar los ejes
-#                ax.set_yticks(range(5))  # Rango de 0 a 4 (correspondiente a los niveles de riesgo)
-#                ax.set_yticklabels(["Nulo", "Bajo", "Medio", "Alto", "Muy Alto"], fontsize=10)
-#                ax.set_xticks(angles[:-1])
-#                ax.set_xticklabels(dominios, fontsize=8, rotation=45, ha="right")
-
-                
-#                st.pyplot(fig)
-
-#            else:
-#                st.warning(f"No se encontró ningún empleado con {criterio_busqueda} = {valor_busqueda}")
-
-
-        ####################################3
-
-
-        import streamlit as st
-        import pandas as pd
-        import numpy as np
-        import matplotlib.pyplot as plt
-
-        # Mapeo de niveles de riesgo a valores numéricos
-        nivel_riesgo_valores = {
-            "Nulo o despreciable": 0,
-            "Bajo": 1,
-            "Medio": 2,
-            "Alto": 3,
-            "Muy alto": 4
-        }
-
-        st.subheader("Visualización del nivel de riesgo")
-
-        st.markdown("""
-        A continuación puede visualizar los **diagramas de radar** con los resultados para la evaluación del **nivel de riesgo laboral** de uno o mas participantes de la encuesta. A continuación seleccione si quiere visualizar los datos de un participante en particular (tecleando la clave alfa numérica que lo representa) o de todos aquellos que han sido clasificados con el mismo nivel de riesgo.
-        """)
-        # Seleccionar tipo de búsqueda
-        tipo_busqueda = st.radio("Seleccione el tipo de búsqueda:", ("Por Empleado", "Por Nivel de Riesgo"))
-
-        if tipo_busqueda == "Por Empleado":
-            # Ingresar el número de Folio o CT para buscar
-            criterio_busqueda = st.radio("Buscar empleado por:", ("Folio", "CT"))
-            valor_busqueda = st.text_input(f"Ingrese el {criterio_busqueda} del empleado:")
-
-            if valor_busqueda:
-                df_filtrado = nuevo_df3_resultado_dominios[nuevo_df3_resultado_dominios[criterio_busqueda].astype(str) == valor_busqueda]
-
-                if not df_filtrado.empty:
-                    st.success(f"Empleado encontrado con {criterio_busqueda} = {valor_busqueda}")
-                    st.dataframe(df_filtrado)
-
-                    # Extraer los valores de nivel de riesgo por dominio y convertirlos a valores numéricos
-                    niveles_riesgo = []
-                    dominios = list(dominios_reales.keys())
-
-                    for dominio in dominios:
-                        nivel_str = df_filtrado[f"{dominio}_Nivel de Riesgo"].values[0]
-                        niveles_riesgo.append(nivel_riesgo_valores.get(nivel_str, 0))
-
-                    # Crear el gráfico de radar
-                    num_vars = len(dominios)
-
-                    # Ángulos de cada eje en el gráfico de radar
-                    angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
-                    niveles_riesgo += niveles_riesgo[:1]  # Cerrar el gráfico
-                    angles += angles[:1]
-
-                    # Crear la figura del radar
-                    fig, ax = plt.subplots(figsize=(8, 8), subplot_kw=dict(polar=True))
-                    ax.fill(angles, niveles_riesgo, color='red', alpha=0.25)
-                    ax.plot(angles, niveles_riesgo, color='red', linewidth=2)
-
-                    # Configurar los ejes
-                    ax.set_yticks(range(5))  # Rango de 0 a 4 (correspondiente a los niveles de riesgo)
-                    ax.set_yticklabels(["Nulo", "Bajo", "Medio", "Alto", "Muy Alto"], fontsize=10)
-                    ax.set_xticks(angles[:-1])
-                    ax.set_xticklabels(dominios, fontsize=8, rotation=45, ha="right")
-
-                    st.pyplot(fig)
-
-                else:
-                    st.warning(f"No se encontró ningún empleado con {criterio_busqueda} = {valor_busqueda}")
-
-        elif tipo_busqueda == "Por Nivel de Riesgo":
-            # Seleccionar un Nivel de Riesgo
-            nivel_seleccionado = st.selectbox("Seleccione el Nivel de Riesgo a visualizar:", list(nivel_riesgo_valores.keys()))
-
-            # Filtrar empleados con el Nivel de Riesgo seleccionado
-            df_filtrado = nuevo_df3_resultado_dominios[nuevo_df3_resultado_dominios["Nivel de Riesgo"] == nivel_seleccionado]
-
-            if not df_filtrado.empty:
-                st.success(f"Se encontraron {len(df_filtrado)} empleados con Nivel de Riesgo: {nivel_seleccionado}")
-                st.dataframe(df_filtrado[["Folio", "Nivel de Riesgo"]])
-
-                # Definir el número de filas y columnas en la cuadrícula de gráficos
-                num_empleados = len(df_filtrado)
-                num_cols = 3  # Número de columnas por fila
-                num_rows = -(-num_empleados // num_cols)  # Redondeo hacia arriba
-
-                # Crear múltiples gráficos de radar en una cuadrícula
-                fig, axes = plt.subplots(num_rows, num_cols, figsize=(num_cols * 5, num_rows * 5), subplot_kw=dict(polar=True))
-                axes = np.array(axes).flatten()  # Asegurar que se puedan iterar en caso de que haya menos empleados
-
-                for i, (_, empleado) in enumerate(df_filtrado.iterrows()):
-                    niveles_riesgo = []
-                    for dominio in dominios_reales.keys():
-                        nivel_str = empleado[f"{dominio}_Nivel de Riesgo"]
-                        niveles_riesgo.append(nivel_riesgo_valores.get(nivel_str, 0))
-
-                    # Ángulos del radar
-                    angles = np.linspace(0, 2 * np.pi, len(dominios_reales), endpoint=False).tolist()
-                    niveles_riesgo += niveles_riesgo[:1]  # Cerrar el gráfico
-                    angles += angles[:1]
-
-                    # Crear el gráfico de radar para el empleado
-                    ax = axes[i]
-                    ax.fill(angles, niveles_riesgo, color='red', alpha=0.25)
-                    ax.plot(angles, niveles_riesgo, color='red', linewidth=2)
-
-                    # Configurar los ejes
-                    ax.set_yticks(range(5))
-                    ax.set_yticklabels(["Nulo", "Bajo", "Medio", "Alto", "Muy Alto"], fontsize=7)
-                    ax.set_xticks(angles[:-1])
-                    ax.set_xticklabels(dominios_reales.keys(), fontsize=6, rotation=45, ha="right")
-                    ax.set_title(f"Empleado {empleado['Folio']}", fontsize=10, pad=10)
-
-                # Ajustar el diseño del gráfico
-                plt.tight_layout()
-                st.pyplot(fig)
-
-            else:
-                st.warning(f"No se encontraron empleados con Nivel de Riesgo: {nivel_seleccionado}")
-
-        with st.expander("**¿Qué es un gráfico de radar y cómo se interpreta?**"):
-            st.markdown("""
-            Un gráfico de radar, también conocido como gráfico de araña o gráfico polar, es una representación gráfica que permite visualizar datos multivariados en un formato bidimensional. Se utiliza para mostrar valores de diferentes variables en un sistema de coordenadas radiales, donde cada eje representa una variable.
-
-            ### Características principales:
-            - **Ejes radiales**: Cada eje radial corresponde a una variable o categoría específica.
-            - **Escala común**: Todas las variables se representan en la misma escala, lo que facilita la comparación.
-            - **Área sombreada**: El área delimitada por la línea que conecta los puntos representa el "perfil" de los datos.
-
-            ### ¿Cómo interpretarlo?
-            - **Forma del gráfico**: La forma del área sombreada indica cómo se distribuyen los valores de las variables. Por ejemplo, un gráfico equilibrado (simétrico) puede indicar uniformidad en las variables, mientras que un gráfico asimétrico resalta diferencias marcadas.
-            - **Valores extremos**: Los puntos más alejados del centro representan valores altos, mientras que los más cercanos al centro indican valores bajos.
-            - **Comparaciones**: Al superponer varios gráficos de radar, es posible comparar perfiles entre diferentes categorías, grupos o individuos.""")
-
-        
-        ####################
-
-        st.subheader("Minimización de items del cuestionario y estudio de corrlaciones entre variables")
-
-        def indiscernibility(attr, table):
-            u_ind = {}  # un diccionario vacío para almacenar los elementos de la relación de indiscernibilidad (U/IND({conjunto de atributos}))
-            attr_values = []  # una lista vacía para almacenar los valores de los atributos
-
-            for i in table.index:
-                attr_values = []
-                for j in attr:
-                    attr_values.append(table.loc[i, j])  # encontrar el valor de la tabla en la fila correspondiente y el atributo deseado y agregarlo a la lista attr_values
-
-                # convertir la lista en una cadena y verificar si ya es una clave en el diccionario
-                key = ''.join(str(k) for k in attr_values)
-
-                if key in u_ind:  # si la clave ya existe en el diccionario
-                    u_ind[key].add(i)
-                else:  # si la clave aún no existe en el diccionario
-                    u_ind[key] = set()
-                    u_ind[key].add(i)
-
-            # Ordenar la relación de indiscernibilidad por la longitud de cada conjunto
-            u_ind_sorted = sorted(u_ind.values(), key=len, reverse=True)
-            return u_ind_sorted
-
-
-
-        ####################
-
-        from itertools import combinations
-
-        with st.expander("**¿Qué es el reducto de un cuestionario y cómo se calcula?**"):
-            st.markdown("""
-            ### ¿Qué es el reducto de un cuestionario?
-            El reducto de un cuestionario es un conjunto mínimo de preguntas seleccionadas que conservan, de manera eficiente, la capacidad de clasificar o representar la información contenida en el cuestionario original. Es una herramienta útil en análisis de datos, ya que permite simplificar el instrumento manteniendo su representatividad y precisión.
-
-            ### ¿Cómo se calcula el reducto en este código?
-            El proceso de cálculo del reducto en el código proporcionado incluye los siguientes pasos:
-
-            1. **Relación de indiscernibilidad (`indiscernibility`)**:
-               - Agrupa las respuestas de las filas en conjuntos equivalentes basados en los valores de los atributos (preguntas) seleccionados.
-               - Cada conjunto representa una partición de la tabla en base a las similitudes entre los datos.
-
-            2. **Comparación de particiones (`compare_partitions`)**:
-               - Compara la partición original (usando todas las preguntas del dominio) con particiones generadas por subconjuntos de preguntas.
-               - La métrica de similitud utilizada es el índice de Jaccard, que mide la proporción de intersección entre dos conjuntos en relación con su unión.
-
-            3. **Búsqueda del reducto (`find_reduct_for_domain`)**:
-               - Explora todas las combinaciones posibles de preguntas dentro de un dominio.
-               - Evalúa qué subconjunto alcanza un nivel de similitud (umbral) cercano o igual a la partición original.
-               - Si un subconjunto cumple con el umbral, se considera el reducto para ese dominio.
-
-            4. **Aplicación a dominios específicos**:
-               - El cuestionario está dividido en dominios (como "Carga de trabajo" o "Liderazgo"), cada uno con un conjunto de preguntas asociadas.
-               - El proceso se aplica individualmente a cada dominio para encontrar su reducto.
-
-            ### Ejemplo práctico:
-            Supongamos que un dominio tiene 10 preguntas, pero después del análisis, se identifica que solo 3 preguntas son suficientes para mantener la misma estructura de clasificación que las 10 originales. Estas 3 preguntas forman el reducto del dominio.
-
-            ### ¿Por qué es importante?
-            - **Optimización**: Reduce el número de preguntas sin perder la calidad de los datos.
-            - **Menor carga cognitiva**: Facilita la administración del cuestionario.
-            - **Eficiencia**: Acelera los procesos de análisis al trabajar con menos variables.
-
-            ### Orden en el que se calculan las relaciones de indiscernibilidad:
-            - Crea particiones basadas en valores de las preguntas seleccionadas.
-            - Evalúa la similitud entre las particiones usando el índice de Jaccard.
-            - El umbral (por defecto 0.9 o 90%) define qué tan representativo debe ser el reducto en comparación con el conjunto completo.
-
-            Este enfoque es común en metodologías como la teoría de conjuntos aproximados (Rough Set Theory) y es particularmente útil en contextos donde la reducción de datos es esencial sin comprometer la calidad analítica.
-            """)
-
-        # Función para calcular la relación de indiscernibilidad
-        def indiscernibility(attr, table):
-            u_ind = {}
-            for i in table.index:
-                attr_values = tuple(table.loc[i, attr])
-                if attr_values in u_ind:
-                    u_ind[attr_values].add(i)
-                else:
-                    u_ind[attr_values] = {i}
-            return list(u_ind.values())
-
-        # Función para calcular la similitud entre particiones usando Jaccard
-        def compare_partitions(original, test):
-            score = 0
-            for orig_set in original:
-                best_match = 0
-                for test_set in test:
-                    similarity = len(orig_set.intersection(test_set)) / len(orig_set.union(test_set))
-                    best_match = max(best_match, similarity)
-                score += best_match * len(orig_set)
-            total_size = sum(len(group) for group in original)
-            return score / total_size if total_size > 0 else 0
-
-        st.markdown("""A continuación se muestra el **reducto** para cada uno de los dominios en el cuestionario de **riesgo laboral**""")
-        
-        
-        # Función para encontrar el reducto para un dominio
-        def find_reduct_for_domain(domain_questions, df, threshold=0.9):
-            best_match = 0
-            best_subset = None
-            original_partition = indiscernibility(domain_questions, df)
-
-            for i in range(1, len(domain_questions) + 1):
-                for subset in combinations(domain_questions, i):
-                    test_partition = indiscernibility(list(subset), df)
-                    match_score = compare_partitions(original_partition, test_partition)
-                    if match_score > best_match:
-                        best_match = match_score
-                        best_subset = subset
-                    if best_match >= threshold:
-                        st.write(f"Reducto encontrado para el dominio **{domain}** con umbral {threshold}: {best_subset} (**Coincidencia: {best_match:.2%})**")
-                        return list(best_subset)
-
-            st.write(f"No se encontró reducto con umbral {threshold}. Mejor coincidencia: {best_match:.2%}")
-            return list(best_subset)
-
-        # Diccionario de dominios y preguntas
-        dominios_reales = {
-            "Condiciones en el ambiente de trabajo": ["P2_1", "P2_2", "P2_3", "P2_4", "P2_5"],
-            "Carga de trabajo": ["P3_1", "P3_2", "P3_3", "P4_1", "P4_2", "P4_3", "P4_4",
-                         "P15_1", "P15_2", "P15_3", "P15_4", "P5_1", "P5_2", "P5_3", "P5_4"],
-            "Falta de control sobre el trabajo": ["P7_1", "P7_2", "P7_3", "P7_4", "P7_5",
-                                          "P7_6", "P8_1", "P8_2", "P9_5", "P9_6"],
-            "Jornada de trabajo": ["P6_1", "P6_2"],
-            "Interferencia en la relación trabajo-familia": ["P6_3", "P6_4", "P6_5", "P6_6"],
-            "Liderazgo": ["P9_1", "P9_2", "P9_3", "P9_4", "P10_1", "P10_2", "P10_3", "P10_4", "P10_5"],
-            "Relaciones en el trabajo": ["P11_1", "P11_2", "P11_3", "P11_4", "P11_5",
-                                 "P17_1", "P17_2", "P17_3", "P17_4"],
-            "Violencia": ["P13_1", "P13_2", "P13_3", "P13_4", "P13_5", "P13_6", "P13_7", "P13_8"],
-            "Reconocimiento del desempeño": ["P12_1", "P12_2", "P12_3", "P12_4", "P12_5", "P12_6"],
-            "Insuficiente sentido de pertenencia e inestabilidad": ["P12_7", "P12_9", "P12_10", "P12_8"]
-        }
-
-        # Aplicar el proceso de reducción para cada dominio
-        #@st.cache_data    
-        
-        reductos = {}
-        for domain, questions in dominios_reales.items():
-            #print(f"Buscando reducto para el dominio: {domain}")
-            reducto = find_reduct_for_domain(questions, nuevo_df3_resultado, threshold=0.9)
-            reductos[domain] = reducto
-
-        # Mostrar los reductos para cada dominio
-        #for domain, reducto in reductos.items():
-            #st.write(f"Dominio: {domain}, Reducto: {reducto}")
-            #st.write(f"Reducto encontrado. **Coincidencia: {best_match:.2%}**")
-
-
-
-        #########################
-
-
-        import streamlit as st
-        import matplotlib.pyplot as plt
-        from matplotlib_venn import venn2
-
-        # Función para generar un diagrama de Venn comparando dos clasificaciones
-        def generate_venn(original_partition, reduced_partition, domain_name):
-            # Convertir particiones en conjuntos únicos
-            original_sets = set(frozenset(group) for group in original_partition)
-            reduced_sets = set(frozenset(group) for group in reduced_partition)
-
-            # Intersección, solo en el original, solo en el reducido
-            only_original = len(original_sets - reduced_sets)
-            only_reduced = len(reduced_sets - original_sets)
-            intersection = len(original_sets & reduced_sets)
-
-            # Crear diagrama de Venn
-            fig, ax = plt.subplots(figsize=(6, 6))
-            venn = venn2(
-                subsets=(only_original, only_reduced, intersection),
-                set_labels=("Lista completa", "Reducto"),
-                ax=ax
-            )
-            ax.set_title(f"Comparación: {domain_name}", fontsize=12)
-    
-            return fig
-
-        #st.title("Comparación de Clasificaciones con Diagramas de Venn")
-        
-        st.markdown("""A continuación se muestran los diagramas de Venn para el grado de coincidencia entre los reductos de cada dominio y la lista completa de preguntas. En el siguiente menú puede seleccionar el dominio a visualizar y debajo se mostrará el diagrama de Venn, donde los numeros representa: la cantidad de indivios contenidos en el cuestionario completo, la intersección y el reducto""")
-        
-        # Selección del dominio para generar el diagrama
-        dominio_seleccionado = st.selectbox("**Seleccione un dominio:**", list(dominios_reales.keys()))
-
-        if dominio_seleccionado:
-            # Obtener clasificaciones usando la lista completa de preguntas
-            original_partition = indiscernibility(dominios_reales[dominio_seleccionado], nuevo_df3_resultado)
-
-            # Obtener clasificaciones usando el reducto
-            reduced_partition = indiscernibility(reductos[dominio_seleccionado], nuevo_df3_resultado)
-
-            # Generar y mostrar el diagrama de Venn
-            fig = generate_venn(original_partition, reduced_partition, dominio_seleccionado)
-            st.pyplot(fig)
-
-        st.markdown("""**El Cuestionario reducido se muestra a continuación:**""")
-        
-        # Crear un nuevo DataFrame con solo las preguntas que están en los reductos
-        columnas_reducto = ["Folio", "CT", "Nivel de Riesgo"]  # Mantener las columnas clave
-        for dominio, preguntas_reducto in reductos.items():
-            columnas_reducto.extend(preguntas_reducto)
-
-        # Verificar que las columnas existan en el DataFrame    
-        columnas_existentes = [col for col in columnas_reducto if col in nuevo_df3_resultado.columns]
-
-        # Filtrar el DataFrame con las preguntas seleccionadas en los reductos
-        df_reductos = nuevo_df3_resultado[columnas_existentes].copy()
-
-        # Mostrar el DataFrame en Streamlit
-        st.success("Se ha generado el DataFrame con las preguntas reducidas por dominio.")
-        st.dataframe(df_reductos)
-
-        # Permitir descarga del DataFrame con los reductos
-        @st.cache_data
-        def convertir_csv(df):
-            return df.to_csv(index=False).encode("utf-8")
-
-        archivo_csv_reductos = convertir_csv(df_reductos)
-
-        st.download_button(
-            label="Descargar datos con preguntas reducidas (CSV)",
-            data=archivo_csv_reductos,
-            file_name="datos_reductos.csv",
-            mime="text/csv"
-        )
-
-
-
-        ##################### mapa
-
-        import streamlit as st
-        import pandas as pd
-        import numpy as np
-        import matplotlib.pyplot as plt
-        import seaborn as sns
-
-#        st.title("Mapa de Correlaciones de las Preguntas Reducidas")
-#
-#        # Verificar si el DataFrame `df_reductos` está disponible y tiene datos
-#        if not df_reductos.empty:
-#            # Definir las escalas Likert positiva y negativa
-#            escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas veces": 2, "Casi nunca": 1, "Nunca": 0}
-#            escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas veces": 2, "Casi nunca": 3, "Nunca": 4}
-
-#            # Omitir las columnas "Folio" y "CT"
-#            df_reductos_numerico = df_reductos.drop(columns=["Folio", "CT", "Nivel de Riesgo"], errors="ignore").copy()
-
-#            # Convertir respuestas a valores numéricos según la escala correspondiente
-#            for columna in df_reductos_numerico.columns:
-#                if columna in preguntas_likert_positiva:
-#                    df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_positiva).fillna(np.nan)
-#                elif columna in preguntas_likert_negativa:
-#                    df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_negativa).fillna(np.nan)
-
-#            # Calcular la matriz de correlación
-#            correlaciones = df_reductos_numerico.corr()
-
-#            #    Crear el mapa de correlaciones
-#            fig, ax = plt.subplots(figsize=(40, 32))
-#            sns.heatmap(
-#                correlaciones, 
-#                annot=True, 
-#                cmap="coolwarm", 
-#                fmt=".2f", 
-#                linewidths=0.5, 
-#                ax=ax
-#            )
-#            ax.set_title("Mapa de Correlaciones entre Preguntas Reducidas")
-
-#            # Mostrar la gráfica en Streamlit
-#            st.pyplot(fig)
-
-#        else:
-#            st.warning("No se ha generado el DataFrame con preguntas reducidas.")
-
-#        #################
-
-#        import streamlit as st
-#        import pandas as pd
-#        import numpy as np
-#        import matplotlib.pyplot as plt
-#        import seaborn as sns
-
-#        st.title("Mapa de Correlaciones de Puntajes por Dominio")
-
-#        # Verificar si el DataFrame `nuevo_df3_resultado_dominios` está disponible y tiene datos
-#        if not nuevo_df3_resultado_dominios.empty:
-#            # Omitir columnas no numéricas ("Folio" y "Nivel de Riesgo")
-#            columnas_a_excluir = ["Folio"] + [col for col in nuevo_df3_resultado_dominios.columns if "Nivel de Riesgo" in col]
-#            df_puntajes_numerico = nuevo_df3_resultado_dominios.drop(columns=columnas_a_excluir, errors="ignore").copy()
-
-#            # Calcular la matriz de correlación
-#            correlaciones = df_puntajes_numerico.corr()
-
-#            # Crear el mapa de correlaciones
-#            fig, ax = plt.subplots(figsize=(10, 8))
-#            sns.heatmap(
-#                correlaciones, 
-#                annot=True, 
-#                cmap="coolwarm", 
-#                fmt=".2f", 
-#                linewidths=0.5, 
-#                ax=ax
-#            )
-#            ax.set_title("Mapa de Correlaciones entre Puntajes por Dominio")
-#            ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha="right")
-#            ax.set_yticklabels(ax.get_yticklabels(), rotation=0)
-
-
-#            # Mostrar la gráfica en Streamlit
-#            st.pyplot(fig)
-
-#        else:
-#            st.warning("No se ha generado el DataFrame con puntajes por dominio.")
-
-        import streamlit as st
-        import pandas as pd
-        import numpy as np
-        import matplotlib.pyplot as plt
-        import seaborn as sns
-
-#st.title("Mapa de Correlaciones")
-
-        # Opciones para que el usuario elija el tipo de mapa de correlación
-        opcion_mapa = st.radio(
-            "Seleccione el mapa de correlaciones que desea visualizar:",
-            ("Mapa de Correlaciones de Preguntas Reducidas", "Mapa de Correlaciones de Puntajes por Dominio")
-        )
-
-        if opcion_mapa == "Mapa de Correlaciones de Preguntas Reducidas":
-            # Verificar si el DataFrame `df_reductos` está disponible y tiene datos
-            if not df_reductos.empty:
-                # Definir las escalas Likert positiva y negativa
-                escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas veces": 2, "Casi nunca": 1, "Nunca": 0}
-                escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas veces": 2, "Casi nunca": 3, "Nunca": 4}
-
-                # Omitir las columnas "Folio" y "CT"
-                df_reductos_numerico = df_reductos.drop(columns=["Folio", "CT", "Nivel de Riesgo"], errors="ignore").copy()
-
-                # Convertir respuestas a valores numéricos según la escala correspondiente
-                for columna in df_reductos_numerico.columns:
-                    if columna in preguntas_likert_positiva:
-                        df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_positiva).fillna(np.nan)
-                    elif columna in preguntas_likert_negativa:
-                        df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_negativa).fillna(np.nan)
-
-                # Calcular la matriz de correlación
-                correlaciones = df_reductos_numerico.corr()
-
-                # Crear el mapa de correlaciones
-                fig, ax = plt.subplots(figsize=(40, 32))
-                sns.heatmap(
-                    correlaciones, 
-                    annot=True, 
-                    cmap="coolwarm", 
-                    fmt=".2f", 
-                    linewidths=0.5, 
-                    ax=ax
-                )
-                ax.set_title("Mapa de Correlaciones entre Preguntas Reducidas")
-
-                # Mostrar la gráfica en Streamlit
-                st.pyplot(fig)
-            else:
-                st.warning("No se ha generado el DataFrame con preguntas reducidas.")
-
-        elif opcion_mapa == "Mapa de Correlaciones de Puntajes por Dominio":
-            # Verificar si el DataFrame `nuevo_df3_resultado_dominios` está disponible y tiene datos
-            if not nuevo_df3_resultado_dominios.empty:
-                # Omitir columnas no numéricas ("Folio" y "Nivel de Riesgo")
-                columnas_a_excluir = ["Folio"] + [col for col in nuevo_df3_resultado_dominios.columns if "Nivel de Riesgo" in col]
-                df_puntajes_numerico = nuevo_df3_resultado_dominios.drop(columns=columnas_a_excluir, errors="ignore").copy()
-
-                # Calcular la matriz de correlación
-                correlaciones = df_puntajes_numerico.corr()
-
-                # Crear el mapa de correlaciones
-                fig, ax = plt.subplots(figsize=(10, 8))
-                sns.heatmap(
-                    correlaciones, 
-                    annot=True, 
-                    cmap="coolwarm", 
-                    fmt=".2f", 
-                    linewidths=0.5, 
-                    ax=ax
-                )
-                ax.set_title("Mapa de Correlaciones entre Puntajes por Dominio")
-                ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha="right")
-                ax.set_yticklabels(ax.get_yticklabels(), rotation=0)
-
-                # Mostrar la gráfica en Streamlit
-                st.pyplot(fig)
-            else:
-                st.warning("No se ha generado el DataFrame con puntajes por dominio.")
-
-
-
-
-        
-
-        #################
-
-        import streamlit as st
-        import pandas as pd
-        import numpy as np
-        import networkx as nx
-        import matplotlib.pyplot as plt
-
-        st.title("Red de Correlaciones con Umbral Dinámico y Preguntas más Correlacionadas")
-
-        # Input para el umbral de correlación
-        umbral_correlacion = st.number_input(
-            "Ingrese el umbral de correlación mínima:",
-            min_value=0.0, max_value=1.0, value=0.5, step=0.05
-        )
-
-        # Diccionario con las descripciones de las preguntas
-        #preguntas = {
-        #    "P2_1": "El espacio donde trabajo me permite realizar mis actividades de manera segura e higiénica.",
-        #    "P2_2": "Mi trabajo me exige hacer mucho esfuerzo físico",
-        #    "P2_3": "Me preocupa sufrir un accidente en mi trabajo",
-        #    "P2_4": "Considero que en mi trabajo se aplican las normas de seguridad y salud en el trabajo",
-        #    "P2_5": "Considero que las actividades que realizo son peligrosas",
-        #    # Agrega todas las demás preguntas...
-        #}
-
-                # Diccionario completo con las claves cortas y las descripciones largas
-        preguntas = {
-            "P1": "En caso de pertenecer a Oficinas Centrales Indica en cual de las siguientes áreas colaboras.",
-            "P2_1": "El espacio donde trabajo me permite realizar mis actividades de manera segura e higiénica",
-            "P2_2": "Mi trabajo me exige hacer mucho esfuerzo físico",
-            "P2_3": "Me preocupa sufrir un accidente en mi trabajo",
-            "P2_4": "Considero que en mi trabajo se aplican las normas de seguridad y salud en el trabajo",
-            "P2_5": "Considero que las actividades que realizo son peligrosas",
-            "P3_1": "Por la cantidad de trabajo que tengo debo quedarme tiempo adicional a mi turno",
-            "P3_2": "Por la cantidad de trabajo que tengo debo trabajar sin parar",
-            "P3_3": "Considero que es necesario mantener un ritmo de trabajo acelerado",
-            "P4_1": "Mi trabajo exige que esté muy concentrado",
-            "P4_2": "Mi trabajo requiere que memorice mucha información",
-            "P4_3": "En mi trabajo tengo que tomar decisiones difíciles muy rápido",
-            "P4_4": "Mi trabajo exige que atienda varios asuntos al mismo tiempo",
-            "P5_1": "En mi trabajo soy responsable de cosas de mucho valor",
-            "P5_2": "Respondo ante mi jefe por los resultados de toda mi área de trabajo",
-            "P5_3": "En el trabajo me dan órdenes contradictorias",
-            "P5_4": "Considero que en mi trabajo me piden hacer cosas innecesarias",
-            "P6_1": "Trabajo horas extras más de tres veces a la semana",
-            "P6_2": "Mi trabajo me exige laborar en días de descanso, festivos o fines de semana",
-            "P6_3": "Considero que el tiempo en el trabajo es mucho y perjudica mis actividades familiares o personales",
-            "P6_4": "Debo atender asuntos de trabajo cuando estoy en casa",
-            "P6_5": "Pienso en las actividades familiares o personales cuando estoy en mi trabajo",
-            "P6_6": "Pienso que mis responsabilidades familiares afectan mi trabajo",
-            "P7_1": "Mi trabajo permite que desarrolle nuevas habilidades",
-            "P7_2": "En mi trabajo puedo aspirar a un mejor puesto",
-            "P7_3": "Durante mi jornada de trabajo puedo tomar pausas cuando las necesito",
-            "P7_4": "Puedo decidir cuánto trabajo realizo durante la jornada laboral",
-            "P7_5": "Puedo decidir la velocidad a la que realizo mis actividades en mi trabajo",
-            "P7_6": "Puedo cambiar el orden de las actividades que realizo en mi trabajo",
-            "P8_1": "Los cambios que se presentan en mi trabajo dificultan mi labor",
-            "P8_2": "Cuando se presentan cambios en mi trabajo se tienen en cuenta mis ideas o aportaciones",
-            "P9_1": "Me informan con claridad cuáles son mis funciones",
-            "P9_2": "Me explican claramente los resultados que debo obtener en mi trabajo",
-            "P9_3": "Me explican claramente los objetivos de mi trabajo",
-            "P9_4": "Me informan con quién puedo resolver problemas o asuntos de trabajo",
-            "P9_5": "Me permiten asistir a capacitaciones relacionadas con mi trabajo",
-            "P9_6": "Recibo capacitación útil para hacer mi trabajo",
-            "P10_1": "Mi jefe ayuda a organizar mejor el trabajo",
-            "P10_2": "Mi jefe tiene en cuenta mis puntos de vista y opiniones",
-            "P10_3": "Mi jefe me comunica a tiempo la información relacionada con el trabajo",
-            "P10_4": "La orientación que me da mi jefe me ayuda a realizar mejor mi trabajo",
-            "P10_5": "Mi jefe ayuda a solucionar los problemas que se presentan en el trabajo",
-            "P11_1": "Puedo confiar en mis compañeros de trabajo",
-            "P11_2": "Entre compañeros solucionamos los problemas de trabajo de forma respetuosa",
-            "P11_3": "En mi trabajo me hacen sentir parte del grupo",
-            "P11_4": "Cuando tenemos que realizar trabajo de equipo los compañeros colaboran",
-            "P11_5": "Mis compañeros de trabajo me ayudan cuando tengo dificultades",
-            "P12_1": "Me informan sobre lo que hago bien en mi trabajo",
-            "P12_2": "La forma como evalúan mi trabajo en mi centro de trabajo me ayuda a mejorar mi desempeño",
-            "P12_3": "En mi centro de trabajo me pagan a tiempo mi salario",
-            "P12_4": "El pago que recibo es el que merezco por el trabajo que realizo",
-            "P12_5": "Si obtengo los resultados esperados en mi trabajo me recompensan o reconocen",
-            "P12_6": "Las personas que hacen bien el trabajo pueden crecer laboralmente",
-            "P12_7": "Considero que mi trabajo es estable",
-            "P12_8": "En mi trabajo existe continua rotación de personal",
-            "P12_9": "Siento orgullo de laborar en este centro de trabajo",
-            "P12_10": "Me siento comprometido con mi trabajo",
-            "P13_1": "En mi trabajo puedo expresarme libremente sin interrupciones",
-            "P13_2": "Recibo críticas constantes a mi persona y/o trabajo",
-            "P13_3": "Recibo burlas, calumnias, difamaciones, humillaciones o ridiculizaciones",
-            "P13_4": "Se ignora mi presencia o se me excluye de las reuniones de trabajo y en la toma de decisiones",
-            "P13_5": "Se manipulan las situaciones de trabajo para hacerme parecer un mal trabajador",
-            "P13_6": "Se ignoran mis éxitos laborales y se atribuyen a otros trabajadores",
-            "P13_7": "Me bloquean o impiden las oportunidades que tengo para obtener ascenso o mejora en mi trabajo",
-            "P13_8": "He presenciado actos de violencia en mi centro de trabajo",
-            "P14": "En mi trabajo debo brindar servicio a clientes o usuarios:",
-            "P15_1": "Atiendo clientes o usuarios muy enojados",
-            "P15_2": "Mi trabajo me exige atender personas muy necesitadas de ayuda o enfermas",
-            "P15_3": "Para hacer mi trabajo debo demostrar sentimientos distintos a los míos",
-            "P15_4": "Mi trabajo me exige atender situaciones de violencia",
-            "P16": "Soy jefe de otros trabajadores:",
-            "P17_1": "Comunican tarde los asuntos de trabajo",
-            "P17_2": "Dificultan el logro de los resultados del trabajo",
-            "P17_3": "Cooperan poco cuando se necesita",
-            "P17_4": "Ignoran las sugerencias para mejorar su trabajo"
-                }
-
-        # Escalas Likert
-        preguntas_likert_positiva = [
-            "P2_1", "P2_4", "P7_1", "P7_2", "P7_3", "P7_4", "P7_5", "P7_6",
-            "P8_2", "P9_1", "P9_2", "P9_3", "P9_4", "P9_5", "P9_6",
-            "P10_1", "P10_2", "P10_3", "P10_4", "P10_5", "P11_1", "P11_2",
-            "P11_3", "P11_4", "P11_5", "P12_1", "P12_2", "P12_3", "P12_4",
-            "P12_5", "P12_6", "P12_7", "P12_8", "P12_9", "P12_10", "P13_1"
-        ]
-
-        preguntas_likert_negativa = [
-            "P2_2", "P2_3", "P2_5", "P3_1", "P3_2", "P3_3", "P4_1", "P4_2",
-            "P4_3", "P4_4", "P5_1", "P5_2", "P5_3", "P5_4", "P6_1", "P6_2",
-            "P6_3", "P6_4", "P6_5", "P6_6", "P8_1", "P13_2", "P13_3", "P13_4",
-            "P13_5", "P13_6", "P13_7", "P13_8", "P15_1", "P15_2", "P15_3",
-            "P15_4", "P17_1", "P17_2", "P17_3", "P17_4"
-        ]
-        
-        # Verificar si el DataFrame `df_reductos` está disponible y tiene datos
-        if not df_reductos.empty:
-            # Convertir las respuestas a escala numérica
-            df_reductos_numerico = df_reductos.drop(columns=["Folio", "CT", "Nivel de Riesgo"], errors="ignore").copy()
-            for columna in df_reductos_numerico.columns:
-                if columna in preguntas_likert_positiva:
-                    df_reductos_numerico[columna] = df_reductos_numerico[columna].map({
-                        "Siempre": 4, "Casi siempre": 3, "Algunas veces": 2, "Casi nunca": 1, "Nunca": 0
-                    }).fillna(np.nan)
-                elif columna in preguntas_likert_negativa:
-                    df_reductos_numerico[columna] = df_reductos_numerico[columna].map({
-                        "Siempre": 0, "Casi siempre": 1, "Algunas veces": 2, "Casi nunca": 3, "Nunca": 4
-                    }).fillna(np.nan)
-
-            # Calcular la matriz de correlación
-            correlaciones = df_reductos_numerico.corr()
-
-            # Crear la red de correlación
-            G = nx.Graph()
-            variables_relevantes = set()
-
-            for i in correlaciones.columns:
-                for j in correlaciones.columns:
-                    if i != j and abs(correlaciones.loc[i, j]) > umbral_correlacion:
-                        G.add_edge(i, j, weight=correlaciones.loc[i, j])
-                        variables_relevantes.add(i)
-                        variables_relevantes.add(j)
-
-            # Añadir nodos relevantes a la red
-            G.add_nodes_from(variables_relevantes)
-
-            # Crear lista de colores para los nodos
-            node_colors = [
-                "red" if nodo in preguntas_likert_negativa else "green"
-                for nodo in G.nodes
-            ]
-
-            # Dibujar la red de correlación
-            fig, ax = plt.subplots(figsize=(12, 10))
-            pos = nx.spring_layout(G, seed=42)
-
-            nx.draw_networkx_nodes(G, pos, node_size=700, node_color=node_colors, ax=ax)
-            nx.draw_networkx_labels(G, pos, font_size=10, ax=ax)
-
-            # Dibujar bordes
-            edges = G.edges(data=True)
-            nx.draw_networkx_edges(G, pos, edgelist=[(u, v) for u, v, d in edges], width=1.5, edge_color="gray", ax=ax)
-
-            # Título
-            ax.set_title(f"Red de Correlaciones (Umbral > {umbral_correlacion:.2f})", fontsize=14)
-            plt.axis("off")
-
-            # Mostrar la gráfica en Streamlit
-            st.pyplot(fig)
-
-
-            # Crear DataFrame con las preguntas más correlacionadas
-            preguntas_correlacionadas = []
-            pares_vistos = set()  # Para evitar duplicados
-
-            for i in correlaciones.columns:
-                for j in correlaciones.columns:
-                    if i != j and abs(correlaciones.loc[i, j]) > umbral_correlacion:
-                        par = tuple(sorted([i, j]))
-                        if par not in pares_vistos:
-                            preguntas_correlacionadas.append({
-                                "Pregunta 1": i,
-                                "Pregunta 1 (Descripción)": preguntas.get(i, "Descripción no disponible"),
-                                "Pregunta 2": j,
-                                "Pregunta 2 (Descripción)": preguntas.get(j, "Descripción no disponible"),
-                                "Índice de Correlación": correlaciones.loc[i, j]
-                            })
-                            pares_vistos.add(par)
-
-
-            
-            # Convertir a DataFrame
-            df_preguntas_correlacionadas = pd.DataFrame(preguntas_correlacionadas).drop_duplicates(subset=["Pregunta 1", "Pregunta 2"])
-
-            # Mostrar el DataFrame en Streamlit
-            st.write("### Preguntas Más Correlacionadas")
-            st.dataframe(df_preguntas_correlacionadas)
-
-        else:
-            st.warning("No se ha generado el DataFrame con preguntas reducidas.")
-
-
-        ##########
-        
-        
-        # Permitir descargar el DataFrame filtrado
-        @st.cache_data
-        def convertir_csv(df):
-            return df.to_csv(index=False).encode("utf-8")
-
-        archivo_csv = convertir_csv(nuevo_df)
-
-        st.download_button(
-            label="Descargar datos filtrados (CSV)",
-            data=archivo_csv,
-            file_name=f"datos_CT_{valor_seleccionado}.csv",
-            mime="text/csv")
-
-
-        import streamlit as st
-        import pandas as pd
-        import numpy as np
-        import matplotlib.pyplot as plt
-        from sklearn.tree import DecisionTreeClassifier, plot_tree
-        from sklearn.model_selection import train_test_split
-        from sklearn.metrics import accuracy_score
-
-
-        # Definir las escalas Likert
-        escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas Veces": 2, "Casi nunca": 1, "Nunca": 0}
-        escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas Veces": 2, "Casi nunca": 3, "Nunca": 4}
-
-        # Preguntas en las escalas positiva y negativa
-        preguntas_likert_positiva = [
-            "P2_1", "P2_4", "P7_1", "P7_2", "P7_3", "P7_4", "P7_5", "P7_6",
-            "P8_2", "P9_1", "P9_2", "P9_3", "P9_4", "P9_5", "P9_6",
-            "P10_1", "P10_2", "P10_3", "P10_4", "P10_5", "P11_1", "P11_2",
-            "P11_3", "P11_4", "P11_5", "P12_1", "P12_2", "P12_3", "P12_4",
-            "P12_5", "P12_6", "P12_7", "P12_8", "P12_9", "P12_10", "P13_1"
-        ]
-
-        preguntas_likert_negativa = [
-            "P2_2", "P2_3", "P2_5", "P3_1", "P3_2", "P3_3", "P4_1", "P4_2",
-            "P4_3", "P4_4", "P5_1", "P5_2", "P5_3", "P5_4", "P6_1", "P6_2",
-            "P6_3", "P6_4", "P6_5", "P6_6", "P8_1", "P13_2", "P13_3", "P13_4",
-            "P13_5", "P13_6", "P13_7", "P13_8", "P15_1", "P15_2", "P15_3",
-            "P15_4", "P17_1", "P17_2", "P17_3", "P17_4"
-        ]
-
-        st.title("Árbol de Decisión para Predecir el Nivel de Riesgo")
-
-        # Verificar si el DataFrame `df_reductos` está disponible y tiene datos
-        if not df_reductos.empty:
-            # Excluir columnas irrelevantes
-            columnas_a_excluir = ["Folio", "CT"]
-            df_reductos_numerico = df_reductos.drop(columns=columnas_a_excluir, errors="ignore").copy()
-
-            # Convertir preguntas a valores numéricos según la escala Likert correspondiente
-            for columna in df_reductos_numerico.columns:
-                if columna in preguntas_likert_positiva:
-                    df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_positiva).fillna(np.nan)
-                elif columna in preguntas_likert_negativa:
-                    df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_negativa).fillna(np.nan)
-            st.dataframe(df_reductos_numerico)
-            # Verificar si la columna 'Nivel de Riesgo' está presente
-            if "Nivel de Riesgo" in df_reductos_numerico.columns:
-                # Separar características (X) y variable objetivo (y)
-                X = df_reductos_numerico.drop(columns=["Nivel de Riesgo"])
-                y = df_reductos_numerico["Nivel de Riesgo"]
-
-                # Dividir los datos en conjuntos de entrenamiento y prueba
-                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-
-                # Crear el modelo del árbol de decisión
-                model = DecisionTreeClassifier(max_depth=4, random_state=42)
-                model.fit(X_train, y_train)
-
-                # Predecir en el conjunto de prueba
-                y_pred = model.predict(X_test)
-                accuracy = accuracy_score(y_test, y_pred)
-
-                # Mostrar la precisión del modelo
-                st.write(f"### Precisión del modelo en datos de prueba: {accuracy:.2%}")
-
-
-                # Identificar las características utilizadas en el modelo
-                features_importances = model.feature_importances_
-                features_usadas = np.array(X.columns)[features_importances > 0]
-                importances_usadas = features_importances[features_importances > 0]
-
-                # Crear un DataFrame con las preguntas relevantes y su importancia
-                preguntas_utilizadas = pd.DataFrame({
-                    "Pregunta": features_usadas,
-                    "Importancia": importances_usadas,
-                    "Descripción": [preguntas.get(col, "Descripción no disponible") for col in features_usadas]
-                }).sort_values(by="Importancia", ascending=False)
-
-                st.write("### Preguntas Utilizadas en el Modelo (Con Importancia)")
-                st.dataframe(preguntas_utilizadas)
-
-                
-                # Visualizar el árbol de decisión
-                fig, ax = plt.subplots(figsize=(12, 8))
-                plot_tree(
-                    model,
-                    feature_names=X.columns,
-                    class_names=model.classes_.astype(str),
-                    filled=True,
-                    rounded=True,
-                    fontsize=8,
-                    ax=ax
-                )
-                ax.set_title("Árbol de Decisión para Predecir el Nivel de Riesgo")
-                st.pyplot(fig)
-
-                # Mostrar preguntas utilizadas
-                preguntas_utilizadas = pd.DataFrame({
-                    "Pregunta": X.columns,
-                    "Descripción": [preguntas.get(col, "Descripción no disponible") for col in X.columns]
-                })
-
-                st.write("### Preguntas Utilizadas en el Modelo")
-                st.dataframe(preguntas_utilizadas)
-
-                # Descargar preguntas como CSV
-                @st.cache_data
-                def convertir_csv(df):
-                    return df.to_csv(index=False).encode("utf-8")
-
-                archivo_csv = convertir_csv(preguntas_utilizadas)
-                st.download_button(
-                    label="Descargar preguntas utilizadas (CSV)",
-                    data=archivo_csv,
-                    file_name="preguntas_utilizadas.csv",
-                    mime="text/csv"
-                )
-            else:
-                st.warning("El DataFrame no contiene la columna 'Nivel de Riesgo'.")    
-        else:
-            st.warning("No se ha generado el DataFrame con preguntas reducidas.")
-
-
-        ####################################
-
-        import streamlit as st
-        import pandas as pd
-        import numpy as np
-        from sklearn.tree import DecisionTreeClassifier, plot_tree
-        import matplotlib.pyplot as plt
-
-        # Escalas Likert
-        escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas Veces": 2, "Casi nunca": 1, "Nunca": 0}    
-        escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas Veces": 2, "Casi nunca": 3, "Nunca": 4}
-
-        # Preguntas en las escalas Likert positiva y negativa
-        preguntas_likert_positiva = [
-            "P2_1", "P2_4", "P7_1", "P7_2", "P7_3", "P7_4", "P7_5", "P7_6",
-            "P8_2", "P9_1", "P9_2", "P9_3", "P9_4", "P9_5", "P9_6",
-            "P10_1", "P10_2", "P10_3", "P10_4", "P10_5", "P11_1", "P11_2",
-            "P11_3", "P11_4", "P11_5", "P12_1", "P12_2", "P12_3", "P12_4",
-            "P12_5", "P12_6", "P12_7", "P12_8", "P12_9", "P12_10", "P13_1"
-        ]
-
-        preguntas_likert_negativa = [
-            "P2_2", "P2_3", "P2_5", "P3_1", "P3_2", "P3_3", "P4_1", "P4_2",
-            "P4_3", "P4_4", "P5_1", "P5_2", "P5_3", "P5_4", "P6_1", "P6_2",
-            "P6_3", "P6_4", "P6_5", "P6_6", "P8_1", "P13_2", "P13_3", "P13_4",
-            "P13_5", "P13_6", "P13_7", "P13_8", "P15_1", "P15_2", "P15_3",
-            "P15_4", "P17_1", "P17_2", "P17_3", "P17_4"
-        ]
-
-        # Diccionario de dominios
-        dominios_reales = {
-            "Condiciones en el ambiente de trabajo": ["P2_1", "P2_2", "P2_3", "P2_4", "P2_5"],
-            "Carga de trabajo": ["P3_1", "P3_2", "P3_3", "P4_1", "P4_2", "P4_3", "P4_4",
-                         "P15_1", "P15_2", "P15_3", "P15_4", "P5_1", "P5_2", "P5_3", "P5_4"],
-            "Falta de control sobre el trabajo": ["P7_1", "P7_2", "P7_3", "P7_4", "P7_5",
-                                          "P7_6", "P8_1", "P8_2", "P9_5", "P9_6"],
-            "Jornada de trabajo": ["P6_1", "P6_2"],
-            "Interferencia en la relación trabajo-familia": ["P6_3", "P6_4", "P6_5", "P6_6"],
-            "Liderazgo": ["P9_1", "P9_2", "P9_3", "P9_4", "P10_1", "P10_2", "P10_3", "P10_4", "P10_5"],
-            "Relaciones en el trabajo": ["P11_1", "P11_2", "P11_3", "P11_4", "P11_5",
-                                 "P17_1", "P17_2", "P17_3", "P17_4"],
-            "Violencia": ["P13_1", "P13_2", "P13_3", "P13_4", "P13_5", "P13_6", "P13_7", "P13_8"],
-            "Reconocimiento del desempeño": ["P12_1", "P12_2", "P12_3", "P12_4", "P12_5", "P12_6"],
-            "Insuficiente sentido de pertenencia e inestabilidad": ["P12_7", "P12_9", "P12_10", "P12_8"]
-        }
-
-        st.title("Árboles de Decisión para Predecir el Nivel de Riesgo por Dominio")
-
-        # Selección del dominio
-        dominio_seleccionado = st.selectbox("Seleccione un dominio:", list(dominios_reales.keys()))
-
-        # Nombre de la columna objetivo en `nuevo_df3_resultado_dominios`
-        columna_objetivo = f"{dominio_seleccionado}_Nivel de Riesgo"
-
-        # Verificar si la columna objetivo está en `nuevo_df3_resultado_dominios`
-        if columna_objetivo in nuevo_df3_resultado_dominios.columns:
-            # Unir `df_reductos` con `nuevo_df3_resultado_dominios` por `Folio`
-            df_combinado = df_reductos.merge(
-                nuevo_df3_resultado_dominios[["Folio", columna_objetivo]], 
-                on="Folio", 
-                how="inner"
-            )
-
-            # Filtrar preguntas del dominio que están en `df_reductos`
-            preguntas_dominio = [p for p in dominios_reales[dominio_seleccionado] if p in df_reductos.columns]
-
-            if preguntas_dominio:
-                df_dominio = df_combinado[preguntas_dominio + [columna_objetivo]].copy()
-
-                # Convertir respuestas a escala numérica
-                for columna in df_dominio.columns:
-                    if columna in preguntas_likert_positiva:
-                        df_dominio[columna] = df_dominio[columna].map(escala_likert_positiva).fillna(0)
-                    elif columna in preguntas_likert_negativa:
-                        df_dominio[columna] = df_dominio[columna].map(escala_likert_negativa).fillna(0)
-
-                # Separar características (X) y variable objetivo (y)
-                X = df_dominio.drop(columns=[columna_objetivo])
-                y = df_dominio[columna_objetivo]
-
-                # Crear el modelo del árbol de decisión
-                model = DecisionTreeClassifier(max_depth=4, random_state=42)
-                model.fit(X, y)
-
-                # Visualizar el árbol de decisión
-                fig, ax = plt.subplots(figsize=(12, 8))
-                plot_tree(
-                    model,
-                    feature_names=X.columns,
-                    class_names=model.classes_.astype(str),
-                    filled=True,
-                    rounded=True,
-                    fontsize=10,
-                    ax=ax
-                )
-                ax.set_title(f"Árbol de Decisión - {dominio_seleccionado}")
-                st.pyplot(fig)
-            else:
-                st.warning(f"No hay preguntas disponibles para el dominio '{dominio_seleccionado}' en el DataFrame.")
-        else:
-            st.warning(f"La columna '{columna_objetivo}' no está en `nuevo_df3_resultado_dominios`.")
 
 
 
