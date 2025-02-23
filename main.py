@@ -789,7 +789,7 @@ elif paginas == "Análisis":
         nuevo_df3_resultado_dominios = st.session_state['nuevo_df3_resultado_dominios']
     if 'dominios_reales' in st.session_state:
         dominios_reales = st.session_state['dominios_reales']
-    if 'nuevo_df3_resultado' in st.session_state():
+    if 'nuevo_df3_resultado' in st.session_state:
         nuevo_df3_resultado = st.session_state['nuevo_df3_resultado']
 
 
