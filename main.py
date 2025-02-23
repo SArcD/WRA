@@ -1,29 +1,49 @@
+#import streamlit as st
+
+# Crear un menú de navegación en la barra lateral
+#opcion = st.sidebar.radio("Selecciona una página", ["Inicio", "Acerca de", "Contacto"])
+
+#if opcion == "Inicio":
+#    st.title("Página de Inicio")
+#    st.write("Bienvenido a la página de inicio.")
+#elif opcion == "Acerca de":
+#    st.title("Acerca de")
+#    st.write("Aquí encontrarás información sobre nosotros.")
+#elif opcion == "Contacto":
+#    st.title("Contacto")
+#    st.write("Ponte en contacto con nosotros.")
+
+
+
+paginas = st.sidebar.radio("Secciones:",["Descripción","Cargar datos","Depuración","Análisis por clusters","Formulario interactivo"])
 import streamlit as st
 import pandas as pd
 
 st.title("Análisis de datos aplicado al riesgo laboral")
 
-st.subheader("""**Objetivo de la Aplicación**""")
+if paginas == "Descripción":
+    
+    
+    st.subheader("""**Objetivo de la Aplicación**""")
 
-st.markdown("""
-<div class="justificado">
+    st.markdown("""
+    <div class="justificado">
 
-Esta aplicación tiene como objetivo facilitar la identificación, análisis y prevención de los **factores de riesgo psicosocial** en los centros de trabajo, de acuerdo con los lineamientos establecidos en la **NOM-035-STPS-2018**. A través de la evaluación de respuestas a un cuestionario estandarizado, la aplicación permite:
+    Esta aplicación tiene como objetivo facilitar la identificación, análisis y prevención de los **factores de riesgo psicosocial** en los centros de trabajo, de acuerdo con los lineamientos establecidos en la **NOM-035-STPS-2018**. A través de la evaluación de respuestas a un cuestionario estandarizado, la aplicación permite:
 
-- **Automatizar la captura y procesamiento de datos** del cuestionario de evaluación.
-- **Generar reportes individuales y organizacionales** sobre niveles de riesgo psicosocial.
-- **Visualizar mapas de correlación y redes de relaciones** entre factores de riesgo.
-- **Identificar dominios críticos** y sugerir áreas de intervención para mejorar el entorno organizacional.
-- **Comparar clasificaciones y realizar análisis de reducción de preguntas**, facilitando una evaluación más eficiente.
+    - **Automatizar la captura y procesamiento de datos** del cuestionario de evaluación.
+    - **Generar reportes individuales y organizacionales** sobre niveles de riesgo psicosocial.
+    - **Visualizar mapas de correlación y redes de relaciones** entre factores de riesgo.
+    - **Identificar dominios críticos** y sugerir áreas de intervención para mejorar el entorno organizacional.
+    - **Comparar clasificaciones y realizar análisis de reducción de preguntas**, facilitando una evaluación más eficiente.
 
-La herramienta está dirigida a **empresas, organizaciones y profesionales en seguridad laboral**, permitiendo tomar decisiones basadas en datos para la mejora del bienestar de los trabajadores.
-""", unsafe_allow_html=True)
+    La herramienta está dirigida a **empresas, organizaciones y profesionales en seguridad laboral**, permitiendo tomar decisiones basadas en datos para la mejora del bienestar de los trabajadores.
+    """, unsafe_allow_html=True)
 
 st.subheader("Carga de arhivos")
 
 st.markdown("""
 En esta sección puede cargar los datos laborales a analizar. Estos deben tener el formato de la encuesta para la determinación del riesgo laboral.
-
 """)
 
 st.markdown("""
