@@ -174,7 +174,7 @@ if archivo_excel is not None:
         st.subsubheader("Preguntas en Escala Likert Positiva")
         st.dataframe(df_likert_positiva)
 
-        st.subheader("Preguntas en Escala Likert Negativa")
+        st.subsubheader("Preguntas en Escala Likert Negativa")
         st.dataframe(df_likert_negativa)
 
         st.markdown("""
