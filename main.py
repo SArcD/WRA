@@ -59,6 +59,7 @@ elif paginas == "Cargar datos":
     #    try:
             # Leer el archivo Excel en un DataFrame
     df = pd.read_excel(archivo_excel)
+    st.session_state['df'] = df
     st.success("Archivo cargado exitosamente")
         
     # Mostrar el DataFrame en la aplicación
@@ -66,262 +67,260 @@ elif paginas == "Cargar datos":
         st.markdown("""A continuación se muestra el archivo con los datos cargados a la aplicación. Si da doble click en la columna esta se puede reordenar de manera ascendente o descendente.""")
 
         st.dataframe(df)
-        st.session_state['df'] = df
+#        st.session_state['df'] = df
 
 
 elif paginas == "Depuración":        
-        st.subheader("**Depuración de datos**")
-        st.markdown("""En esta sección se agrega la columna Folio, en la que se le asigna una clave alfanumérica ("part-##") como identificador a cada participante de la encuesta. Además se reemplaza el nombre de la columna "selecciona tu centro de trabajo" por "CT" por brevedad. De igual forma, los enunciados de cada pregunta se reemplazaron por una clave. Cada clave y su pregunta correspondiente se puede consultar en la siguiente tabla:   
-        """)
+    st.subheader("**Depuración de datos**")
+    st.markdown("""En esta sección se agrega la columna Folio, en la que se le asigna una clave alfanumérica ("part-##") como identificador a cada participante de la encuesta. Además se reemplaza el nombre de la columna "selecciona tu centro de trabajo" por "CT" por brevedad. De igual forma, los enunciados de cada pregunta se reemplazaron por una clave. Cada clave y su pregunta correspondiente se puede consultar en la siguiente tabla:   
+    """)
         # Diccionario completo con las claves cortas y las descripciones largas
-        preguntas = {
-            "P1": "En caso de pertenecer a Oficinas Centrales Indica en cual de las siguientes áreas colaboras.",
-            "P2_1": "El espacio donde trabajo me permite realizar mis actividades de manera segura e higiénica",
-            "P2_2": "Mi trabajo me exige hacer mucho esfuerzo físico",
-            "P2_3": "Me preocupa sufrir un accidente en mi trabajo",
-            "P2_4": "Considero que en mi trabajo se aplican las normas de seguridad y salud en el trabajo",
-            "P2_5": "Considero que las actividades que realizo son peligrosas",
-            "P3_1": "Por la cantidad de trabajo que tengo debo quedarme tiempo adicional a mi turno",
-            "P3_2": "Por la cantidad de trabajo que tengo debo trabajar sin parar",
-            "P3_3": "Considero que es necesario mantener un ritmo de trabajo acelerado",
-            "P4_1": "Mi trabajo exige que esté muy concentrado",
-            "P4_2": "Mi trabajo requiere que memorice mucha información",
-            "P4_3": "En mi trabajo tengo que tomar decisiones difíciles muy rápido",
-            "P4_4": "Mi trabajo exige que atienda varios asuntos al mismo tiempo",
-            "P5_1": "En mi trabajo soy responsable de cosas de mucho valor",
-            "P5_2": "Respondo ante mi jefe por los resultados de toda mi área de trabajo",
-            "P5_3": "En el trabajo me dan órdenes contradictorias",
-            "P5_4": "Considero que en mi trabajo me piden hacer cosas innecesarias",
-            "P6_1": "Trabajo horas extras más de tres veces a la semana",
-            "P6_2": "Mi trabajo me exige laborar en días de descanso, festivos o fines de semana",
-            "P6_3": "Considero que el tiempo en el trabajo es mucho y perjudica mis actividades familiares o personales",
-            "P6_4": "Debo atender asuntos de trabajo cuando estoy en casa",
-            "P6_5": "Pienso en las actividades familiares o personales cuando estoy en mi trabajo",
-            "P6_6": "Pienso que mis responsabilidades familiares afectan mi trabajo",
-            "P7_1": "Mi trabajo permite que desarrolle nuevas habilidades",
-            "P7_2": "En mi trabajo puedo aspirar a un mejor puesto",
-            "P7_3": "Durante mi jornada de trabajo puedo tomar pausas cuando las necesito",
-            "P7_4": "Puedo decidir cuánto trabajo realizo durante la jornada laboral",
-            "P7_5": "Puedo decidir la velocidad a la que realizo mis actividades en mi trabajo",
-            "P7_6": "Puedo cambiar el orden de las actividades que realizo en mi trabajo",
-            "P8_1": "Los cambios que se presentan en mi trabajo dificultan mi labor",
-            "P8_2": "Cuando se presentan cambios en mi trabajo se tienen en cuenta mis ideas o aportaciones",
-            "P9_1": "Me informan con claridad cuáles son mis funciones",
-            "P9_2": "Me explican claramente los resultados que debo obtener en mi trabajo",
-            "P9_3": "Me explican claramente los objetivos de mi trabajo",
-            "P9_4": "Me informan con quién puedo resolver problemas o asuntos de trabajo",
-            "P9_5": "Me permiten asistir a capacitaciones relacionadas con mi trabajo",
-            "P9_6": "Recibo capacitación útil para hacer mi trabajo",
-            "P10_1": "Mi jefe ayuda a organizar mejor el trabajo",
-            "P10_2": "Mi jefe tiene en cuenta mis puntos de vista y opiniones",
-            "P10_3": "Mi jefe me comunica a tiempo la información relacionada con el trabajo",
-            "P10_4": "La orientación que me da mi jefe me ayuda a realizar mejor mi trabajo",
-            "P10_5": "Mi jefe ayuda a solucionar los problemas que se presentan en el trabajo",
-            "P11_1": "Puedo confiar en mis compañeros de trabajo",
-            "P11_2": "Entre compañeros solucionamos los problemas de trabajo de forma respetuosa",
-            "P11_3": "En mi trabajo me hacen sentir parte del grupo",
-            "P11_4": "Cuando tenemos que realizar trabajo de equipo los compañeros colaboran",
-            "P11_5": "Mis compañeros de trabajo me ayudan cuando tengo dificultades",
-            "P12_1": "Me informan sobre lo que hago bien en mi trabajo",
-            "P12_2": "La forma como evalúan mi trabajo en mi centro de trabajo me ayuda a mejorar mi desempeño",
-            "P12_3": "En mi centro de trabajo me pagan a tiempo mi salario",
-            "P12_4": "El pago que recibo es el que merezco por el trabajo que realizo",
-            "P12_5": "Si obtengo los resultados esperados en mi trabajo me recompensan o reconocen",
-            "P12_6": "Las personas que hacen bien el trabajo pueden crecer laboralmente",
-            "P12_7": "Considero que mi trabajo es estable",
-            "P12_8": "En mi trabajo existe continua rotación de personal",
-            "P12_9": "Siento orgullo de laborar en este centro de trabajo",
-            "P12_10": "Me siento comprometido con mi trabajo",
-            "P13_1": "En mi trabajo puedo expresarme libremente sin interrupciones",
-            "P13_2": "Recibo críticas constantes a mi persona y/o trabajo",
-            "P13_3": "Recibo burlas, calumnias, difamaciones, humillaciones o ridiculizaciones",
-            "P13_4": "Se ignora mi presencia o se me excluye de las reuniones de trabajo y en la toma de decisiones",
-            "P13_5": "Se manipulan las situaciones de trabajo para hacerme parecer un mal trabajador",
-            "P13_6": "Se ignoran mis éxitos laborales y se atribuyen a otros trabajadores",
-            "P13_7": "Me bloquean o impiden las oportunidades que tengo para obtener ascenso o mejora en mi trabajo",
-            "P13_8": "He presenciado actos de violencia en mi centro de trabajo",
-            "P14": "En mi trabajo debo brindar servicio a clientes o usuarios:",
-            "P15_1": "Atiendo clientes o usuarios muy enojados",
-            "P15_2": "Mi trabajo me exige atender personas muy necesitadas de ayuda o enfermas",
-            "P15_3": "Para hacer mi trabajo debo demostrar sentimientos distintos a los míos",
-            "P15_4": "Mi trabajo me exige atender situaciones de violencia",
-            "P16": "Soy jefe de otros trabajadores:",
-            "P17_1": "Comunican tarde los asuntos de trabajo",
-            "P17_2": "Dificultan el logro de los resultados del trabajo",
-            "P17_3": "Cooperan poco cuando se necesita",
-            "P17_4": "Ignoran las sugerencias para mejorar su trabajo"
-                }
+    preguntas = {
+        "P1": "En caso de pertenecer a Oficinas Centrales Indica en cual de las siguientes áreas colaboras.",
+        "P2_1": "El espacio donde trabajo me permite realizar mis actividades de manera segura e higiénica",
+        "P2_2": "Mi trabajo me exige hacer mucho esfuerzo físico",
+        "P2_3": "Me preocupa sufrir un accidente en mi trabajo",
+        "P2_4": "Considero que en mi trabajo se aplican las normas de seguridad y salud en el trabajo",
+        "P2_5": "Considero que las actividades que realizo son peligrosas",
+        "P3_1": "Por la cantidad de trabajo que tengo debo quedarme tiempo adicional a mi turno",
+        "P3_2": "Por la cantidad de trabajo que tengo debo trabajar sin parar",
+        "P3_3": "Considero que es necesario mantener un ritmo de trabajo acelerado",
+        "P4_1": "Mi trabajo exige que esté muy concentrado",
+        "P4_2": "Mi trabajo requiere que memorice mucha información",
+        "P4_3": "En mi trabajo tengo que tomar decisiones difíciles muy rápido",
+        "P4_4": "Mi trabajo exige que atienda varios asuntos al mismo tiempo",
+        "P5_1": "En mi trabajo soy responsable de cosas de mucho valor",
+        "P5_2": "Respondo ante mi jefe por los resultados de toda mi área de trabajo",
+        "P5_3": "En el trabajo me dan órdenes contradictorias",
+        "P5_4": "Considero que en mi trabajo me piden hacer cosas innecesarias",
+        "P6_1": "Trabajo horas extras más de tres veces a la semana",
+        "P6_2": "Mi trabajo me exige laborar en días de descanso, festivos o fines de semana",
+        "P6_3": "Considero que el tiempo en el trabajo es mucho y perjudica mis actividades familiares o personales",
+        "P6_4": "Debo atender asuntos de trabajo cuando estoy en casa",
+        "P6_5": "Pienso en las actividades familiares o personales cuando estoy en mi trabajo",
+        "P6_6": "Pienso que mis responsabilidades familiares afectan mi trabajo",
+        "P7_1": "Mi trabajo permite que desarrolle nuevas habilidades",
+        "P7_2": "En mi trabajo puedo aspirar a un mejor puesto",
+        "P7_3": "Durante mi jornada de trabajo puedo tomar pausas cuando las necesito",
+        "P7_4": "Puedo decidir cuánto trabajo realizo durante la jornada laboral",
+        "P7_5": "Puedo decidir la velocidad a la que realizo mis actividades en mi trabajo",
+        "P7_6": "Puedo cambiar el orden de las actividades que realizo en mi trabajo",
+        "P8_1": "Los cambios que se presentan en mi trabajo dificultan mi labor",
+        "P8_2": "Cuando se presentan cambios en mi trabajo se tienen en cuenta mis ideas o aportaciones",
+        "P9_1": "Me informan con claridad cuáles son mis funciones",
+        "P9_2": "Me explican claramente los resultados que debo obtener en mi trabajo",
+        "P9_3": "Me explican claramente los objetivos de mi trabajo",
+        "P9_4": "Me informan con quién puedo resolver problemas o asuntos de trabajo",
+        "P9_5": "Me permiten asistir a capacitaciones relacionadas con mi trabajo",
+        "P9_6": "Recibo capacitación útil para hacer mi trabajo",
+        "P10_1": "Mi jefe ayuda a organizar mejor el trabajo",
+        "P10_2": "Mi jefe tiene en cuenta mis puntos de vista y opiniones",
+        "P10_3": "Mi jefe me comunica a tiempo la información relacionada con el trabajo",
+        "P10_4": "La orientación que me da mi jefe me ayuda a realizar mejor mi trabajo",
+        "P10_5": "Mi jefe ayuda a solucionar los problemas que se presentan en el trabajo",
+        "P11_1": "Puedo confiar en mis compañeros de trabajo",
+        "P11_2": "Entre compañeros solucionamos los problemas de trabajo de forma respetuosa",
+        "P11_3": "En mi trabajo me hacen sentir parte del grupo",
+        "P11_4": "Cuando tenemos que realizar trabajo de equipo los compañeros colaboran",
+        "P11_5": "Mis compañeros de trabajo me ayudan cuando tengo dificultades",
+        "P12_1": "Me informan sobre lo que hago bien en mi trabajo",
+        "P12_2": "La forma como evalúan mi trabajo en mi centro de trabajo me ayuda a mejorar mi desempeño",
+        "P12_3": "En mi centro de trabajo me pagan a tiempo mi salario",
+        "P12_4": "El pago que recibo es el que merezco por el trabajo que realizo",
+        "P12_5": "Si obtengo los resultados esperados en mi trabajo me recompensan o reconocen",
+        "P12_6": "Las personas que hacen bien el trabajo pueden crecer laboralmente",
+        "P12_7": "Considero que mi trabajo es estable",
+        "P12_8": "En mi trabajo existe continua rotación de personal",
+        "P12_9": "Siento orgullo de laborar en este centro de trabajo",
+        "P12_10": "Me siento comprometido con mi trabajo",
+        "P13_1": "En mi trabajo puedo expresarme libremente sin interrupciones",
+        "P13_2": "Recibo críticas constantes a mi persona y/o trabajo",
+        "P13_3": "Recibo burlas, calumnias, difamaciones, humillaciones o ridiculizaciones",
+        "P13_4": "Se ignora mi presencia o se me excluye de las reuniones de trabajo y en la toma de decisiones",
+        "P13_5": "Se manipulan las situaciones de trabajo para hacerme parecer un mal trabajador",
+        "P13_6": "Se ignoran mis éxitos laborales y se atribuyen a otros trabajadores",
+        "P13_7": "Me bloquean o impiden las oportunidades que tengo para obtener ascenso o mejora en mi trabajo",
+        "P13_8": "He presenciado actos de violencia en mi centro de trabajo",
+        "P14": "En mi trabajo debo brindar servicio a clientes o usuarios:",
+        "P15_1": "Atiendo clientes o usuarios muy enojados",
+        "P15_2": "Mi trabajo me exige atender personas muy necesitadas de ayuda o enfermas",
+        "P15_3": "Para hacer mi trabajo debo demostrar sentimientos distintos a los míos",
+        "P15_4": "Mi trabajo me exige atender situaciones de violencia",
+        "P16": "Soy jefe de otros trabajadores:",
+        "P17_1": "Comunican tarde los asuntos de trabajo",
+        "P17_2": "Dificultan el logro de los resultados del trabajo",
+        "P17_3": "Cooperan poco cuando se necesita",
+        "P17_4": "Ignoran las sugerencias para mejorar su trabajo"
+        }
 
 
-        # Definición de escalas Likert y preguntas
-        escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas Veces": 2, "Casi nunca": 1, "Nunca": 0}
-        escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas Veces": 2, "Casi nunca": 3, "Nunca": 4}
+    # Definición de escalas Likert y preguntas
+    escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas Veces": 2, "Casi nunca": 1, "Nunca": 0}
+    escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas Veces": 2, "Casi nunca": 3, "Nunca": 4}
             
-        # Escalas Likert
-        preguntas_likert_positiva = [
-            "P2_1", "P2_4", "P7_1", "P7_2", "P7_3", "P7_4", "P7_5", "P7_6",
-            "P8_2", "P9_1", "P9_2", "P9_3", "P9_4", "P9_5", "P9_6",
-            "P10_1", "P10_2", "P10_3", "P10_4", "P10_5", "P11_1", "P11_2",
-            "P11_3", "P11_4", "P11_5", "P12_1", "P12_2", "P12_3", "P12_4",
-            "P12_5", "P12_6", "P12_7", "P12_8", "P12_9", "P12_10", "P13_1"
-        ]
+    # Escalas Likert
+    preguntas_likert_positiva = [
+        "P2_1", "P2_4", "P7_1", "P7_2", "P7_3", "P7_4", "P7_5", "P7_6",
+        "P8_2", "P9_1", "P9_2", "P9_3", "P9_4", "P9_5", "P9_6",
+        "P10_1", "P10_2", "P10_3", "P10_4", "P10_5", "P11_1", "P11_2",
+        "P11_3", "P11_4", "P11_5", "P12_1", "P12_2", "P12_3", "P12_4",
+        "P12_5", "P12_6", "P12_7", "P12_8", "P12_9", "P12_10", "P13_1"
+    ]
 
-        preguntas_likert_negativa = [
-            "P2_2", "P2_3", "P2_5", "P3_1", "P3_2", "P3_3", "P4_1", "P4_2",
-            "P4_3", "P4_4", "P5_1", "P5_2", "P5_3", "P5_4", "P6_1", "P6_2",
-            "P6_3", "P6_4", "P6_5", "P6_6", "P8_1", "P13_2", "P13_3", "P13_4",
-            "P13_5", "P13_6", "P13_7", "P13_8", "P15_1", "P15_2", "P15_3",
-            "P15_4", "P17_1", "P17_2", "P17_3", "P17_4"
-        ]
-            # Convertir a un DataFrame
-        df_preguntas = pd.DataFrame(list(preguntas.items()), columns=["Clave de Pregunta", "Enunciado"])
-        st.markdown("""Listado de preguntas en la encuesta y su clave alfanumérica:""")
-        st.dataframe(df_preguntas)
+    preguntas_likert_negativa = [
+        "P2_2", "P2_3", "P2_5", "P3_1", "P3_2", "P3_3", "P4_1", "P4_2",
+        "P4_3", "P4_4", "P5_1", "P5_2", "P5_3", "P5_4", "P6_1", "P6_2",
+        "P6_3", "P6_4", "P6_5", "P6_6", "P8_1", "P13_2", "P13_3", "P13_4",
+        "P13_5", "P13_6", "P13_7", "P13_8", "P15_1", "P15_2", "P15_3",
+        "P15_4", "P17_1", "P17_2", "P17_3", "P17_4"
+    ]
+    # Convertir a un DataFrame
+    df_preguntas = pd.DataFrame(list(preguntas.items()), columns=["Clave de Pregunta", "Enunciado"])
+    st.markdown("""Listado de preguntas en la encuesta y su clave alfanumérica:""")
+    st.dataframe(df_preguntas)
 
 
-        st.markdown("""Las preguntas están divididas en dos grupos: uno en el que la intensidad de las respuestas va en escala positiva y otro en el que van en escala negativa. A continuación de muestran agrupadas de acuerdo a su escala""")
-        # Crear DataFrames para cada tipo de escala Likert
-        df_likert_positiva = pd.DataFrame(
-        [{"Clave de Pregunta": clave, "Enunciado": preguntas[clave]} for clave in preguntas_likert_positiva],
-        columns=["Clave de Pregunta", "Enunciado"]
-        )
+    st.markdown("""Las preguntas están divididas en dos grupos: uno en el que la intensidad de las respuestas va en escala positiva y otro en el que van en escala negativa. A continuación de muestran agrupadas de acuerdo a su escala""")
+    # Crear DataFrames para cada tipo de escala Likert
+    df_likert_positiva = pd.DataFrame(
+    [{"Clave de Pregunta": clave, "Enunciado": preguntas[clave]} for clave in preguntas_likert_positiva],
+    columns=["Clave de Pregunta", "Enunciado"]
+    )
     
-        df_likert_negativa = pd.DataFrame(
-            [{"Clave de Pregunta": clave, "Enunciado": preguntas[clave]} for clave in preguntas_likert_negativa],
-            columns=["Clave de Pregunta", "Enunciado"]
-        )
+    df_likert_negativa = pd.DataFrame(
+    [{"Clave de Pregunta": clave, "Enunciado": preguntas[clave]} for clave in preguntas_likert_negativa],
+    columns=["Clave de Pregunta", "Enunciado"]
+    )
 
-        # Agregar valores de las escalas Likert
-        df_escala_positiva = pd.DataFrame(escala_likert_positiva.items(), columns=["Respuesta", "Valor"])
-        df_escala_negativa = pd.DataFrame(escala_likert_negativa.items(), columns=["Respuesta", "Valor"])
+    # Agregar valores de las escalas Likert
+    df_escala_positiva = pd.DataFrame(escala_likert_positiva.items(), columns=["Respuesta", "Valor"])
+    df_escala_negativa = pd.DataFrame(escala_likert_negativa.items(), columns=["Respuesta", "Valor"])
 
             # Mostrar las tablas en Streamlit
             #st.title("Preguntas y Escalas Likert")
 
-        st.markdown("**Preguntas en Escala Likert Positiva**")
-        st.dataframe(df_likert_positiva)
+    st.markdown("**Preguntas en Escala Likert Positiva**")
+    st.dataframe(df_likert_positiva)
 
-        st.markdown("**Preguntas en Escala Likert Negativa**")
-        st.dataframe(df_likert_negativa)
+    st.markdown("**Preguntas en Escala Likert Negativa**")
+    st.dataframe(df_likert_negativa)
 
-        st.markdown("""
-        A continuación se muestran los valores de las escalas likert positiva y negativa:
-        """)
+    st.markdown("""A continuación se muestran los valores de las escalas likert positiva y negativa:""")
 
             
-        st.markdown("**Valores de Escala Likert Positiva**")
-        st.table(df_escala_positiva)
+    st.markdown("**Valores de Escala Likert Positiva**")
+    st.table(df_escala_positiva)
 
-        st.markdown("**Valores de Escala Likert Negativa**")
-        st.table(df_escala_negativa)        # Invertir el diccionario para mapear nombres largos a claves cortas
+    st.markdown("**Valores de Escala Likert Negativa**")
+    st.table(df_escala_negativa)        # Invertir el diccionario para mapear nombres largos a claves cortas
         
-        nombres_invertidos = {v: k for k, v in preguntas.items()}
+    nombres_invertidos = {v: k for k, v in preguntas.items()}
 
-        # Función para renombrar las columnas
-        def renombrar_columnas(col):
-            # Conservar columnas específicas
-            if col in ["Marca temporal", "Selecciona tu centro de trabajo"]:
-                return col
-            # Eliminar corchetes y mapear a clave corta si está en el diccionario
-            col_limpia = col.strip(" []")
-            return nombres_invertidos.get(col_limpia, col)
+    # Función para renombrar las columnas
+    def renombrar_columnas(col):
+        # Conservar columnas específicas
+        if col in ["Marca temporal", "Selecciona tu centro de trabajo"]:
+            return col
+        # Eliminar corchetes y mapear a clave corta si está en el diccionario
+        col_limpia = col.strip(" []")
+        return nombres_invertidos.get(col_limpia, col)
 
-        # Aplicar el renombrado a las columnas de `df`
-        df.columns = [renombrar_columnas(col) for col in df.columns]
+    # Aplicar el renombrado a las columnas de `df`
+    df.columns = [renombrar_columnas(col) for col in df.columns]
         
-        import pandas as pd
+    import pandas as pd
 
-        # Reemplazar "Marca temporal" por una columna "Folio"
-        df["Folio"] = [f"part-{i+1}" for i in range(len(df))]
+    # Reemplazar "Marca temporal" por una columna "Folio"
+    df["Folio"] = [f"part-{i+1}" for i in range(len(df))]
     
-        # Reorganizar las columnas para que "Folio" esté al inicio
-        columnas_ordenadas = ["Folio"] + [col for col in df.columns if col != "Folio"]
-        df = df[columnas_ordenadas]
+    # Reorganizar las columnas para que "Folio" esté al inicio
+    columnas_ordenadas = ["Folio"] + [col for col in df.columns if col != "Folio"]
+    df = df[columnas_ordenadas]
         
         
-        import pandas as pd
+    import pandas as pd
 
-        # Cambiar los nombres de las columnas específicas
-        df.rename(columns={
-            "Selecciona tu centro de trabajo": "CT",
-            "En caso de pertenecer a Oficinas Centrales Indica en cual de las siguientes áreas colaboras.": "Area"
-        }, inplace=True)
+    # Cambiar los nombres de las columnas específicas
+    df.rename(columns={
+        "Selecciona tu centro de trabajo": "CT",
+        "En caso de pertenecer a Oficinas Centrales Indica en cual de las siguientes áreas colaboras.": "Area"
+    }, inplace=True)
 
-        # Reorganizar las columnas para que "Folio" esté al inicio
-        columnas_ordenadas = ["Folio"] + [col for col in df.columns if col != "Folio" and col != "Marca temporal"]
-        df = df[columnas_ordenadas]
+    # Reorganizar las columnas para que "Folio" esté al inicio
+    columnas_ordenadas = ["Folio"] + [col for col in df.columns if col != "Folio" and col != "Marca temporal"]
+    df = df[columnas_ordenadas]
 
 
-        # Función para verificar si una celda contiene una combinación inválida o es NaN
-        def es_valor_invalido(valor):
-            #if pd.isna(valor):  # Verifica si es NaN
-            #    return True
-            if isinstance(valor, str):
-                # Verifica si contiene una coma o un espacio adicional después de una coma
-                if "," in valor:
-                    return True
-                    # Verifica si contiene caracteres invisibles como saltos de línea
+    # Función para verificar si una celda contiene una combinación inválida o es NaN
+    def es_valor_invalido(valor):
+        #if pd.isna(valor):  # Verifica si es NaN
+        #    return True
+        if isinstance(valor, str):
+            # Verifica si contiene una coma o un espacio adicional después de una coma
+            if "," in valor:
+                return True
+                # Verifica si contiene caracteres invisibles como saltos de línea
                     #if "\n" in valor or "\r" in valor:
                     #    return True
-            return False
+        return False
 
-        # Identificar filas con valores inválidos
-        filas_invalidas = df.map(es_valor_invalido).any(axis=1)
+    # Identificar filas con valores inválidos
+    filas_invalidas = df.map(es_valor_invalido).any(axis=1)
 
-        # Crear un nuevo DataFrame excluyendo las filas con valores inválidos
-        df = df[~filas_invalidas].copy()
+    # Crear un nuevo DataFrame excluyendo las filas con valores inválidos
+    df = df[~filas_invalidas].copy()
         
-        st.markdown("""**Este es el dataframe con el que se realizará el análisis de datos:**""")
+    st.markdown("""**Este es el dataframe con el que se realizará el análisis de datos:**""")
         
-        st.dataframe(df)
-        # Mostrar el número de filas y columnas
-        num_filas, num_columnas = df.shape
+    st.dataframe(df)
+    # Mostrar el número de filas y columnas
+    num_filas, num_columnas = df.shape
         st.markdown(f"""**El DataFrame tiene {num_filas} filas y {num_columnas} columnas.**""")
 
-        import pandas as pd
-        import streamlit as st
-        from io import BytesIO
+    import pandas as pd
+    import streamlit as st
+    from io import BytesIO
 
-        # Función para convertir DataFrame a Excel
-        def convertir_df_a_excel(df):
-            output = BytesIO()
-            with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
-                df.to_excel(writer, index=False, sheet_name="Datos")
-            processed_data = output.getvalue()
-            return processed_data
+    # Función para convertir DataFrame a Excel
+    def convertir_df_a_excel(df):
+        output = BytesIO()
+        with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
+            df.to_excel(writer, index=False, sheet_name="Datos")
+        processed_data = output.getvalue()
+        return processed_data
 
-        # Convertir DataFrame a archivo Excel
-        excel_data = convertir_df_a_excel(df)
+    # Convertir DataFrame a archivo Excel
+    excel_data = convertir_df_a_excel(df)
 
-        # Botón de descarga
-        st.download_button(
-            label="📥 Descargar Excel",
-            data=excel_data,
-            file_name="dataframe.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
+    # Botón de descarga
+    st.download_button(
+        label="📥 Descargar Excel",
+        data=excel_data,
+        file_name="dataframe.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
 
 
-        st.subheader("Filtrar datos por Centro de trabajo, atención a clientes y puesto")
-        st.markdown("""En esta sección se puede seleccionar el **Centro de trabajo** a analizar. Además es posible analizar por separado las respuestas tanto del personal que brinda **atención a clientes** y/o que está **a cargo de otros empleados**. En el siguiente menú desplegable, busque el centro de trabajo que desea analizar y, debajo de este menu, indique si el tipo de personal brinda atención a clientes y son jefes de otros trabajadores:""")
-        # Crear un menú desplegable con los valores únicos de "CT"
-        valores_ct = df["CT"].unique()
-        valor_seleccionado = st.selectbox("Seleccione el **Centro de trabajo (CT)**:", valores_ct)
+    st.subheader("Filtrar datos por Centro de trabajo, atención a clientes y puesto")
+    st.markdown("""En esta sección se puede seleccionar el **Centro de trabajo** a analizar. Además es posible analizar por separado las respuestas tanto del personal que brinda **atención a clientes** y/o que está **a cargo de otros empleados**. En el siguiente menú desplegable, busque el centro de trabajo que desea analizar y, debajo de este menu, indique si el tipo de personal brinda atención a clientes y son jefes de otros trabajadores:""")
+    # Crear un menú desplegable con los valores únicos de "CT"
+    valores_ct = df["CT"].unique()
+    valor_seleccionado = st.selectbox("Seleccione el **Centro de trabajo (CT)**:", valores_ct)
 
-        # Filtrar el DataFrame según la selección
-        nuevo_df = df[df["CT"] == valor_seleccionado]
+    # Filtrar el DataFrame según la selección
+    nuevo_df = df[df["CT"] == valor_seleccionado]
 
         #st.success(f"Mostrando datos filtrados para CT = {valor_seleccionado}")
         #st.dataframe(nuevo_df)
 
 
-        # Opciones para P14
-        opciones_p14 = {"Sí": "Si", "No": "No"}
-        valor_p14 = st.radio("Indique si en su trabajo debe **brindar servicio a clientes o usuarios**:", list(opciones_p14.keys()))
+    # Opciones para P14
+    opciones_p14 = {"Sí": "Si", "No": "No"}
+    valor_p14 = st.radio("Indique si en su trabajo debe **brindar servicio a clientes o usuarios**:", list(opciones_p14.keys()))
 
-        # Filtrar por la opción de P14
-        valor_seleccionado = opciones_p14[valor_p14]
-        nuevo_df2 = nuevo_df[nuevo_df["P14"] == valor_seleccionado].copy()
+    # Filtrar por la opción de P14
+    valor_seleccionado = opciones_p14[valor_p14]
+    nuevo_df2 = nuevo_df[nuevo_df["P14"] == valor_seleccionado].copy()
 
         # Si selecciona "No", asignar 0 a las columnas P15
         if valor_seleccionado == "No":
