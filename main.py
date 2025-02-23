@@ -569,7 +569,6 @@ elif paginas == "Depuración":
                 mime="text/csv"
             )
 
-
         ###############
 
     import streamlit as st
@@ -690,13 +689,6 @@ elif paginas == "Depuración":
     }
 
 
-
-        
-        
-        #st.subheader("Aná")
-
-    import streamlit as st
-
     st.markdown("""
     A continuación se evalua el nivel de riesgo en cada dominio definido por la NOM-035-STPS-2018
     """)
@@ -767,6 +759,7 @@ elif paginas == "Depuración":
 
     # Crear el nuevo DataFrame con los resultados por dominio
     nuevo_df3_resultado_dominios = nuevo_df3_result_num[columnas_finales]
+    st.session_state['nuevo_df3_resultado_dominios'] = nuevo_df3_resultado_dominios
 
     # Mostrar el DataFrame en Streamlit
     #st.success("Cálculo de puntajes y niveles de riesgo por dominio completado")
@@ -790,90 +783,8 @@ elif paginas == "Depuración":
 elif paginas == "Análisis":
     
 
-        ###################
-
-        #st.title("Búsqueda de Empleado por Folio o CT")
-
-        ## Ingresar el número de Folio o CT para buscar
-        #criterio_busqueda = st.radio("Buscar empleado por:", ("Folio", "CT"))
-        #valor_busqueda = st.text_input(f"Ingrese el {criterio_busqueda} del empleado:")
-
-        ## Filtrar el DataFrame según la búsqueda
-        #if valor_busqueda:
-        #    df_filtrado = nuevo_df3_resultado_dominios[nuevo_df3_resultado_dominios[criterio_busqueda].astype(str) == valor_busqueda]
-
-       #     if not df_filtrado.empty:
-       #         st.success(f"Empleado encontrado con {criterio_busqueda} = {valor_busqueda}")
-       #         st.dataframe(df_filtrado)
-       #     else:
-       #         st.warning(f"No se encontró ningún empleado con {criterio_busqueda} = {valor_busqueda}")
-
-
-        ########################
-
-#        import streamlit as st
-#        import pandas as pd
-#        import numpy as np
-#        import matplotlib.pyplot as plt
-
-#        # Mapeo de niveles de riesgo a valores numéricos
-#        nivel_riesgo_valores = {
-#            "Nulo o despreciable": 0,
-#            "Bajo": 1,
-#            "Medio": 2,
-#            "Alto": 3,
-#            "Muy alto": 4
-#        }
-
-#        st.title("Búsqueda de Empleado y Evaluación de Riesgo en Diagrama de Radar")
-
-#        # Ingresar el número de Folio o CT para buscar
-#        criterio_busqueda = st.radio("Buscar empleado por:", ("Folio", "CT"))
-#        valor_busqueda = st.text_input(f"Ingrese el {criterio_busqueda} del empleado:")
-
-#        if valor_busqueda:
-#            df_filtrado = nuevo_df3_resultado_dominios[nuevo_df3_resultado_dominios[criterio_busqueda].astype(str) == valor_busqueda]
-
-#            if not df_filtrado.empty:
-#                st.success(f"Empleado encontrado con {criterio_busqueda} = {valor_busqueda}")
-#                st.dataframe(df_filtrado)
-
-#                # Extraer los valores de nivel de riesgo por dominio y convertirlos a valores numéricos
-#                niveles_riesgo = []
-#                dominios = list(dominios_reales.keys())
-
-#                for dominio in dominios:
-#                    nivel_str = df_filtrado[f"{dominio}_Nivel de Riesgo"].values[0]
-#                    niveles_riesgo.append(nivel_riesgo_valores.get(nivel_str, 0))
-
-#                # Crear el gráfico de radar
-#                num_vars = len(dominios)
-
-#                # Ángulos de cada eje en el gráfico de radar
-#                angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
-#                niveles_riesgo += niveles_riesgo[:1]  # Cerrar el gráfico
-#                angles += angles[:1]
-
-#                # Crear la figura del radar
-#                fig, ax = plt.subplots(figsize=(8, 8), subplot_kw=dict(polar=True))
-#                ax.fill(angles, niveles_riesgo, color='red', alpha=0.25)
-#                ax.plot(angles, niveles_riesgo, color='red', linewidth=2)
-
-#                # Configurar los ejes
-#                ax.set_yticks(range(5))  # Rango de 0 a 4 (correspondiente a los niveles de riesgo)
-#                ax.set_yticklabels(["Nulo", "Bajo", "Medio", "Alto", "Muy Alto"], fontsize=10)
-#                ax.set_xticks(angles[:-1])
-#                ax.set_xticklabels(dominios, fontsize=8, rotation=45, ha="right")
-
-                
-#                st.pyplot(fig)
-
-#            else:
-#                st.warning(f"No se encontró ningún empleado con {criterio_busqueda} = {valor_busqueda}")
-
-
-        ####################################3
-
+    if 'nuevo_df3_resultado_dominios' in st.session_state:
+        nuevo_df3_resultado_dominios = st.session_state['nuevo_df3_resultado_dominios']
 
     import streamlit as st
     import pandas as pd
