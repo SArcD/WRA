@@ -17,7 +17,7 @@ import pandas as pd
 
 
 
-paginas = st.sidebar.radio("Secciones:",["Descripción","Cargar datos","Depuración","Análisis por clusters","Formulario interactivo"])
+paginas = st.sidebar.radio("Secciones:",["Descripción","Cargar datos","Depuración","Análisis","Formulario interactivo"])
 
 st.title("Análisis de datos aplicado al riesgo laboral")
 
@@ -787,7 +787,253 @@ elif paginas == "Depuración":
     )
 
 
+elif paginas == "Análisis":
+    
 
+        ###################
+
+        #st.title("Búsqueda de Empleado por Folio o CT")
+
+        ## Ingresar el número de Folio o CT para buscar
+        #criterio_busqueda = st.radio("Buscar empleado por:", ("Folio", "CT"))
+        #valor_busqueda = st.text_input(f"Ingrese el {criterio_busqueda} del empleado:")
+
+        ## Filtrar el DataFrame según la búsqueda
+        #if valor_busqueda:
+        #    df_filtrado = nuevo_df3_resultado_dominios[nuevo_df3_resultado_dominios[criterio_busqueda].astype(str) == valor_busqueda]
+
+       #     if not df_filtrado.empty:
+       #         st.success(f"Empleado encontrado con {criterio_busqueda} = {valor_busqueda}")
+       #         st.dataframe(df_filtrado)
+       #     else:
+       #         st.warning(f"No se encontró ningún empleado con {criterio_busqueda} = {valor_busqueda}")
+
+
+        ########################
+
+#        import streamlit as st
+#        import pandas as pd
+#        import numpy as np
+#        import matplotlib.pyplot as plt
+
+#        # Mapeo de niveles de riesgo a valores numéricos
+#        nivel_riesgo_valores = {
+#            "Nulo o despreciable": 0,
+#            "Bajo": 1,
+#            "Medio": 2,
+#            "Alto": 3,
+#            "Muy alto": 4
+#        }
+
+#        st.title("Búsqueda de Empleado y Evaluación de Riesgo en Diagrama de Radar")
+
+#        # Ingresar el número de Folio o CT para buscar
+#        criterio_busqueda = st.radio("Buscar empleado por:", ("Folio", "CT"))
+#        valor_busqueda = st.text_input(f"Ingrese el {criterio_busqueda} del empleado:")
+
+#        if valor_busqueda:
+#            df_filtrado = nuevo_df3_resultado_dominios[nuevo_df3_resultado_dominios[criterio_busqueda].astype(str) == valor_busqueda]
+
+#            if not df_filtrado.empty:
+#                st.success(f"Empleado encontrado con {criterio_busqueda} = {valor_busqueda}")
+#                st.dataframe(df_filtrado)
+
+#                # Extraer los valores de nivel de riesgo por dominio y convertirlos a valores numéricos
+#                niveles_riesgo = []
+#                dominios = list(dominios_reales.keys())
+
+#                for dominio in dominios:
+#                    nivel_str = df_filtrado[f"{dominio}_Nivel de Riesgo"].values[0]
+#                    niveles_riesgo.append(nivel_riesgo_valores.get(nivel_str, 0))
+
+#                # Crear el gráfico de radar
+#                num_vars = len(dominios)
+
+#                # Ángulos de cada eje en el gráfico de radar
+#                angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
+#                niveles_riesgo += niveles_riesgo[:1]  # Cerrar el gráfico
+#                angles += angles[:1]
+
+#                # Crear la figura del radar
+#                fig, ax = plt.subplots(figsize=(8, 8), subplot_kw=dict(polar=True))
+#                ax.fill(angles, niveles_riesgo, color='red', alpha=0.25)
+#                ax.plot(angles, niveles_riesgo, color='red', linewidth=2)
+
+#                # Configurar los ejes
+#                ax.set_yticks(range(5))  # Rango de 0 a 4 (correspondiente a los niveles de riesgo)
+#                ax.set_yticklabels(["Nulo", "Bajo", "Medio", "Alto", "Muy Alto"], fontsize=10)
+#                ax.set_xticks(angles[:-1])
+#                ax.set_xticklabels(dominios, fontsize=8, rotation=45, ha="right")
+
+                
+#                st.pyplot(fig)
+
+#            else:
+#                st.warning(f"No se encontró ningún empleado con {criterio_busqueda} = {valor_busqueda}")
+
+
+        ####################################3
+
+
+    import streamlit as st
+    import pandas as pd
+    import numpy as np
+    import matplotlib.pyplot as plt
+
+    # Mapeo de niveles de riesgo a valores numéricos
+    nivel_riesgo_valores = {
+        "Nulo o despreciable": 0,
+        "Bajo": 1,
+        "Medio": 2,
+        "Alto": 3,
+        "Muy alto": 4
+    }
+
+    st.subheader("Visualización del nivel de riesgo")
+
+    st.markdown("""
+    A continuación puede visualizar los **diagramas de radar** con los resultados para la evaluación del **nivel de riesgo laboral** de uno o mas participantes de la encuesta. A continuación seleccione si quiere visualizar los datos de un participante en particular (tecleando la clave alfa numérica que lo representa) o de todos aquellos que han sido clasificados con el mismo nivel de riesgo.
+    """)
+    # Seleccionar tipo de búsqueda
+    tipo_busqueda = st.radio("Seleccione el tipo de búsqueda:", ("Por Empleado", "Por Nivel de Riesgo"))
+
+    if tipo_busqueda == "Por Empleado":
+        # Ingresar el número de Folio o CT para buscar
+        criterio_busqueda = st.radio("Buscar empleado por:", ("Folio", "CT"))
+        valor_busqueda = st.text_input(f"Ingrese el {criterio_busqueda} del empleado:")
+
+        if valor_busqueda:
+            df_filtrado = nuevo_df3_resultado_dominios[nuevo_df3_resultado_dominios[criterio_busqueda].astype(str) == valor_busqueda]
+
+            if not df_filtrado.empty:
+                st.success(f"Empleado encontrado con {criterio_busqueda} = {valor_busqueda}")
+                st.dataframe(df_filtrado)
+
+                # Extraer los valores de nivel de riesgo por dominio y convertirlos a valores numéricos
+                niveles_riesgo = []
+                dominios = list(dominios_reales.keys())
+
+                for dominio in dominios:
+                    nivel_str = df_filtrado[f"{dominio}_Nivel de Riesgo"].values[0]
+                    niveles_riesgo.append(nivel_riesgo_valores.get(nivel_str, 0))
+
+                # Crear el gráfico de radar
+                num_vars = len(dominios)
+
+                # Ángulos de cada eje en el gráfico de radar
+                angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
+                niveles_riesgo += niveles_riesgo[:1]  # Cerrar el gráfico
+                angles += angles[:1]
+
+                # Crear la figura del radar
+                fig, ax = plt.subplots(figsize=(8, 8), subplot_kw=dict(polar=True))
+                ax.fill(angles, niveles_riesgo, color='red', alpha=0.25)
+                ax.plot(angles, niveles_riesgo, color='red', linewidth=2)
+
+                # Configurar los ejes
+                ax.set_yticks(range(5))  # Rango de 0 a 4 (correspondiente a los niveles de riesgo)
+                ax.set_yticklabels(["Nulo", "Bajo", "Medio", "Alto", "Muy Alto"], fontsize=10)
+                ax.set_xticks(angles[:-1])
+                ax.set_xticklabels(dominios, fontsize=8, rotation=45, ha="right")
+
+                st.pyplot(fig)
+
+            else:
+                st.warning(f"No se encontró ningún empleado con {criterio_busqueda} = {valor_busqueda}")
+
+    elif tipo_busqueda == "Por Nivel de Riesgo":
+        # Seleccionar un Nivel de Riesgo
+        nivel_seleccionado = st.selectbox("Seleccione el Nivel de Riesgo a visualizar:", list(nivel_riesgo_valores.keys()))
+
+        # Filtrar empleados con el Nivel de Riesgo seleccionado
+        df_filtrado = nuevo_df3_resultado_dominios[nuevo_df3_resultado_dominios["Nivel de Riesgo"] == nivel_seleccionado]
+
+        if not df_filtrado.empty:
+            st.success(f"Se encontraron {len(df_filtrado)} empleados con Nivel de Riesgo: {nivel_seleccionado}")
+            st.dataframe(df_filtrado[["Folio", "Nivel de Riesgo"]])
+
+            # Definir el número de filas y columnas en la cuadrícula de gráficos
+            num_empleados = len(df_filtrado)
+            num_cols = 3  # Número de columnas por fila
+            num_rows = -(-num_empleados // num_cols)  # Redondeo hacia arriba
+
+            # Crear múltiples gráficos de radar en una cuadrícula
+            fig, axes = plt.subplots(num_rows, num_cols, figsize=(num_cols * 5, num_rows * 5), subplot_kw=dict(polar=True))
+            axes = np.array(axes).flatten()  # Asegurar que se puedan iterar en caso de que haya menos empleados
+
+            for i, (_, empleado) in enumerate(df_filtrado.iterrows()):
+                niveles_riesgo = []
+                for dominio in dominios_reales.keys():
+                    nivel_str = empleado[f"{dominio}_Nivel de Riesgo"]
+                    niveles_riesgo.append(nivel_riesgo_valores.get(nivel_str, 0))
+
+                # Ángulos del radar
+                angles = np.linspace(0, 2 * np.pi, len(dominios_reales), endpoint=False).tolist()
+                niveles_riesgo += niveles_riesgo[:1]  # Cerrar el gráfico
+                angles += angles[:1]
+
+                # Crear el gráfico de radar para el empleado
+                ax = axes[i]
+                ax.fill(angles, niveles_riesgo, color='red', alpha=0.25)
+                ax.plot(angles, niveles_riesgo, color='red', linewidth=2)
+
+                # Configurar los ejes
+                ax.set_yticks(range(5))
+                ax.set_yticklabels(["Nulo", "Bajo", "Medio", "Alto", "Muy Alto"], fontsize=7)
+                ax.set_xticks(angles[:-1])
+                ax.set_xticklabels(dominios_reales.keys(), fontsize=6, rotation=45, ha="right")
+                ax.set_title(f"Empleado {empleado['Folio']}", fontsize=10, pad=10)
+
+            # Ajustar el diseño del gráfico
+            plt.tight_layout()
+            st.pyplot(fig)
+
+        else:
+            st.warning(f"No se encontraron empleados con Nivel de Riesgo: {nivel_seleccionado}")
+
+    with st.expander("**¿Qué es un gráfico de radar y cómo se interpreta?**"):
+        st.markdown("""
+        Un gráfico de radar, también conocido como gráfico de araña o gráfico polar, es una representación gráfica que permite visualizar datos multivariados en un formato bidimensional. Se utiliza para mostrar valores de diferentes variables en un sistema de coordenadas radiales, donde cada eje representa una variable.
+
+        ### Características principales:
+            - **Ejes radiales**: Cada eje radial corresponde a una variable o categoría específica.
+            - **Escala común**: Todas las variables se representan en la misma escala, lo que facilita la comparación.
+            - **Área sombreada**: El área delimitada por la línea que conecta los puntos representa el "perfil" de los datos.
+
+            ### ¿Cómo interpretarlo?
+            - **Forma del gráfico**: La forma del área sombreada indica cómo se distribuyen los valores de las variables. Por ejemplo, un gráfico equilibrado (simétrico) puede indicar uniformidad en las variables, mientras que un gráfico asimétrico resalta diferencias marcadas.
+            - **Valores extremos**: Los puntos más alejados del centro representan valores altos, mientras que los más cercanos al centro indican valores bajos.
+            - **Comparaciones**: Al superponer varios gráficos de radar, es posible comparar perfiles entre diferentes categorías, grupos o individuos.""")
+
+        
+    ####################
+
+    st.subheader("Minimización de items del cuestionario y estudio de corrlaciones entre variables")
+
+    def indiscernibility(attr, table):
+        u_ind = {}  # un diccionario vacío para almacenar los elementos de la relación de indiscernibilidad (U/IND({conjunto de atributos}))
+        attr_values = []  # una lista vacía para almacenar los valores de los atributos
+
+        for i in table.index:
+            attr_values = []
+            for j in attr:
+                attr_values.append(table.loc[i, j])  # encontrar el valor de la tabla en la fila correspondiente y el atributo deseado y agregarlo a la lista attr_values
+
+            # convertir la lista en una cadena y verificar si ya es una clave en el diccionario
+            key = ''.join(str(k) for k in attr_values)
+
+            if key in u_ind:  # si la clave ya existe en el diccionario
+                u_ind[key].add(i)
+            else:  # si la clave aún no existe en el diccionario
+                u_ind[key] = set()
+                u_ind[key].add(i)
+
+        # Ordenar la relación de indiscernibilidad por la longitud de cada conjunto
+        u_ind_sorted = sorted(u_ind.values(), key=len, reverse=True)
+        return u_ind_sorted
+
+
+#aqui
 
 
 
