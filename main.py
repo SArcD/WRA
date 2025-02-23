@@ -1560,17 +1560,17 @@ elif paginas == "Análisis":
         
         
     # Permitir descargar el DataFrame filtrado
-    @st.cache_data
-    def convertir_csv(df):
-        return df.to_csv(index=False).encode("utf-8")
+    #@st.cache_data
+    #def convertir_csv(df):
+    #    return df.to_csv(index=False).encode("utf-8")
 
-    archivo_csv = convertir_csv(nuevo_df)
+    #archivo_csv = convertir_csv(nuevo_df)
 
-    st.download_button(
-        label="Descargar datos filtrados (CSV)",
-        data=archivo_csv,
-        file_name=f"datos_CT_{valor_seleccionado}.csv",
-        mime="text/csv")
+    #st.download_button(
+   #     label="Descargar datos filtrados (CSV)",
+   #     data=archivo_csv,
+   #     file_name=f"datos_CT_{valor_seleccionado}.csv",
+   #     mime="text/csv")
 
 
     import streamlit as st
