@@ -3,7 +3,7 @@ import pandas as pd
 
 st.title("Análisis de datos aplicado al riesgo laboral")
 
-st.subheader("""Objetivo de la Aplicación""")
+st.subheader("""**Objetivo de la Aplicación**""")
 
 st.markdown("""
 <div class="justificado">
@@ -20,6 +20,11 @@ La herramienta está dirigida a **empresas, organizaciones y profesionales en se
 """, unsafe_allow_html=True)
 
 st.subheader("Carga de arhivos")
+
+st.markdown("""
+En esta sección puede cargar los datos laborales a analizar. Estos deben tener el formato de la encuesta para la determinación del riesgo laboral.
+
+""")
 
 st.markdown("""
 Por favor suba aqui el archivo de **.xlsx** con los datos de la Encuesta para la Determinación de factores de riesgo laborales.
