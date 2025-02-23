@@ -445,9 +445,9 @@ elif paginas == "Depuración":
 
             #st.success("Cálculo de Nivel de Riesgo Completado")
             #st.dataframe(nuevo_df3_resultado)
-
+    st.session_state['nuevo_df3_resultado'] = nuevo_df3_resultado
         ####################3
-
+    
     import streamlit as st
 
     # Crear una copia del DataFrame original
