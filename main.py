@@ -202,7 +202,7 @@ if archivo_excel is not None:
         """)
 
             
-        st.markdown("**Valores de Escala Likert Positiva"**)
+        st.markdown("**Valores de Escala Likert Positiva**")
         st.table(df_escala_positiva)
 
         st.markdown("**Valores de Escala Likert Negativa**")
