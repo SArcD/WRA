@@ -790,7 +790,7 @@ elif paginas == "Análisis":
     if 'dominios_reales' in st.session_state:
         dominios_reales = st.session_state['dominios_reales']
     if 'nuevo_df3' in locals():
-        nuevo_df3_resultado = procesar_dataframe(nuevo_df3)
+        nuevo_df3_resultado = st.session_state['nuevo_df3']
 
 
     
