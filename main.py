@@ -1340,6 +1340,459 @@ elif paginas == "Análisis":
         else:
             st.warning("No se ha generado el DataFrame con puntajes por dominio.")
 
+#######################################################################################################################
+
+    #################
+
+    import streamlit as st
+    import pandas as pd
+    import numpy as np
+    import networkx as nx
+    import matplotlib.pyplot as plt
+
+    st.markdown("Red de Correlaciones con Umbral Dinámico y Preguntas más Correlacionadas")
+
+    # Input para el umbral de correlación
+    umbral_correlacion = st.number_input(
+        "Ingrese el umbral de correlación mínima:",
+        min_value=0.0, max_value=1.0, value=0.5, step=0.05
+    )
+
+        # Diccionario con las descripciones de las preguntas
+        #preguntas = {
+        #    "P2_1": "El espacio donde trabajo me permite realizar mis actividades de manera segura e higiénica.",
+        #    "P2_2": "Mi trabajo me exige hacer mucho esfuerzo físico",
+        #    "P2_3": "Me preocupa sufrir un accidente en mi trabajo",
+        #    "P2_4": "Considero que en mi trabajo se aplican las normas de seguridad y salud en el trabajo",
+        #    "P2_5": "Considero que las actividades que realizo son peligrosas",
+        #    # Agrega todas las demás preguntas...
+        #}
+
+                # Diccionario completo con las claves cortas y las descripciones largas
+    preguntas = {
+            "P1": "En caso de pertenecer a Oficinas Centrales Indica en cual de las siguientes áreas colaboras.",
+            "P2_1": "El espacio donde trabajo me permite realizar mis actividades de manera segura e higiénica",
+            "P2_2": "Mi trabajo me exige hacer mucho esfuerzo físico",
+            "P2_3": "Me preocupa sufrir un accidente en mi trabajo",
+            "P2_4": "Considero que en mi trabajo se aplican las normas de seguridad y salud en el trabajo",
+            "P2_5": "Considero que las actividades que realizo son peligrosas",
+            "P3_1": "Por la cantidad de trabajo que tengo debo quedarme tiempo adicional a mi turno",
+            "P3_2": "Por la cantidad de trabajo que tengo debo trabajar sin parar",
+            "P3_3": "Considero que es necesario mantener un ritmo de trabajo acelerado",
+            "P4_1": "Mi trabajo exige que esté muy concentrado",
+            "P4_2": "Mi trabajo requiere que memorice mucha información",
+            "P4_3": "En mi trabajo tengo que tomar decisiones difíciles muy rápido",
+            "P4_4": "Mi trabajo exige que atienda varios asuntos al mismo tiempo",
+            "P5_1": "En mi trabajo soy responsable de cosas de mucho valor",
+            "P5_2": "Respondo ante mi jefe por los resultados de toda mi área de trabajo",
+            "P5_3": "En el trabajo me dan órdenes contradictorias",
+            "P5_4": "Considero que en mi trabajo me piden hacer cosas innecesarias",
+            "P6_1": "Trabajo horas extras más de tres veces a la semana",
+            "P6_2": "Mi trabajo me exige laborar en días de descanso, festivos o fines de semana",
+            "P6_3": "Considero que el tiempo en el trabajo es mucho y perjudica mis actividades familiares o personales",
+            "P6_4": "Debo atender asuntos de trabajo cuando estoy en casa",
+            "P6_5": "Pienso en las actividades familiares o personales cuando estoy en mi trabajo",
+            "P6_6": "Pienso que mis responsabilidades familiares afectan mi trabajo",
+            "P7_1": "Mi trabajo permite que desarrolle nuevas habilidades",
+            "P7_2": "En mi trabajo puedo aspirar a un mejor puesto",
+            "P7_3": "Durante mi jornada de trabajo puedo tomar pausas cuando las necesito",
+            "P7_4": "Puedo decidir cuánto trabajo realizo durante la jornada laboral",
+            "P7_5": "Puedo decidir la velocidad a la que realizo mis actividades en mi trabajo",
+            "P7_6": "Puedo cambiar el orden de las actividades que realizo en mi trabajo",
+            "P8_1": "Los cambios que se presentan en mi trabajo dificultan mi labor",
+            "P8_2": "Cuando se presentan cambios en mi trabajo se tienen en cuenta mis ideas o aportaciones",
+            "P9_1": "Me informan con claridad cuáles son mis funciones",
+            "P9_2": "Me explican claramente los resultados que debo obtener en mi trabajo",
+            "P9_3": "Me explican claramente los objetivos de mi trabajo",
+            "P9_4": "Me informan con quién puedo resolver problemas o asuntos de trabajo",
+            "P9_5": "Me permiten asistir a capacitaciones relacionadas con mi trabajo",
+            "P9_6": "Recibo capacitación útil para hacer mi trabajo",
+            "P10_1": "Mi jefe ayuda a organizar mejor el trabajo",
+            "P10_2": "Mi jefe tiene en cuenta mis puntos de vista y opiniones",
+            "P10_3": "Mi jefe me comunica a tiempo la información relacionada con el trabajo",
+            "P10_4": "La orientación que me da mi jefe me ayuda a realizar mejor mi trabajo",
+            "P10_5": "Mi jefe ayuda a solucionar los problemas que se presentan en el trabajo",
+            "P11_1": "Puedo confiar en mis compañeros de trabajo",
+            "P11_2": "Entre compañeros solucionamos los problemas de trabajo de forma respetuosa",
+            "P11_3": "En mi trabajo me hacen sentir parte del grupo",
+            "P11_4": "Cuando tenemos que realizar trabajo de equipo los compañeros colaboran",
+            "P11_5": "Mis compañeros de trabajo me ayudan cuando tengo dificultades",
+            "P12_1": "Me informan sobre lo que hago bien en mi trabajo",
+            "P12_2": "La forma como evalúan mi trabajo en mi centro de trabajo me ayuda a mejorar mi desempeño",
+            "P12_3": "En mi centro de trabajo me pagan a tiempo mi salario",
+            "P12_4": "El pago que recibo es el que merezco por el trabajo que realizo",
+            "P12_5": "Si obtengo los resultados esperados en mi trabajo me recompensan o reconocen",
+            "P12_6": "Las personas que hacen bien el trabajo pueden crecer laboralmente",
+            "P12_7": "Considero que mi trabajo es estable",
+            "P12_8": "En mi trabajo existe continua rotación de personal",
+            "P12_9": "Siento orgullo de laborar en este centro de trabajo",
+            "P12_10": "Me siento comprometido con mi trabajo",
+            "P13_1": "En mi trabajo puedo expresarme libremente sin interrupciones",
+            "P13_2": "Recibo críticas constantes a mi persona y/o trabajo",
+            "P13_3": "Recibo burlas, calumnias, difamaciones, humillaciones o ridiculizaciones",
+            "P13_4": "Se ignora mi presencia o se me excluye de las reuniones de trabajo y en la toma de decisiones",
+            "P13_5": "Se manipulan las situaciones de trabajo para hacerme parecer un mal trabajador",
+            "P13_6": "Se ignoran mis éxitos laborales y se atribuyen a otros trabajadores",
+            "P13_7": "Me bloquean o impiden las oportunidades que tengo para obtener ascenso o mejora en mi trabajo",
+            "P13_8": "He presenciado actos de violencia en mi centro de trabajo",
+            "P14": "En mi trabajo debo brindar servicio a clientes o usuarios:",
+            "P15_1": "Atiendo clientes o usuarios muy enojados",
+            "P15_2": "Mi trabajo me exige atender personas muy necesitadas de ayuda o enfermas",
+            "P15_3": "Para hacer mi trabajo debo demostrar sentimientos distintos a los míos",
+            "P15_4": "Mi trabajo me exige atender situaciones de violencia",
+            "P16": "Soy jefe de otros trabajadores:",
+            "P17_1": "Comunican tarde los asuntos de trabajo",
+            "P17_2": "Dificultan el logro de los resultados del trabajo",
+            "P17_3": "Cooperan poco cuando se necesita",
+            "P17_4": "Ignoran las sugerencias para mejorar su trabajo"
+                }
+
+        # Escalas Likert
+    preguntas_likert_positiva = [
+            "P2_1", "P2_4", "P7_1", "P7_2", "P7_3", "P7_4", "P7_5", "P7_6",
+            "P8_2", "P9_1", "P9_2", "P9_3", "P9_4", "P9_5", "P9_6",
+            "P10_1", "P10_2", "P10_3", "P10_4", "P10_5", "P11_1", "P11_2",
+            "P11_3", "P11_4", "P11_5", "P12_1", "P12_2", "P12_3", "P12_4",
+            "P12_5", "P12_6", "P12_7", "P12_8", "P12_9", "P12_10", "P13_1"
+    ]
+
+    preguntas_likert_negativa = [
+            "P2_2", "P2_3", "P2_5", "P3_1", "P3_2", "P3_3", "P4_1", "P4_2",
+            "P4_3", "P4_4", "P5_1", "P5_2", "P5_3", "P5_4", "P6_1", "P6_2",
+            "P6_3", "P6_4", "P6_5", "P6_6", "P8_1", "P13_2", "P13_3", "P13_4",
+            "P13_5", "P13_6", "P13_7", "P13_8", "P15_1", "P15_2", "P15_3",
+            "P15_4", "P17_1", "P17_2", "P17_3", "P17_4"
+    ]
+        
+    # Verificar si el DataFrame `df_reductos` está disponible y tiene datos
+    if not df_reductos.empty:
+        # Convertir las respuestas a escala numérica
+        df_reductos_numerico = df_reductos.drop(columns=["Folio", "CT", "Nivel de Riesgo"], errors="ignore").copy()
+        for columna in df_reductos_numerico.columns:
+            if columna in preguntas_likert_positiva:
+                df_reductos_numerico[columna] = df_reductos_numerico[columna].map({
+                    "Siempre": 4, "Casi siempre": 3, "Algunas veces": 2, "Casi nunca": 1, "Nunca": 0
+                }).fillna(np.nan)
+            elif columna in preguntas_likert_negativa:
+                df_reductos_numerico[columna] = df_reductos_numerico[columna].map({
+                    "Siempre": 0, "Casi siempre": 1, "Algunas veces": 2, "Casi nunca": 3, "Nunca": 4
+                }).fillna(np.nan)
+
+        # Calcular la matriz de correlación
+        correlaciones = df_reductos_numerico.corr()
+
+        # Crear la red de correlación
+        G = nx.Graph()
+        variables_relevantes = set()
+
+        for i in correlaciones.columns:
+            for j in correlaciones.columns:
+                if i != j and abs(correlaciones.loc[i, j]) > umbral_correlacion:
+                    G.add_edge(i, j, weight=correlaciones.loc[i, j])
+                    variables_relevantes.add(i)
+                    variables_relevantes.add(j)
+
+        # Añadir nodos relevantes a la red
+        G.add_nodes_from(variables_relevantes)
+
+        # Crear lista de colores para los nodos
+        node_colors = [
+            "red" if nodo in preguntas_likert_negativa else "green"
+            for nodo in G.nodes
+        ]
+
+        # Dibujar la red de correlación
+        fig, ax = plt.subplots(figsize=(12, 10))
+        pos = nx.spring_layout(G, seed=42)
+
+        nx.draw_networkx_nodes(G, pos, node_size=700, node_color=node_colors, ax=ax)
+        nx.draw_networkx_labels(G, pos, font_size=10, ax=ax)
+
+        # Dibujar bordes
+        edges = G.edges(data=True)
+        nx.draw_networkx_edges(G, pos, edgelist=[(u, v) for u, v, d in edges], width=1.5, edge_color="gray", ax=ax)
+
+        # Título
+        ax.set_title(f"Red de Correlaciones (Umbral > {umbral_correlacion:.2f})", fontsize=14)
+        plt.axis("off")
+
+        # Mostrar la gráfica en Streamlit
+        st.pyplot(fig)
+
+
+        # Crear DataFrame con las preguntas más correlacionadas
+        preguntas_correlacionadas = []
+        pares_vistos = set()  # Para evitar duplicados
+
+        for i in correlaciones.columns:
+            for j in correlaciones.columns:
+                if i != j and abs(correlaciones.loc[i, j]) > umbral_correlacion:
+                    par = tuple(sorted([i, j]))
+                    if par not in pares_vistos:
+                        preguntas_correlacionadas.append({
+                            "Pregunta 1": i,
+                            "Pregunta 1 (Descripción)": preguntas.get(i, "Descripción no disponible"),
+                            "Pregunta 2": j,
+                            "Pregunta 2 (Descripción)": preguntas.get(j, "Descripción no disponible"),
+                            "Índice de Correlación": correlaciones.loc[i, j]
+                        })
+                        pares_vistos.add(par)
+
+
+            
+        # Convertir a DataFrame
+        df_preguntas_correlacionadas = pd.DataFrame(preguntas_correlacionadas).drop_duplicates(subset=["Pregunta 1", "Pregunta 2"])
+
+        # Mostrar el DataFrame en Streamlit
+        st.write("### Preguntas Más Correlacionadas")
+        st.dataframe(df_preguntas_correlacionadas)
+
+    else:
+        st.warning("No se ha generado el DataFrame con preguntas reducidas.")
+
+
+    ##########
+        
+        
+    # Permitir descargar el DataFrame filtrado
+    @st.cache_data
+    def convertir_csv(df):
+        return df.to_csv(index=False).encode("utf-8")
+
+    archivo_csv = convertir_csv(nuevo_df)
+
+    st.download_button(
+        label="Descargar datos filtrados (CSV)",
+        data=archivo_csv,
+        file_name=f"datos_CT_{valor_seleccionado}.csv",
+        mime="text/csv")
+
+
+    import streamlit as st
+    import pandas as pd
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from sklearn.tree import DecisionTreeClassifier, plot_tree
+    from sklearn.model_selection import train_test_split
+    from sklearn.metrics import accuracy_score
+
+
+    # Definir las escalas Likert
+    escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas Veces": 2, "Casi nunca": 1, "Nunca": 0}
+    escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas Veces": 2, "Casi nunca": 3, "Nunca": 4}
+
+    # Preguntas en las escalas positiva y negativa
+    preguntas_likert_positiva = [
+        "P2_1", "P2_4", "P7_1", "P7_2", "P7_3", "P7_4", "P7_5", "P7_6",
+        "P8_2", "P9_1", "P9_2", "P9_3", "P9_4", "P9_5", "P9_6",
+        "P10_1", "P10_2", "P10_3", "P10_4", "P10_5", "P11_1", "P11_2",
+        "P11_3", "P11_4", "P11_5", "P12_1", "P12_2", "P12_3", "P12_4",
+        "P12_5", "P12_6", "P12_7", "P12_8", "P12_9", "P12_10", "P13_1"
+    ]
+
+    preguntas_likert_negativa = [
+        "P2_2", "P2_3", "P2_5", "P3_1", "P3_2", "P3_3", "P4_1", "P4_2",
+        "P4_3", "P4_4", "P5_1", "P5_2", "P5_3", "P5_4", "P6_1", "P6_2",
+        "P6_3", "P6_4", "P6_5", "P6_6", "P8_1", "P13_2", "P13_3", "P13_4",
+        "P13_5", "P13_6", "P13_7", "P13_8", "P15_1", "P15_2", "P15_3",
+        "P15_4", "P17_1", "P17_2", "P17_3", "P17_4"
+    ]
+
+    st.title("Árbol de Decisión para Predecir el Nivel de Riesgo")
+
+    # Verificar si el DataFrame `df_reductos` está disponible y tiene datos
+    if not df_reductos.empty:
+        # Excluir columnas irrelevantes
+        columnas_a_excluir = ["Folio", "CT"]
+        df_reductos_numerico = df_reductos.drop(columns=columnas_a_excluir, errors="ignore").copy()
+
+        # Convertir preguntas a valores numéricos según la escala Likert correspondiente
+        for columna in df_reductos_numerico.columns:
+            if columna in preguntas_likert_positiva:
+                df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_positiva).fillna(np.nan)
+            elif columna in preguntas_likert_negativa:
+                df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_negativa).fillna(np.nan)
+        st.dataframe(df_reductos_numerico)
+        # Verificar si la columna 'Nivel de Riesgo' está presente
+        if "Nivel de Riesgo" in df_reductos_numerico.columns:
+            # Separar características (X) y variable objetivo (y)
+            X = df_reductos_numerico.drop(columns=["Nivel de Riesgo"])
+            y = df_reductos_numerico["Nivel de Riesgo"]
+
+            # Dividir los datos en conjuntos de entrenamiento y prueba
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+            # Crear el modelo del árbol de decisión
+            model = DecisionTreeClassifier(max_depth=4, random_state=42)
+            model.fit(X_train, y_train)
+
+            # Predecir en el conjunto de prueba
+            y_pred = model.predict(X_test)
+            accuracy = accuracy_score(y_test, y_pred)
+
+            # Mostrar la precisión del modelo
+            st.write(f"### Precisión del modelo en datos de prueba: {accuracy:.2%}")
+
+
+            # Identificar las características utilizadas en el modelo
+            features_importances = model.feature_importances_
+            features_usadas = np.array(X.columns)[features_importances > 0]
+            importances_usadas = features_importances[features_importances > 0]
+
+            # Crear un DataFrame con las preguntas relevantes y su importancia
+            preguntas_utilizadas = pd.DataFrame({
+                "Pregunta": features_usadas,
+                "Importancia": importances_usadas,
+                "Descripción": [preguntas.get(col, "Descripción no disponible") for col in features_usadas]
+            }).sort_values(by="Importancia", ascending=False)
+
+            st.write("### Preguntas Utilizadas en el Modelo (Con Importancia)")
+            st.dataframe(preguntas_utilizadas)
+
+                
+            # Visualizar el árbol de decisión
+            fig, ax = plt.subplots(figsize=(12, 8))
+            plot_tree(
+                model,
+                feature_names=X.columns,
+                class_names=model.classes_.astype(str),
+                filled=True,
+                rounded=True,
+                fontsize=8,
+                ax=ax
+            )
+            ax.set_title("Árbol de Decisión para Predecir el Nivel de Riesgo")
+            st.pyplot(fig)
+
+            # Mostrar preguntas utilizadas
+            preguntas_utilizadas = pd.DataFrame({
+                "Pregunta": X.columns,
+                "Descripción": [preguntas.get(col, "Descripción no disponible") for col in X.columns]
+            })
+
+            st.write("### Preguntas Utilizadas en el Modelo")
+            st.dataframe(preguntas_utilizadas)
+
+            # Descargar preguntas como CSV
+            @st.cache_data
+            def convertir_csv(df):
+                return df.to_csv(index=False).encode("utf-8")
+
+            archivo_csv = convertir_csv(preguntas_utilizadas)
+            st.download_button(
+                label="Descargar preguntas utilizadas (CSV)",
+                data=archivo_csv,
+                file_name="preguntas_utilizadas.csv",
+                mime="text/csv"
+            )
+        else:
+            st.warning("El DataFrame no contiene la columna 'Nivel de Riesgo'.")    
+    else:
+        st.warning("No se ha generado el DataFrame con preguntas reducidas.")
+
+
+    ####################################
+
+    import streamlit as st
+    import pandas as pd
+    import numpy as np
+    from sklearn.tree import DecisionTreeClassifier, plot_tree
+    import matplotlib.pyplot as plt
+
+    # Escalas Likert
+    escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas Veces": 2, "Casi nunca": 1, "Nunca": 0}    
+    escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas Veces": 2, "Casi nunca": 3, "Nunca": 4}
+
+    # Preguntas en las escalas Likert positiva y negativa
+    preguntas_likert_positiva = [
+            "P2_1", "P2_4", "P7_1", "P7_2", "P7_3", "P7_4", "P7_5", "P7_6",
+            "P8_2", "P9_1", "P9_2", "P9_3", "P9_4", "P9_5", "P9_6",
+            "P10_1", "P10_2", "P10_3", "P10_4", "P10_5", "P11_1", "P11_2",
+            "P11_3", "P11_4", "P11_5", "P12_1", "P12_2", "P12_3", "P12_4",
+            "P12_5", "P12_6", "P12_7", "P12_8", "P12_9", "P12_10", "P13_1"
+    ]
+
+    preguntas_likert_negativa = [
+            "P2_2", "P2_3", "P2_5", "P3_1", "P3_2", "P3_3", "P4_1", "P4_2",
+            "P4_3", "P4_4", "P5_1", "P5_2", "P5_3", "P5_4", "P6_1", "P6_2",
+            "P6_3", "P6_4", "P6_5", "P6_6", "P8_1", "P13_2", "P13_3", "P13_4",
+            "P13_5", "P13_6", "P13_7", "P13_8", "P15_1", "P15_2", "P15_3",
+            "P15_4", "P17_1", "P17_2", "P17_3", "P17_4"
+    ]
+
+    # Diccionario de dominios
+    dominios_reales = {
+            "Condiciones en el ambiente de trabajo": ["P2_1", "P2_2", "P2_3", "P2_4", "P2_5"],
+            "Carga de trabajo": ["P3_1", "P3_2", "P3_3", "P4_1", "P4_2", "P4_3", "P4_4",
+                         "P15_1", "P15_2", "P15_3", "P15_4", "P5_1", "P5_2", "P5_3", "P5_4"],
+            "Falta de control sobre el trabajo": ["P7_1", "P7_2", "P7_3", "P7_4", "P7_5",
+                                          "P7_6", "P8_1", "P8_2", "P9_5", "P9_6"],
+            "Jornada de trabajo": ["P6_1", "P6_2"],
+            "Interferencia en la relación trabajo-familia": ["P6_3", "P6_4", "P6_5", "P6_6"],
+            "Liderazgo": ["P9_1", "P9_2", "P9_3", "P9_4", "P10_1", "P10_2", "P10_3", "P10_4", "P10_5"],
+            "Relaciones en el trabajo": ["P11_1", "P11_2", "P11_3", "P11_4", "P11_5",
+                                 "P17_1", "P17_2", "P17_3", "P17_4"],
+            "Violencia": ["P13_1", "P13_2", "P13_3", "P13_4", "P13_5", "P13_6", "P13_7", "P13_8"],
+            "Reconocimiento del desempeño": ["P12_1", "P12_2", "P12_3", "P12_4", "P12_5", "P12_6"],
+            "Insuficiente sentido de pertenencia e inestabilidad": ["P12_7", "P12_9", "P12_10", "P12_8"]
+    }
+
+    st.markdown("Árboles de Decisión para Predecir el Nivel de Riesgo por Dominio")
+
+    # Selección del dominio
+    dominio_seleccionado = st.selectbox("Seleccione un dominio:", list(dominios_reales.keys()))
+
+    # Nombre de la columna objetivo en `nuevo_df3_resultado_dominios`
+    columna_objetivo = f"{dominio_seleccionado}_Nivel de Riesgo"
+
+    # Verificar si la columna objetivo está en `nuevo_df3_resultado_dominios`
+    if columna_objetivo in nuevo_df3_resultado_dominios.columns:
+        # Unir `df_reductos` con `nuevo_df3_resultado_dominios` por `Folio`
+        df_combinado = df_reductos.merge(
+            nuevo_df3_resultado_dominios[["Folio", columna_objetivo]], 
+            on="Folio", 
+            how="inner"
+        )
+
+        # Filtrar preguntas del dominio que están en `df_reductos`
+        preguntas_dominio = [p for p in dominios_reales[dominio_seleccionado] if p in df_reductos.columns]
+
+        if preguntas_dominio:
+            df_dominio = df_combinado[preguntas_dominio + [columna_objetivo]].copy()
+
+            # Convertir respuestas a escala numérica
+            for columna in df_dominio.columns:
+                if columna in preguntas_likert_positiva:
+                    df_dominio[columna] = df_dominio[columna].map(escala_likert_positiva).fillna(0)
+                elif columna in preguntas_likert_negativa:
+                    df_dominio[columna] = df_dominio[columna].map(escala_likert_negativa).fillna(0)
+
+            # Separar características (X) y variable objetivo (y)
+            X = df_dominio.drop(columns=[columna_objetivo])
+            y = df_dominio[columna_objetivo]
+
+            # Crear el modelo del árbol de decisión
+            model = DecisionTreeClassifier(max_depth=4, random_state=42)
+            model.fit(X, y)
+
+            # Visualizar el árbol de decisión
+            fig, ax = plt.subplots(figsize=(12, 8))
+            plot_tree(
+                model,
+                feature_names=X.columns,
+                class_names=model.classes_.astype(str),
+                filled=True,
+                rounded=True,
+                fontsize=10,
+                ax=ax
+            )
+            ax.set_title(f"Árbol de Decisión - {dominio_seleccionado}")
+            st.pyplot(fig)
+        else:
+            st.warning(f"No hay preguntas disponibles para el dominio '{dominio_seleccionado}' en el DataFrame.")
+    else:
+        st.warning(f"La columna '{columna_objetivo}' no está en `nuevo_df3_resultado_dominios`.")
+
 
 
 
