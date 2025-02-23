@@ -760,6 +760,8 @@ elif paginas == "Depuración":
     # Crear el nuevo DataFrame con los resultados por dominio
     nuevo_df3_resultado_dominios = nuevo_df3_result_num[columnas_finales]
     st.session_state['nuevo_df3_resultado_dominios'] = nuevo_df3_resultado_dominios
+    st.session_state['dominios_reales'] = dominios_reales
+
 
     # Mostrar el DataFrame en Streamlit
     #st.success("Cálculo de puntajes y niveles de riesgo por dominio completado")
@@ -785,7 +787,10 @@ elif paginas == "Análisis":
 
     if 'nuevo_df3_resultado_dominios' in st.session_state:
         nuevo_df3_resultado_dominios = st.session_state['nuevo_df3_resultado_dominios']
+    if 'dominios_reales' in st.session_state:
+        dominios_reales = st.session_state['dominios_reales']
 
+    
     import streamlit as st
     import pandas as pd
     import numpy as np
