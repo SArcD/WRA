@@ -171,7 +171,7 @@ if archivo_excel is not None:
             # Mostrar las tablas en Streamlit
             #st.title("Preguntas y Escalas Likert")
 
-        st.subheader("Preguntas en Escala Likert Positiva")
+        st.subsubheader("Preguntas en Escala Likert Positiva")
         st.dataframe(df_likert_positiva)
 
         st.subheader("Preguntas en Escala Likert Negativa")
