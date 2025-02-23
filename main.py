@@ -12,12 +12,12 @@
 #elif opcion == "Contacto":
 #    st.title("Contacto")
 #    st.write("Ponte en contacto con nosotros.")
+import streamlit as st
+import pandas as pd
 
 
 
 paginas = st.sidebar.radio("Secciones:",["Descripción","Cargar datos","Depuración","Análisis por clusters","Formulario interactivo"])
-import streamlit as st
-import pandas as pd
 
 st.title("Análisis de datos aplicado al riesgo laboral")
 
