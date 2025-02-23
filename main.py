@@ -40,29 +40,34 @@ if paginas == "Descripción":
     La herramienta está dirigida a **empresas, organizaciones y profesionales en seguridad laboral**, permitiendo tomar decisiones basadas en datos para la mejora del bienestar de los trabajadores.
     """, unsafe_allow_html=True)
 
-st.subheader("Carga de arhivos")
+elif paginas == "Cargar datos"
 
-st.markdown("""
-En esta sección puede cargar los datos laborales a analizar. Estos deben tener el formato de la encuesta para la determinación del riesgo laboral.
-""")
+    st.subheader("Carga de arhivos")
 
-st.markdown("""
-Por favor suba aqui el archivo de **.xlsx** con los datos de la Encuesta para la Determinación de factores de riesgo laborales.
-""")
+    st.markdown("""
+    En esta sección puede cargar los datos laborales a analizar. Estos deben tener el formato de la encuesta para la determinación del riesgo laboral.
+    """)
 
-# Cargar el archivo desde la interfaz de usuario
-archivo_excel = st.file_uploader("Sube tu archivo Excel", type=["xlsx"])
+    st.markdown("""
+    Por favor suba aqui el archivo de **.xlsx** con los datos de la Encuesta para la Determinación de factores de riesgo laborales.
+    """)
 
-if archivo_excel is not None:
-    try:
-        # Leer el archivo Excel en un DataFrame
-        df = pd.read_excel(archivo_excel)
-        st.success("Archivo cargado exitosamente")
+    # Cargar el archivo desde la interfaz de usuario
+    archivo_excel = st.file_uploader("Sube tu archivo Excel", type=["xlsx"])
+
+    #if archivo_excel is not None:
+    #    try:
+            # Leer el archivo Excel en un DataFrame
+    df = pd.read_excel(archivo_excel)
+    st.success("Archivo cargado exitosamente")
         
-        # Mostrar el DataFrame en la aplicación
-        with st.expander("**Vista previa de los datos cargados**"):
-            st.markdown("""A continuación se muestra el archivo con los datos cargados a la aplicación. Si da doble click en la columna esta se puede reordenar de manera ascendente o descendente.""")
-            st.dataframe(df)
+    # Mostrar el DataFrame en la aplicación
+    with st.expander("**Vista previa de los datos cargados**"):
+        st.markdown("""A continuación se muestra el archivo con los datos cargados a la aplicación. Si da doble click en la columna esta se puede reordenar de manera ascendente o descendente.""")
+        st.dataframe(df)
+        
+
+elif paginas == "Depuración"        
         st.subheader("**Depuración de datos**")
         st.markdown("""En esta sección se agrega la columna Folio, en la que se le asigna una clave alfanumérica ("part-##") como identificador a cada participante de la encuesta. Además se reemplaza el nombre de la columna "selecciona tu centro de trabajo" por "CT" por brevedad. De igual forma, los enunciados de cada pregunta se reemplazaron por una clave. Cada clave y su pregunta correspondiente se puede consultar en la siguiente tabla:   
         """)
@@ -1859,8 +1864,8 @@ if archivo_excel is not None:
 
 
     
-    except Exception as e:
-        st.error(f"Se produjo un error al cargar el archivo: {e}")
-else:
-    st.warning("Por favor, sube un archivo Excel para continuar.")
+#    except Exception as e:
+#        st.error(f"Se produjo un error al cargar el archivo: {e}")
+#else:
+#    st.warning("Por favor, sube un archivo Excel para continuar.")
 
