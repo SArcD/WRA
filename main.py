@@ -70,7 +70,6 @@ elif paginas == "Cargar datos":
 #        st.session_state['df'] = df
 
 
-elif paginas == "Depuración":        
     if 'df' in st.session_state:
         df = st.session_state['df']
     st.subheader("**Depuración de datos**")
@@ -239,7 +238,8 @@ elif paginas == "Depuración":
     columnas_ordenadas = ["Folio"] + [col for col in df.columns if col != "Folio"]
     df = df[columnas_ordenadas]
         
-        
+elif paginas == "Depuración":        
+
     import pandas as pd
 
     # Cambiar los nombres de las columnas específicas
