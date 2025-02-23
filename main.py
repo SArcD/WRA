@@ -277,7 +277,7 @@ elif paginas == "Depuración":
     st.dataframe(df)
     # Mostrar el número de filas y columnas
     num_filas, num_columnas = df.shape
-        st.markdown(f"""**El DataFrame tiene {num_filas} filas y {num_columnas} columnas.**""")
+    st.markdown(f"""**El DataFrame tiene {num_filas} filas y {num_columnas} columnas.**""")
 
     import pandas as pd
     import streamlit as st
