@@ -312,10 +312,11 @@ elif paginas == "Depuración":
 
     # Filtrar el DataFrame según la selección
     nuevo_df = df[df["CT"] == valor_seleccionado]
+    st.session_state['nuevo_df'] = nuevo_df
 
         #st.success(f"Mostrando datos filtrados para CT = {valor_seleccionado}")
         #st.dataframe(nuevo_df)
-
+    
 
     # Opciones para P14
     opciones_p14 = {"Sí": "Si", "No": "No"}
@@ -785,6 +786,10 @@ elif paginas == "Depuración":
 elif paginas == "Análisis":
     
 
+
+    
+    if 'nuevo_df' in st.session_state:
+        nuevo_df = st.session_state['nuevo_df']
     if 'nuevo_df3_resultado_dominios' in st.session_state:
         nuevo_df3_resultado_dominios = st.session_state['nuevo_df3_resultado_dominios']
     if 'dominios_reales' in st.session_state:
