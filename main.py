@@ -72,7 +72,7 @@ elif paginas == "Cargar datos":
 
 elif paginas == "Depuración":        
     if 'df' in st.session_state:
-    df = st.session_state['df']
+        df = st.session_state['df']
     st.subheader("**Depuración de datos**")
     st.markdown("""En esta sección se agrega la columna Folio, en la que se le asigna una clave alfanumérica ("part-##") como identificador a cada participante de la encuesta. Además se reemplaza el nombre de la columna "selecciona tu centro de trabajo" por "CT" por brevedad. De igual forma, los enunciados de cada pregunta se reemplazaron por una clave. Cada clave y su pregunta correspondiente se puede consultar en la siguiente tabla:   
     """)
