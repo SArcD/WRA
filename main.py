@@ -43,11 +43,11 @@ if archivo_excel is not None:
         with st.expander("**Vista previa de los datos cargados**"):
             st.markdown("""A continuación se muestra el archivo con los datos cargados a la aplicación. Si da doble click en la columna esta se puede reordenar de manera ascendente o descendente.""")
             st.dataframe(df)
-        with st.expander("**Depuración de datos**"):
-            st.markdown("""En esta sección se agrega la columna Folio, en la que se le asigna una clave alfanumérica ("part-##") como identificador a cada participante de la encuesta. Además se reemplaza el nombre de la columna "selecciona tu centro de trabajo" por "CT" por brevedad. De igual forma, los enunciados de cada pregunta se reemplazaron por una clave. Cada clave y su pregunta correspondiente se puede consultar en la siguiente tabla:   
-            """)
-            # Diccionario completo con las claves cortas y las descripciones largas
-            preguntas = {
+        st.subheader("**Depuración de datos**")
+        st.markdown("""En esta sección se agrega la columna Folio, en la que se le asigna una clave alfanumérica ("part-##") como identificador a cada participante de la encuesta. Además se reemplaza el nombre de la columna "selecciona tu centro de trabajo" por "CT" por brevedad. De igual forma, los enunciados de cada pregunta se reemplazaron por una clave. Cada clave y su pregunta correspondiente se puede consultar en la siguiente tabla:   
+        """)
+        # Diccionario completo con las claves cortas y las descripciones largas
+        preguntas = {
             "P1": "En caso de pertenecer a Oficinas Centrales Indica en cual de las siguientes áreas colaboras.",
             "P2_1": "El espacio donde trabajo me permite realizar mis actividades de manera segura e higiénica",
             "P2_2": "Mi trabajo me exige hacer mucho esfuerzo físico",
@@ -126,123 +126,123 @@ if archivo_excel is not None:
                 }
 
 
-            # Definición de escalas Likert y preguntas
-            escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas Veces": 2, "Casi nunca": 1, "Nunca": 0}
-            escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas Veces": 2, "Casi nunca": 3, "Nunca": 4}
+        # Definición de escalas Likert y preguntas
+        escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas Veces": 2, "Casi nunca": 1, "Nunca": 0}
+        escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas Veces": 2, "Casi nunca": 3, "Nunca": 4}
             
-            # Escalas Likert
-            preguntas_likert_positiva = [
+        # Escalas Likert
+        preguntas_likert_positiva = [
             "P2_1", "P2_4", "P7_1", "P7_2", "P7_3", "P7_4", "P7_5", "P7_6",
             "P8_2", "P9_1", "P9_2", "P9_3", "P9_4", "P9_5", "P9_6",
             "P10_1", "P10_2", "P10_3", "P10_4", "P10_5", "P11_1", "P11_2",
             "P11_3", "P11_4", "P11_5", "P12_1", "P12_2", "P12_3", "P12_4",
             "P12_5", "P12_6", "P12_7", "P12_8", "P12_9", "P12_10", "P13_1"
-                ]
+        ]
 
-            preguntas_likert_negativa = [
+        preguntas_likert_negativa = [
             "P2_2", "P2_3", "P2_5", "P3_1", "P3_2", "P3_3", "P4_1", "P4_2",
             "P4_3", "P4_4", "P5_1", "P5_2", "P5_3", "P5_4", "P6_1", "P6_2",
             "P6_3", "P6_4", "P6_5", "P6_6", "P8_1", "P13_2", "P13_3", "P13_4",
             "P13_5", "P13_6", "P13_7", "P13_8", "P15_1", "P15_2", "P15_3",
             "P15_4", "P17_1", "P17_2", "P17_3", "P17_4"
-            ]
+        ]
             # Convertir a un DataFrame
-            df_preguntas = pd.DataFrame(list(preguntas.items()), columns=["Clave de Pregunta", "Enunciado"])
-            st.markdown("""Listado de preguntas en la encuesta y su clave alfanumérica:""")
-            st.dataframe(df_preguntas)
+        df_preguntas = pd.DataFrame(list(preguntas.items()), columns=["Clave de Pregunta", "Enunciado"])
+        st.markdown("""Listado de preguntas en la encuesta y su clave alfanumérica:""")
+        st.dataframe(df_preguntas)
 
 
-            st.markdown("""Las preguntas están divididas en dos grupos: uno en el que la intensidad de las respuestas va en escala positiva y otro en el que van en escala negativa. A continuación de muestran agrupadas de acuerdo a su escala""")
-            # Crear DataFrames para cada tipo de escala Likert
-            df_likert_positiva = pd.DataFrame(
-            [{"Clave de Pregunta": clave, "Enunciado": preguntas[clave]} for clave in preguntas_likert_positiva],
-            columns=["Clave de Pregunta", "Enunciado"]
-            )
+        st.markdown("""Las preguntas están divididas en dos grupos: uno en el que la intensidad de las respuestas va en escala positiva y otro en el que van en escala negativa. A continuación de muestran agrupadas de acuerdo a su escala""")
+        # Crear DataFrames para cada tipo de escala Likert
+        df_likert_positiva = pd.DataFrame(
+        [{"Clave de Pregunta": clave, "Enunciado": preguntas[clave]} for clave in preguntas_likert_positiva],
+        columns=["Clave de Pregunta", "Enunciado"]
+        )
     
-            df_likert_negativa = pd.DataFrame(
-                [{"Clave de Pregunta": clave, "Enunciado": preguntas[clave]} for clave in preguntas_likert_negativa],
-                columns=["Clave de Pregunta", "Enunciado"]
-            )
+        df_likert_negativa = pd.DataFrame(
+            [{"Clave de Pregunta": clave, "Enunciado": preguntas[clave]} for clave in preguntas_likert_negativa],
+            columns=["Clave de Pregunta", "Enunciado"]
+        )
 
-            # Agregar valores de las escalas Likert
-            df_escala_positiva = pd.DataFrame(escala_likert_positiva.items(), columns=["Respuesta", "Valor"])
-            df_escala_negativa = pd.DataFrame(escala_likert_negativa.items(), columns=["Respuesta", "Valor"])
+        # Agregar valores de las escalas Likert
+        df_escala_positiva = pd.DataFrame(escala_likert_positiva.items(), columns=["Respuesta", "Valor"])
+        df_escala_negativa = pd.DataFrame(escala_likert_negativa.items(), columns=["Respuesta", "Valor"])
 
             # Mostrar las tablas en Streamlit
             #st.title("Preguntas y Escalas Likert")
 
-            st.subheader("Preguntas en Escala Likert Positiva")
-            st.dataframe(df_likert_positiva)
+        st.subheader("Preguntas en Escala Likert Positiva")
+        st.dataframe(df_likert_positiva)
 
-            st.subheader("Preguntas en Escala Likert Negativa")
-            st.dataframe(df_likert_negativa)
+        st.subheader("Preguntas en Escala Likert Negativa")
+        st.dataframe(df_likert_negativa)
 
-            st.markdown("""
-            A continuación se muestran los valores de las escalas likert positiva y negativa:
-            """)
+        st.markdown("""
+        A continuación se muestran los valores de las escalas likert positiva y negativa:
+        """)
 
             
-            st.subheader("Valores de Escala Likert Positiva")
-            st.table(df_escala_positiva)
+        st.subheader("Valores de Escala Likert Positiva")
+        st.table(df_escala_positiva)
 
-            st.subheader("Valores de Escala Likert Negativa")
-            st.table(df_escala_negativa)        # Invertir el diccionario para mapear nombres largos a claves cortas
+        st.subheader("Valores de Escala Likert Negativa")
+        st.table(df_escala_negativa)        # Invertir el diccionario para mapear nombres largos a claves cortas
         
-            nombres_invertidos = {v: k for k, v in preguntas.items()}
+        nombres_invertidos = {v: k for k, v in preguntas.items()}
 
-            # Función para renombrar las columnas
-            def renombrar_columnas(col):
-                # Conservar columnas específicas
-                if col in ["Marca temporal", "Selecciona tu centro de trabajo"]:
-                    return col
-                # Eliminar corchetes y mapear a clave corta si está en el diccionario
-                col_limpia = col.strip(" []")
-                return nombres_invertidos.get(col_limpia, col)
+        # Función para renombrar las columnas
+        def renombrar_columnas(col):
+            # Conservar columnas específicas
+            if col in ["Marca temporal", "Selecciona tu centro de trabajo"]:
+                return col
+            # Eliminar corchetes y mapear a clave corta si está en el diccionario
+            col_limpia = col.strip(" []")
+            return nombres_invertidos.get(col_limpia, col)
 
-            # Aplicar el renombrado a las columnas de `df`
-            df.columns = [renombrar_columnas(col) for col in df.columns]
+        # Aplicar el renombrado a las columnas de `df`
+        df.columns = [renombrar_columnas(col) for col in df.columns]
         
-            import pandas as pd
+        import pandas as pd
 
-            # Reemplazar "Marca temporal" por una columna "Folio"
-            df["Folio"] = [f"part-{i+1}" for i in range(len(df))]
+        # Reemplazar "Marca temporal" por una columna "Folio"
+        df["Folio"] = [f"part-{i+1}" for i in range(len(df))]
     
-            # Reorganizar las columnas para que "Folio" esté al inicio
-            columnas_ordenadas = ["Folio"] + [col for col in df.columns if col != "Folio"]
-            df = df[columnas_ordenadas]
+        # Reorganizar las columnas para que "Folio" esté al inicio
+        columnas_ordenadas = ["Folio"] + [col for col in df.columns if col != "Folio"]
+        df = df[columnas_ordenadas]
         
         
-            import pandas as pd
+        import pandas as pd
 
-            # Cambiar los nombres de las columnas específicas
-            df.rename(columns={
-                "Selecciona tu centro de trabajo": "CT",
-                "En caso de pertenecer a Oficinas Centrales Indica en cual de las siguientes áreas colaboras.": "Area"
-            }, inplace=True)
+        # Cambiar los nombres de las columnas específicas
+        df.rename(columns={
+            "Selecciona tu centro de trabajo": "CT",
+            "En caso de pertenecer a Oficinas Centrales Indica en cual de las siguientes áreas colaboras.": "Area"
+        }, inplace=True)
 
-            # Reorganizar las columnas para que "Folio" esté al inicio
-            columnas_ordenadas = ["Folio"] + [col for col in df.columns if col != "Folio" and col != "Marca temporal"]
-            df = df[columnas_ordenadas]
+        # Reorganizar las columnas para que "Folio" esté al inicio
+        columnas_ordenadas = ["Folio"] + [col for col in df.columns if col != "Folio" and col != "Marca temporal"]
+        df = df[columnas_ordenadas]
 
 
-            # Función para verificar si una celda contiene una combinación inválida o es NaN
-            def es_valor_invalido(valor):
-                #if pd.isna(valor):  # Verifica si es NaN
-                #    return True
-                if isinstance(valor, str):
-                    # Verifica si contiene una coma o un espacio adicional después de una coma
-                    if "," in valor:
-                        return True
+        # Función para verificar si una celda contiene una combinación inválida o es NaN
+        def es_valor_invalido(valor):
+            #if pd.isna(valor):  # Verifica si es NaN
+            #    return True
+            if isinstance(valor, str):
+                # Verifica si contiene una coma o un espacio adicional después de una coma
+                if "," in valor:
+                    return True
                     # Verifica si contiene caracteres invisibles como saltos de línea
                     #if "\n" in valor or "\r" in valor:
                     #    return True
-                return False
+            return False
 
-            # Identificar filas con valores inválidos
-            filas_invalidas = df.map(es_valor_invalido).any(axis=1)
+        # Identificar filas con valores inválidos
+        filas_invalidas = df.map(es_valor_invalido).any(axis=1)
 
-            # Crear un nuevo DataFrame excluyendo las filas con valores inválidos
-            df = df[~filas_invalidas].copy()
+        # Crear un nuevo DataFrame excluyendo las filas con valores inválidos
+        df = df[~filas_invalidas].copy()
         
         st.markdown("""**Este es el dataframe con el que se realizará el análisis de datos:**""")
         
