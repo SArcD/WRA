@@ -40,7 +40,7 @@ if paginas == "Descripción":
     La herramienta está dirigida a **empresas, organizaciones y profesionales en seguridad laboral**, permitiendo tomar decisiones basadas en datos para la mejora del bienestar de los trabajadores.
     """, unsafe_allow_html=True)
 
-elif paginas == "Cargar datos"
+elif paginas == "Cargar datos":
 
     st.subheader("Carga de arhivos")
 
@@ -67,7 +67,7 @@ elif paginas == "Cargar datos"
         st.dataframe(df)
         
 
-elif paginas == "Depuración"        
+elif paginas == "Depuración":        
         st.subheader("**Depuración de datos**")
         st.markdown("""En esta sección se agrega la columna Folio, en la que se le asigna una clave alfanumérica ("part-##") como identificador a cada participante de la encuesta. Además se reemplaza el nombre de la columna "selecciona tu centro de trabajo" por "CT" por brevedad. De igual forma, los enunciados de cada pregunta se reemplazaron por una clave. Cada clave y su pregunta correspondiente se puede consultar en la siguiente tabla:   
         """)
