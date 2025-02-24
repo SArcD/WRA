@@ -3,7 +3,7 @@ import pandas as pd
 
 
 
-paginas = st.sidebar.radio("Secciones:",["Descripción","Cargar datos","Depuración","Análisis","Formulario interactivo"])
+paginas = st.sidebar.radio("Secciones:",["Descripción","Cargar datos","Depuración","Análisis","Equipo de trabajo"])
 
 st.title("Análisis de datos aplicado al riesgo laboral")
 
@@ -1705,8 +1705,8 @@ elif paginas == "Análisis":
     import matplotlib.pyplot as plt
 
     # Escalas Likert
-    escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas Veces": 2, "Casi nunca": 1, "Nunca": 0}
-    escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas Veces": 2, "Casi nunca": 3, "Nunca": 4}
+    #escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas Veces": 2, "Casi nunca": 1, "Nunca": 0}
+    #escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas Veces": 2, "Casi nunca": 3, "Nunca": 4}
 
     st.title("Árboles de Decisión para Predecir el Nivel de Riesgo por Dominio")
 
@@ -1869,22 +1869,6 @@ elif paginas == "Análisis":
                         )
 
                 submit_button = st.form_submit_button("Generar Diagnóstico")
-
-        #with st.form("form_diagnostico"):
-        #    respuestas_usuario = {}
-        #    for dominio, modelo in modelos_dominios.items():
-        #        st.subheader(f"{dominio}")
-        #        respuestas_usuario[dominio] = {}
-        #        for pregunta in modelo.feature_names_in_:
-        #            enunciado = preguntas.get(pregunta, pregunta)  # Obtener el enunciado o clave si no está en el diccionario
-        #            respuestas_usuario[dominio][pregunta] = st.radio(
-        #                f"{enunciado}", ["Siempre", "Casi siempre", "Algunas veces", "Casi nunca", "Nunca"],
-        #                key=f"{dominio}_{pregunta}"
-        #            )
-
-        #    submit_button = st.form_submit_button("Generar Diagnóstico")
-
-
             
             if submit_button:
                 diagnosticos = {}
@@ -1916,8 +1900,8 @@ elif paginas == "Análisis":
                     st.write(f"**{dominio}:** Nivel de riesgo predicho: `{riesgo}`  |  🎯 **Precisión del modelo:** `{precision_modelo:.2%}`")
 
                 # 🔹 **Riesgo Total Promedio**
-                riesgo_total = np.mean([valor for valor in diagnosticos.values() if isinstance(valor, (int, float))])
-                st.write(f"🟡 **Riesgo Total Promedio:** `{riesgo_total:.2f}`")
+                #riesgo_total = np.mean([valor for valor in diagnosticos.values() if isinstance(valor, (int, float))])
+                #st.write(f"🟡 **Riesgo Total Promedio:** `{riesgo_total:.2f}`")
 
         else:
             st.warning("El DataFrame no contiene la columna 'Nivel de Riesgo'.")
