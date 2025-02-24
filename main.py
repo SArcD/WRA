@@ -1280,6 +1280,7 @@ elif paginas == "Análisis":
     )
 
     if opcion_mapa == "Mapa de Correlaciones de Preguntas Reducidas":
+        @st.cache_data
         # Verificar si el DataFrame `df_reductos` está disponible y tiene datos
         if not df_reductos.empty:
             # Definir las escalas Likert positiva y negativa
@@ -1317,6 +1318,7 @@ elif paginas == "Análisis":
             st.warning("No se ha generado el DataFrame con preguntas reducidas.")
 
     elif opcion_mapa == "Mapa de Correlaciones de Puntajes por Dominio":
+        @st.cache_data
         # Verificar si el DataFrame `nuevo_df3_resultado_dominios` está disponible y tiene datos
         if not nuevo_df3_resultado_dominios.empty:
             # Omitir columnas no numéricas ("Folio" y "Nivel de Riesgo")
