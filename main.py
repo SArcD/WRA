@@ -1783,6 +1783,7 @@ elif paginas == "Análisis":
                     st.subheader(f"{dominio}")
                     respuestas_usuario[dominio] = {}
                     for pregunta in modelo.feature_names_in_:
+                        enunciado = preguntas.get(pregunta, pregunta)  # Obtener el enunciado o clave si no está en el diccionario
                         respuestas_usuario[dominio][pregunta] = st.radio(
                             f"{pregunta}", ["Siempre", "Casi siempre", "Algunas veces", "Casi nunca", "Nunca"],
                             key=f"{dominio}_{pregunta}"
@@ -1790,6 +1791,22 @@ elif paginas == "Análisis":
 
                 submit_button = st.form_submit_button("Generar Diagnóstico")
 
+        #with st.form("form_diagnostico"):
+        #    respuestas_usuario = {}
+        #    for dominio, modelo in modelos_dominios.items():
+        #        st.subheader(f"{dominio}")
+        #        respuestas_usuario[dominio] = {}
+        #        for pregunta in modelo.feature_names_in_:
+        #            enunciado = preguntas.get(pregunta, pregunta)  # Obtener el enunciado o clave si no está en el diccionario
+        #            respuestas_usuario[dominio][pregunta] = st.radio(
+        #                f"{enunciado}", ["Siempre", "Casi siempre", "Algunas veces", "Casi nunca", "Nunca"],
+        #                key=f"{dominio}_{pregunta}"
+        #            )
+
+        #    submit_button = st.form_submit_button("Generar Diagnóstico")
+
+
+            
             if submit_button:
                 diagnosticos = {}
 
