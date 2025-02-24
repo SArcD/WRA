@@ -784,10 +784,7 @@ elif paginas == "Depuración":
 
 
 elif paginas == "Análisis":
-    
-
-
-    
+       
     if 'nuevo_df' in st.session_state:
         nuevo_df = st.session_state['nuevo_df']
     if 'nuevo_df3_resultado_dominios' in st.session_state:
@@ -1186,90 +1183,6 @@ elif paginas == "Análisis":
     import matplotlib.pyplot as plt
     import seaborn as sns
 
-#        st.title("Mapa de Correlaciones de las Preguntas Reducidas")
-#
-#        # Verificar si el DataFrame `df_reductos` está disponible y tiene datos
-#        if not df_reductos.empty:
-#            # Definir las escalas Likert positiva y negativa
-#            escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas veces": 2, "Casi nunca": 1, "Nunca": 0}
-#            escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas veces": 2, "Casi nunca": 3, "Nunca": 4}
-
-#            # Omitir las columnas "Folio" y "CT"
-#            df_reductos_numerico = df_reductos.drop(columns=["Folio", "CT", "Nivel de Riesgo"], errors="ignore").copy()
-
-#            # Convertir respuestas a valores numéricos según la escala correspondiente
-#            for columna in df_reductos_numerico.columns:
-#                if columna in preguntas_likert_positiva:
-#                    df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_positiva).fillna(np.nan)
-#                elif columna in preguntas_likert_negativa:
-#                    df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_negativa).fillna(np.nan)
-
-#            # Calcular la matriz de correlación
-#            correlaciones = df_reductos_numerico.corr()
-
-#            #    Crear el mapa de correlaciones
-#            fig, ax = plt.subplots(figsize=(40, 32))
-#            sns.heatmap(
-#                correlaciones, 
-#                annot=True, 
-#                cmap="coolwarm", 
-#                fmt=".2f", 
-#                linewidths=0.5, 
-#                ax=ax
-#            )
-#            ax.set_title("Mapa de Correlaciones entre Preguntas Reducidas")
-
-#            # Mostrar la gráfica en Streamlit
-#            st.pyplot(fig)
-
-#        else:
-#            st.warning("No se ha generado el DataFrame con preguntas reducidas.")
-
-#        #################
-
-#        import streamlit as st
-#        import pandas as pd
-#        import numpy as np
-#        import matplotlib.pyplot as plt
-#        import seaborn as sns
-
-#        st.title("Mapa de Correlaciones de Puntajes por Dominio")
-
-#        # Verificar si el DataFrame `nuevo_df3_resultado_dominios` está disponible y tiene datos
-#        if not nuevo_df3_resultado_dominios.empty:
-#            # Omitir columnas no numéricas ("Folio" y "Nivel de Riesgo")
-#            columnas_a_excluir = ["Folio"] + [col for col in nuevo_df3_resultado_dominios.columns if "Nivel de Riesgo" in col]
-#            df_puntajes_numerico = nuevo_df3_resultado_dominios.drop(columns=columnas_a_excluir, errors="ignore").copy()
-
-#            # Calcular la matriz de correlación
-#            correlaciones = df_puntajes_numerico.corr()
-
-#            # Crear el mapa de correlaciones
-#            fig, ax = plt.subplots(figsize=(10, 8))
-#            sns.heatmap(
-#                correlaciones, 
-#                annot=True, 
-#                cmap="coolwarm", 
-#                fmt=".2f", 
-#                linewidths=0.5, 
-#                ax=ax
-#            
-#            ax.set_title("Mapa de Correlaciones entre Puntajes por Dominio")
-#            ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha="right")
-#            ax.set_yticklabels(ax.get_yticklabels(), rotation=0)
-
-
-#            # Mostrar la gráfica en Streamlit
-#            st.pyplot(fig)
-
-#        else:
-#            st.warning("No se ha generado el DataFrame con puntajes por dominio.")
-
-    import streamlit as st
-    import pandas as pd
-    import numpy as np
-    import matplotlib.pyplot as plt
-    import seaborn as sns
 
 #st.title("Mapa de Correlaciones")
 
@@ -1280,7 +1193,7 @@ elif paginas == "Análisis":
     )
 
     if opcion_mapa == "Mapa de Correlaciones de Preguntas Reducidas":
-        @st.cache_data
+        #@st.cache_data
         # Verificar si el DataFrame `df_reductos` está disponible y tiene datos
         if not df_reductos.empty:
             # Definir las escalas Likert positiva y negativa
@@ -1318,7 +1231,7 @@ elif paginas == "Análisis":
             st.warning("No se ha generado el DataFrame con preguntas reducidas.")
 
     elif opcion_mapa == "Mapa de Correlaciones de Puntajes por Dominio":
-        @st.cache_data
+        #@st.cache_data
         # Verificar si el DataFrame `nuevo_df3_resultado_dominios` está disponible y tiene datos
         if not nuevo_df3_resultado_dominios.empty:
             # Omitir columnas no numéricas ("Folio" y "Nivel de Riesgo")
@@ -1805,78 +1718,75 @@ elif paginas == "Análisis":
     input_columns = st.session_state["input_columns"]
 #elif pages == "Formulario interactivo":
 
-elif paginas == "Formulario interactivo":
-    st.title("Formulario interactivo para evaluar tu nivel de riesgo laboral")
-    st.markdown("Responde las siguientes preguntas de acuerdo a tu experiencia en el trabajo.")
+elif paginas == "Formulario de Evaluación":
+    st.title("Evaluación Personal de Riesgo Laboral")
+    st.markdown("Responde las siguientes preguntas de acuerdo a tu experiencia en el trabajo para conocer tu nivel de riesgo laboral.")
 
-    # Verificar que el modelo y las columnas de entrada estén disponibles en session state
+    # Verificar que el modelo y la lista de preguntas estén disponibles en session_state
     if "decision_model" not in st.session_state or "input_columns" not in st.session_state:
-        st.error("El modelo de árbol de decisión no está disponible. Por favor, entrena el modelo en la sección correspondiente.")
+        st.error("No se ha encontrado el modelo de evaluación. Por favor, entrena el modelo en la sección de análisis.")
     else:
         model = st.session_state["decision_model"]
         input_columns = st.session_state["input_columns"]
+        # Opcional: Diccionario de descripciones para cada pregunta
+        preguntas = st.session_state.get("preguntas", {})
 
-        # Opcional: recuperar el diccionario de preguntas si se almacenó previamente para mostrar la descripción
-        preguntas_dict = st.session_state.get("preguntas", {})  # Ejemplo: {"P2_1": "¿El espacio de trabajo es seguro?", ...}
-
-        # Recuperar o definir las listas de preguntas para cada escala
-        if "preguntas_likert_positiva" in st.session_state and "preguntas_likert_negativa" in st.session_state:
-            preguntas_pos = st.session_state["preguntas_likert_positiva"]
-            preguntas_neg = st.session_state["preguntas_likert_negativa"]
-        else:
-            preguntas_pos = [
-                "P2_1", "P2_4", "P7_1", "P7_2", "P7_3", "P7_4", "P7_5", "P7_6",
-                "P8_2", "P9_1", "P9_2", "P9_3", "P9_4", "P9_5", "P9_6",
-                "P10_1", "P10_2", "P10_3", "P10_4", "P10_5", "P11_1", "P11_2",
-                "P11_3", "P11_4", "P11_5", "P12_1", "P12_2", "P12_3", "P12_4",
-                "P12_5", "P12_6", "P12_7", "P12_8", "P12_9", "P12_10", "P13_1"
-            ]
-            preguntas_neg = [
-                "P2_2", "P2_3", "P2_5", "P3_1", "P3_2", "P3_3", "P4_1", "P4_2",
-                "P4_3", "P4_4", "P5_1", "P5_2", "P5_3", "P5_4", "P6_1", "P6_2",
-                "P6_3", "P6_4", "P6_5", "P6_6", "P8_1", "P13_2", "P13_3", "P13_4",
-                "P13_5", "P13_6", "P13_7", "P13_8", "P15_1", "P15_2", "P15_3",
-                "P15_4", "P17_1", "P17_2", "P17_3", "P17_4"
-            ]
-
-        # Definir los diccionarios de conversión para las escalas Likert
+        # Definir las escalas Likert para conversión de respuestas
         escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas Veces": 2, "Casi nunca": 1, "Nunca": 0}
         escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas Veces": 2, "Casi nunca": 3, "Nunca": 4}
 
-        # Crear el formulario interactivo
-        with st.form("formulario_riesgo", clear_on_submit=False):
+        # Listas de preguntas según su escala (puedes ajustarlas según tu modelo)
+        preguntas_likert_positiva = [
+            "P2_1", "P2_4", "P7_1", "P7_2", "P7_3", "P7_4", "P7_5", "P7_6",
+            "P8_2", "P9_1", "P9_2", "P9_3", "P9_4", "P9_5", "P9_6",
+            "P10_1", "P10_2", "P10_3", "P10_4", "P10_5"
+        ]
+        preguntas_likert_negativa = [
+            "P2_2", "P2_3", "P2_5", "P3_1", "P3_2", "P3_3",
+            "P4_1", "P4_2", "P4_3", "P4_4", "P5_1", "P5_2", "P5_3", "P5_4"
+        ]
+
+        # Crear el formulario con st.form para agrupar las entradas del usuario
+        with st.form("evaluacion_formulario", clear_on_submit=False):
             respuestas = {}
-            for col in input_columns:
-                # Usar la descripción almacenada o, en su defecto, la clave de la pregunta
-                label = preguntas_dict.get(col, col)
-                respuestas[col] = st.radio(label,
-                                             options=["Siempre", "Casi siempre", "Algunas Veces", "Casi nunca", "Nunca"],
-                                             key=col)
-            submit = st.form_submit_button("Evaluar riesgo")
+            for pregunta in input_columns:
+                # Usar la descripción si está disponible; de lo contrario, se usa la clave de la pregunta
+                label = preguntas.get(pregunta, pregunta)
+                respuestas[pregunta] = st.radio(
+                    label,
+                    options=["Siempre", "Casi siempre", "Algunas Veces", "Casi nunca", "Nunca"],
+                    key=pregunta
+                )
+            submit = st.form_submit_button("Evaluar mi riesgo")
 
-            if submit:
-                # Convertir las respuestas a valores numéricos según la escala correspondiente
-                input_data = {}
-                for col in input_columns:
-                    resp = respuestas[col]
-                    if col in preguntas_pos:
-                        valor = escala_likert_positiva.get(resp, np.nan)
-                    elif col in preguntas_neg:
-                        valor = escala_likert_negativa.get(resp, np.nan)
-                    else:
-                        # En caso de que la pregunta no se identifique, se asume escala positiva
-                        valor = escala_likert_positiva.get(resp, np.nan)
-                    input_data[col] = valor
+        if submit:
+            # Convertir las respuestas a valores numéricos según la escala correspondiente
+            datos_usuario = {}
+            for pregunta in input_columns:
+                respuesta = respuestas[pregunta]
+                if pregunta in preguntas_likert_positiva:
+                    valor = escala_likert_positiva.get(respuesta, np.nan)
+                elif pregunta in preguntas_likert_negativa:
+                    valor = escala_likert_negativa.get(respuesta, np.nan)
+                else:
+                    # En caso de que no se identifique la escala, se asume la escala positiva
+                    valor = escala_likert_positiva.get(respuesta, np.nan)
+                datos_usuario[pregunta] = valor
 
-                # Convertir el diccionario a un DataFrame (una sola fila)
-                df_input = pd.DataFrame([input_data])
+            # Convertir los datos a un DataFrame (una única fila)
+            df_usuario = pd.DataFrame([datos_usuario])
 
-                # Predecir el nivel de riesgo utilizando el modelo de árbol
-                nivel_riesgo = model.predict(df_input)[0]
-                st.success(f"El nivel de riesgo asignado es: {nivel_riesgo}")
+            # Utilizar el modelo de árbol para predecir el nivel de riesgo
+            nivel_riesgo = model.predict(df_usuario)[0]
+            st.success(f"Tu nivel de riesgo laboral es: {nivel_riesgo}")
 
-                # (Opcional) Guardar en session state la respuesta para usarla en otra sección
-                st.session_state["ultima_prediccion"] = nivel_riesgo
+            # (Opcional) Mostrar un gráfico de radar comparativo de tu perfil de respuestas
+            # Por ejemplo, si tienes promedios de referencia almacenados en session_state:
+            if "perfil_referencia" in st.session_state:
+                perfil_referencia = st.session_state["perfil_referencia"]
+                # Calcular el vector del usuario en función de dominios o categorías
+                # Aquí se puede implementar la lógica para crear un radar comparativo.
+                # [Código para generar gráfico de radar, si se requiere]
 
 
         
