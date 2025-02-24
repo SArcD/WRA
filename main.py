@@ -1700,197 +1700,106 @@ elif paginas == "Análisis":
     import pandas as pd
     import numpy as np
     from sklearn.tree import DecisionTreeClassifier, plot_tree
-    import matplotlib.pyplot as plt
     from sklearn.model_selection import train_test_split
     from sklearn.metrics import accuracy_score
+    import matplotlib.pyplot as plt
 
-    preguntas = {
-            "P1": "En caso de pertenecer a Oficinas Centrales Indica en cual de las siguientes áreas colaboras.",
-            "P2_1": "El espacio donde trabajo me permite realizar mis actividades de manera segura e higiénica",
-            "P2_2": "Mi trabajo me exige hacer mucho esfuerzo físico",
-            "P2_3": "Me preocupa sufrir un accidente en mi trabajo",
-            "P2_4": "Considero que en mi trabajo se aplican las normas de seguridad y salud en el trabajo",
-            "P2_5": "Considero que las actividades que realizo son peligrosas",
-            "P3_1": "Por la cantidad de trabajo que tengo debo quedarme tiempo adicional a mi turno",
-            "P3_2": "Por la cantidad de trabajo que tengo debo trabajar sin parar",
-            "P3_3": "Considero que es necesario mantener un ritmo de trabajo acelerado",
-            "P4_1": "Mi trabajo exige que esté muy concentrado",
-            "P4_2": "Mi trabajo requiere que memorice mucha información",
-            "P4_3": "En mi trabajo tengo que tomar decisiones difíciles muy rápido",
-            "P4_4": "Mi trabajo exige que atienda varios asuntos al mismo tiempo",
-            "P5_1": "En mi trabajo soy responsable de cosas de mucho valor",
-            "P5_2": "Respondo ante mi jefe por los resultados de toda mi área de trabajo",
-            "P5_3": "En el trabajo me dan órdenes contradictorias",
-            "P5_4": "Considero que en mi trabajo me piden hacer cosas innecesarias",
-            "P6_1": "Trabajo horas extras más de tres veces a la semana",
-            "P6_2": "Mi trabajo me exige laborar en días de descanso, festivos o fines de semana",
-            "P6_3": "Considero que el tiempo en el trabajo es mucho y perjudica mis actividades familiares o personales",
-            "P6_4": "Debo atender asuntos de trabajo cuando estoy en casa",
-            "P6_5": "Pienso en las actividades familiares o personales cuando estoy en mi trabajo",
-            "P6_6": "Pienso que mis responsabilidades familiares afectan mi trabajo",
-            "P7_1": "Mi trabajo permite que desarrolle nuevas habilidades",
-            "P7_2": "En mi trabajo puedo aspirar a un mejor puesto",
-            "P7_3": "Durante mi jornada de trabajo puedo tomar pausas cuando las necesito",
-            "P7_4": "Puedo decidir cuánto trabajo realizo durante la jornada laboral",
-            "P7_5": "Puedo decidir la velocidad a la que realizo mis actividades en mi trabajo",
-            "P7_6": "Puedo cambiar el orden de las actividades que realizo en mi trabajo",
-            "P8_1": "Los cambios que se presentan en mi trabajo dificultan mi labor",
-            "P8_2": "Cuando se presentan cambios en mi trabajo se tienen en cuenta mis ideas o aportaciones",
-            "P9_1": "Me informan con claridad cuáles son mis funciones",
-            "P9_2": "Me explican claramente los resultados que debo obtener en mi trabajo",
-            "P9_3": "Me explican claramente los objetivos de mi trabajo",
-            "P9_4": "Me informan con quién puedo resolver problemas o asuntos de trabajo",
-            "P9_5": "Me permiten asistir a capacitaciones relacionadas con mi trabajo",
-            "P9_6": "Recibo capacitación útil para hacer mi trabajo",
-            "P10_1": "Mi jefe ayuda a organizar mejor el trabajo",
-            "P10_2": "Mi jefe tiene en cuenta mis puntos de vista y opiniones",
-            "P10_3": "Mi jefe me comunica a tiempo la información relacionada con el trabajo",
-            "P10_4": "La orientación que me da mi jefe me ayuda a realizar mejor mi trabajo",
-            "P10_5": "Mi jefe ayuda a solucionar los problemas que se presentan en el trabajo",
-            "P11_1": "Puedo confiar en mis compañeros de trabajo",
-            "P11_2": "Entre compañeros solucionamos los problemas de trabajo de forma respetuosa",
-            "P11_3": "En mi trabajo me hacen sentir parte del grupo",
-            "P11_4": "Cuando tenemos que realizar trabajo de equipo los compañeros colaboran",
-            "P11_5": "Mis compañeros de trabajo me ayudan cuando tengo dificultades",
-            "P12_1": "Me informan sobre lo que hago bien en mi trabajo",
-            "P12_2": "La forma como evalúan mi trabajo en mi centro de trabajo me ayuda a mejorar mi desempeño",
-            "P12_3": "En mi centro de trabajo me pagan a tiempo mi salario",
-            "P12_4": "El pago que recibo es el que merezco por el trabajo que realizo",
-            "P12_5": "Si obtengo los resultados esperados en mi trabajo me recompensan o reconocen",
-            "P12_6": "Las personas que hacen bien el trabajo pueden crecer laboralmente",
-            "P12_7": "Considero que mi trabajo es estable",
-            "P12_8": "En mi trabajo existe continua rotación de personal",
-            "P12_9": "Siento orgullo de laborar en este centro de trabajo",
-            "P12_10": "Me siento comprometido con mi trabajo",
-            "P13_1": "En mi trabajo puedo expresarme libremente sin interrupciones",
-            "P13_2": "Recibo críticas constantes a mi persona y/o trabajo",
-            "P13_3": "Recibo burlas, calumnias, difamaciones, humillaciones o ridiculizaciones",
-            "P13_4": "Se ignora mi presencia o se me excluye de las reuniones de trabajo y en la toma de decisiones",
-            "P13_5": "Se manipulan las situaciones de trabajo para hacerme parecer un mal trabajador",
-            "P13_6": "Se ignoran mis éxitos laborales y se atribuyen a otros trabajadores",
-            "P13_7": "Me bloquean o impiden las oportunidades que tengo para obtener ascenso o mejora en mi trabajo",
-            "P13_8": "He presenciado actos de violencia en mi centro de trabajo",
-            "P14": "En mi trabajo debo brindar servicio a clientes o usuarios:",
-            "P15_1": "Atiendo clientes o usuarios muy enojados",
-            "P15_2": "Mi trabajo me exige atender personas muy necesitadas de ayuda o enfermas",
-            "P15_3": "Para hacer mi trabajo debo demostrar sentimientos distintos a los míos",
-            "P15_4": "Mi trabajo me exige atender situaciones de violencia",
-            "P16": "Soy jefe de otros trabajadores:",
-            "P17_1": "Comunican tarde los asuntos de trabajo",
-            "P17_2": "Dificultan el logro de los resultados del trabajo",
-            "P17_3": "Cooperan poco cuando se necesita",
-            "P17_4": "Ignoran las sugerencias para mejorar su trabajo"
-                }
+    # Escalas Likert
+    escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas Veces": 2, "Casi nunca": 1, "Nunca": 0}    
+    escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas Veces": 2, "Casi nunca": 3, "Nunca": 4}
 
+    # Diccionario de dominios y sus preguntas
+    dominios_reales = {
+        "Condiciones en el ambiente de trabajo": ["P2_1", "P2_2", "P2_3", "P2_4", "P2_5"],
+        "Carga de trabajo": ["P3_1", "P3_2", "P3_3", "P4_1", "P4_2", "P4_3", "P4_4", "P15_1", "P15_2", "P15_3", "P15_4", "P5_1", "P5_2", "P5_3", "P5_4"],
+        "Falta de control sobre el trabajo": ["P7_1", "P7_2", "P7_3", "P7_4", "P7_5", "P7_6", "P8_1", "P8_2", "P9_5", "P9_6"],
+        "Jornada de trabajo": ["P6_1", "P6_2"],
+        "Interferencia en la relación trabajo-familia": ["P6_3", "P6_4", "P6_5", "P6_6"],
+        "Liderazgo": ["P9_1", "P9_2", "P9_3", "P9_4", "P10_1", "P10_2", "P10_3", "P10_4", "P10_5"],
+        "Relaciones en el trabajo": ["P11_1", "P11_2", "P11_3", "P11_4", "P11_5", "P17_1", "P17_2", "P17_3", "P17_4"],
+        "Violencia": ["P13_1", "P13_2", "P13_3", "P13_4", "P13_5", "P13_6", "P13_7", "P13_8"],
+        "Reconocimiento del desempeño": ["P12_1", "P12_2", "P12_3", "P12_4", "P12_5", "P12_6"],
+        "Insuficiente sentido de pertenencia e inestabilidad": ["P12_7", "P12_9", "P12_10", "P12_8"]
+    }
 
-    
-    st.title("Árboles de Decisión para Predecir el Nivel de Riesgo por Dominio")
+    st.title("Árboles de Decisión para Predecir el Nivel de Riesgo")
 
-    # Verificar si `df_reductos` está disponible
+    # Diccionario para almacenar modelos de cada dominio
+    modelos_dominios = {}
+
+    # Entrenar un modelo de árbol de decisión para cada dominio
     if not df_reductos.empty:
-        # Excluir columnas irrelevantes
-        columnas_a_excluir = ["Folio", "CT"]
-        df_reductos_numerico = df_reductos.drop(columns=columnas_a_excluir, errors="ignore").copy()
+        for dominio, preguntas in dominios_reales.items():
+            st.subheader(f"📊 Modelo para: {dominio}")
 
-        # Convertir respuestas a escala numérica
-        for columna in df_reductos_numerico.columns:
-            if columna in preguntas_likert_positiva:
-                df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_positiva).fillna(np.nan)
-            elif columna in preguntas_likert_negativa:
-                df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_negativa).fillna(np.nan)
+            # Filtrar preguntas disponibles en `df_reductos`
+            preguntas_validas = [p for p in preguntas if p in df_reductos.columns]
+            if not preguntas_validas:
+                st.warning(f"No hay preguntas disponibles para el dominio '{dominio}'. Omitiendo...")
+                continue
+        
+            X = df_reductos[preguntas_validas]
+            y = df_reductos["Nivel de Riesgo"]
+        
+            # Dividir en entrenamiento y prueba
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+        
+            # Crear y entrenar el modelo
+            model = DecisionTreeClassifier(max_depth=4, random_state=42)
+            model.fit(X_train, y_train)
+            modelos_dominios[dominio] = model  # Guardar el modelo
+        
+            # Evaluación
+            y_pred = model.predict(X_test)
+            accuracy = accuracy_score(y_test, y_pred)
+            st.write(f"**Precisión del modelo**: {accuracy:.2%}")
+        
+            # Visualización del árbol de decisión
+            fig, ax = plt.subplots(figsize=(12, 8))
+            plot_tree(model, feature_names=X.columns, class_names=model.classes_.astype(str), filled=True, rounded=True, fontsize=8, ax=ax)
+            ax.set_title(f"Árbol de Decisión - {dominio}")
+            st.pyplot(fig)
 
-        # Verificar si "Nivel de Riesgo" está presente en los datos
-        if "Nivel de Riesgo" in df_reductos_numerico.columns:
-            modelos_dominios = {}  # Diccionario para almacenar los modelos por dominio
-            preguntas_modelos = {}  # Diccionario para almacenar las preguntas utilizadas
-
-            for dominio, preguntas in dominios_reales.items():
-                # Filtrar preguntas disponibles en el DataFrame
-                preguntas_validas = [p for p in preguntas if p in df_reductos_numerico.columns]
-                if not preguntas_validas:
-                    st.warning(f"No hay preguntas disponibles para el dominio '{dominio}'. Omitiendo...")
-                    continue
-
-                st.subheader(f"📊 Modelo para: {dominio}")
-
-                # Preparar datos
-                X = df_reductos_numerico[preguntas_validas]
-                y = df_reductos_numerico["Nivel de Riesgo"]
-
-                # Dividir en entrenamiento y prueba
-                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-
-                # Crear y entrenar el modelo de árbol de decisión
-                model = DecisionTreeClassifier(max_depth=4, random_state=42)
-                model.fit(X_train, y_train)
-                modelos_dominios[dominio] = model  # Guardar el modelo
-
-                # Evaluar el modelo
-                y_pred = model.predict(X_test)
-                accuracy = accuracy_score(y_test, y_pred)
-                st.write(f"**Precisión del modelo**: {accuracy:.2%}")
-
-                # Identificar características importantes
-                features_importances = model.feature_importances_
-                features_usadas = np.array(X.columns)[features_importances > 0]
-                # Convertir a lista de strings explícitamente antes de usarlo en el diccionario
-                features_usadas = list(map(str, features_usadas))
-
-                importances_usadas = features_importances[features_importances > 0]
-
-                # Guardar las preguntas utilizadas en el modelo
-                preguntas_utilizadas = pd.DataFrame({
-                    "Pregunta": features_usadas,
-                    "Importancia": importances_usadas,
-                    "Descripción": [preguntas.get(col, "Descripción no disponible") for col in features_usadas]
-                }).sort_values(by="Importancia", ascending=False)
-                preguntas_modelos[dominio] = preguntas_utilizadas
-
-
-                preguntas_modelos[dominio] = preguntas_utilizadas
-
-                
-                # Mostrar preguntas utilizadas
-                #preguntas_utilizadas = pd.DataFrame({
-                #    "Pregunta": X.columns,
-                #    "Descripción": [preguntas.get(col, "Descripción no disponible") for col in X.columns]
-                #})
-
-                
-                st.write("### Preguntas Utilizadas en el Modelo")
-                st.dataframe(preguntas_utilizadas)
-
-                # Visualizar el árbol de decisión
-                fig, ax = plt.subplots(figsize=(12, 8))
-                plot_tree(
-                    model,
-                    feature_names=X.columns,
-                    class_names=model.classes_.astype(str),
-                    filled=True,
-                    rounded=True,
-                    fontsize=8,
-                    ax=ax
-                )
-                ax.set_title(f"Árbol de Decisión - {dominio}")
-                st.pyplot(fig)
-
-            # **Descargar preguntas utilizadas en cada dominio**
-            @st.cache_data
-            def convertir_csv(df):
-                return df.to_csv(index=False).encode("utf-8")
-
-            for dominio, df_preguntas in preguntas_modelos.items():
-                archivo_csv = convertir_csv(df_preguntas)
-                st.download_button(
-                    label=f"Descargar preguntas utilizadas en {dominio} (CSV)",
-                    data=archivo_csv,
-                    file_name=f"preguntas_utilizadas_{dominio}.csv",
-                    mime="text/csv"
-                )
-        else:
-            st.warning("El DataFrame no contiene la columna 'Nivel de Riesgo'.")    
     else:
         st.warning("No se ha generado el DataFrame con preguntas reducidas.")
+
+    # ----------------------
+    # FORMULARIO INTERACTIVO
+    # ----------------------
+    st.subheader("📋 Formulario de Evaluación de Riesgo")
+    with st.form("diagnostico_form"):
+        respuestas_usuario = {}
+        for dominio, preguntas in dominios_reales.items():
+            st.subheader(f"{dominio}")
+            respuestas_usuario[dominio] = {}
+            for pregunta in preguntas:
+                respuestas_usuario[dominio][pregunta] = st.radio(
+                    f"{pregunta}", ["Siempre", "Casi siempre", "Algunas veces", "Casi nunca", "Nunca"], key=f"{dominio}_{pregunta}"
+                )
+        submit = st.form_submit_button("Obtener Diagnóstico")
+
+    # ----------------------
+    # DIAGNÓSTICO USUARIO
+    # ----------------------
+    if submit:
+        diagnosticos = {}
+        for dominio, respuestas in respuestas_usuario.items():
+            datos_convertidos = {
+                pregunta: escala_likert_positiva.get(respuesta, np.nan) if pregunta in preguntas_likert_positiva else escala_likert_negativa.get(respuesta, np.nan)
+                for pregunta, respuesta in respuestas.items()
+            }
+            df_usuario = pd.DataFrame([datos_convertidos])
+            modelo = modelos_dominios.get(dominio)
+            diagnosticos[dominio] = modelo.predict(df_usuario)[0] if modelo else "No disponible"
+
+        st.subheader("🔍 Diagnóstico de Riesgo por Dominio")
+        for dominio, riesgo in diagnosticos.items():
+            st.write(f"**{dominio}:** Nivel de riesgo predicho: {riesgo}")
+    
+        riesgo_total = np.mean([valor for valor in diagnosticos.values() if isinstance(valor, (int, float))])
+        st.write(f"**Riesgo Total Promedio:** {riesgo_total:.2f}")
+
+
 
 
 
