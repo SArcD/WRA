@@ -1768,47 +1768,68 @@ elif paginas == "Análisis":
 
             st.success("Modelos generados correctamente.")
 
+
+            # ==============================
+            # 🔹 FORMULARIO DE DIAGNÓSTICO 🔹
+            # ==============================
+            st.subheader("📝 Formulario de Evaluación de Riesgo")
+
+            with st.form("form_diagnostico"):
+                respuestas_usuario = {}
+                for dominio, modelo in modelos_dominios.items():
+                    st.subheader(f"{dominio}")
+                    respuestas_usuario[dominio] = {}
+                    for pregunta in modelo.feature_names_in_:
+                        respuestas_usuario[dominio][pregunta] = st.radio(
+                            f"{pregunta}", ["Siempre", "Casi siempre", "Algunas veces", "Casi nunca", "Nunca"],
+                            key=f"{dominio}_{pregunta}"
+                        )
+
+                submit_button = st.form_submit_button("Generar Diagnóstico")
+
+            if submit_button:
+                diagnosticos = {}
+
+                for dominio, modelo in modelos_dominios.items():
+                    respuestas_procesadas = {
+                        pregunta: escala_likert_positiva.get(respuesta, np.nan) if pregunta in preguntas_likert_positiva
+                        else escala_likert_negativa.get(respuesta, np.nan)
+                        for pregunta, respuesta in respuestas_usuario[dominio].items()
+                    }
+
+                    df_usuario = pd.DataFrame([respuestas_procesadas])
+
+                    # **Asegurar que las columnas coincidan con las del modelo**
+                    missing_cols = set(modelo.feature_names_in_) - set(df_usuario.columns)
+                    for col in missing_cols:
+                        df_usuario[col] = 0  # Rellenar columnas faltantes con 0
+
+                    df_usuario = df_usuario[modelo.feature_names_in_]  # Reordenar las columnas
+
+                    diagnosticos[dominio] = modelo.predict(df_usuario)[0] if modelo else "No disponible"
+
+                # ==============================
+                # 🔹 RESULTADOS DEL DIAGNÓSTICO 🔹
+                # ==============================
+                st.subheader("📊 Diagnóstico de Riesgo por Dominio")
+                for dominio, riesgo in diagnosticos.items():
+                    precision_modelo = precisiones_dominios.get(dominio, "No disponible")
+                    st.write(f"**{dominio}:** Nivel de riesgo predicho: `{riesgo}`  |  🎯 **Precisión del modelo:** `{precision_modelo:.2%}`")
+
+                # 🔹 **Riesgo Total Promedio**
+                riesgo_total = np.mean([valor for valor in diagnosticos.values() if isinstance(valor, (int, float))])
+                st.write(f"🟡 **Riesgo Total Promedio:** `{riesgo_total:.2f}`")
+
         else:
             st.warning("El DataFrame no contiene la columna 'Nivel de Riesgo'.")
     else:
         st.warning("No se ha generado el DataFrame con preguntas reducidas.")
 
 
-    # ----------------------
-    # FORMULARIO INTERACTIVO
-    # ----------------------
-    st.subheader("📋 Formulario de Evaluación de Riesgo")
-    with st.form("diagnostico_form"):
-        respuestas_usuario = {}
-        for dominio, preguntas in dominios_reales.items():
-            st.subheader(f"{dominio}")
-            respuestas_usuario[dominio] = {}
-            for pregunta in preguntas:
-                respuestas_usuario[dominio][pregunta] = st.radio(
-                    f"{pregunta}", ["Siempre", "Casi siempre", "Algunas veces", "Casi nunca", "Nunca"], key=f"{dominio}_{pregunta}"
-                )
-        submit = st.form_submit_button("Obtener Diagnóstico")
 
-    # ----------------------
-    # DIAGNÓSTICO USUARIO
-    # ----------------------
-    if submit:
-        diagnosticos = {}
-        for dominio, respuestas in respuestas_usuario.items():
-            datos_convertidos = {
-                pregunta: escala_likert_positiva.get(respuesta, np.nan) if pregunta in preguntas_likert_positiva else escala_likert_negativa.get(respuesta, np.nan)
-                for pregunta, respuesta in respuestas.items()
-            }
-            df_usuario = pd.DataFrame([datos_convertidos])
-            modelo = modelos_dominios.get(dominio)
-            diagnosticos[dominio] = modelo.predict(df_usuario)[0] if modelo else "No disponible"
+        
 
-        st.subheader("🔍 Diagnóstico de Riesgo por Dominio")
-        for dominio, riesgo in diagnosticos.items():
-            st.write(f"**{dominio}:** Nivel de riesgo predicho: {riesgo}")
-    
-        riesgo_total = np.mean([valor for valor in diagnosticos.values() if isinstance(valor, (int, float))])
-        st.write(f"**Riesgo Total Promedio:** {riesgo_total:.2f}")
+
 
 
 
