@@ -1768,11 +1768,11 @@ elif paginas == "Análisis":
 
 
                 # Guardar las preguntas utilizadas en el modelo
-                preguntas_utilizadas = pd.DataFrame({
-                "Pregunta": features_usadas,
-                "Importancia": importances_usadas,
-                "Descripción": [preguntas.get(col, "Descripción no disponible") for col in features_usadas]
-                }).sort_values(by="Importancia", ascending=False)
+                #preguntas_utilizadas = pd.DataFrame({
+                #"Pregunta": features_usadas,
+                #"Importancia": importances_usadas,
+                #Descripción": [preguntas.get(col, "Descripción no disponible") for col in features_usadas]
+                #}).sort_values(by="Importancia", ascending=False)
 
                 preguntas_modelos[dominio] = preguntas_utilizadas
 
