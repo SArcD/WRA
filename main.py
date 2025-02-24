@@ -1703,27 +1703,27 @@ elif paginas == "Análisis":
         st.warning(f"La columna '{columna_objetivo}' no está en `nuevo_df3_resultado_dominios`.")
 
 
-########################
+    ########################
 
-import streamlit as st
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.tree import DecisionTreeClassifier, plot_tree
-from itertools import combinations
+    import streamlit as st
+    import pandas as pd
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from sklearn.tree import DecisionTreeClassifier, plot_tree
+    from itertools import combinations
 
 
-import streamlit as st
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.tree import DecisionTreeClassifier, plot_tree
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
+    import streamlit as st
+    import pandas as pd
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from sklearn.tree import DecisionTreeClassifier, plot_tree
+    from sklearn.model_selection import train_test_split
+    from sklearn.metrics import accuracy_score
 
-# Configuración inicial
-st.title("Evaluación de Riesgo Laboral con Árboles de Decisión")
-st.markdown("Este formulario interactivo predice el nivel de riesgo basado en un modelo de árbol de decisión para cada dominio.")
+    # Configuración inicial
+    st.title("Evaluación de Riesgo Laboral con Árboles de Decisión")
+    st.markdown("Este formulario interactivo predice el nivel de riesgo basado en un modelo de árbol de decisión para cada dominio.")
 
 # Escalas Likert
 #escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas veces": 2, "Casi nunca": 1, "Nunca": 0}
@@ -1746,59 +1746,78 @@ st.markdown("Este formulario interactivo predice el nivel de riesgo basado en un
 #    columns=[col for cols in dominios_reales.values() for col in cols] + [f"{dom}_Nivel de Riesgo" for dom in dominios_reales.keys()]
 #)
 
-# Entrenamiento de modelos por dominio
-modelos_dominios = {}
-for dominio, preguntas in dominios_reales.items():
-    columna_objetivo = f"{dominio}_Nivel de Riesgo"
-    df_dominio = nuevo_df3_resultado_dominios[preguntas + [columna_objetivo]].dropna()
-    X = df_dominio.drop(columns=[columna_objetivo])
-    y = df_dominio[columna_objetivo]
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-    modelo = DecisionTreeClassifier(max_depth=4, random_state=42)
-    modelo.fit(X_train, y_train)
-    y_pred = modelo.predict(X_test)
-    modelos_dominios[dominio] = modelo
-    
-    # Mostrar precisión del modelo
-    st.write(f"Modelo de {dominio} - Precisión: {accuracy_score(y_test, y_pred):.2%}")
-    
-    # Visualizar árbol de decisión
-    fig, ax = plt.subplots(figsize=(10, 6))
-    plot_tree(modelo, feature_names=X.columns, class_names=np.unique(y).astype(str), filled=True, rounded=True, ax=ax)
-    st.pyplot(fig)
 
-# ----------------------------
-# FORMULARIO INTERACTIVO
-# ----------------------------
-st.subheader("Formulario de Evaluación de Riesgo")
-with st.form("diagnostico_form"):
-    respuestas_usuario = {}
+    # Diccionario de dominios
+    dominios_reales = {
+            "Condiciones en el ambiente de trabajo": ["P2_1", "P2_2", "P2_3", "P2_4", "P2_5"],
+            "Carga de trabajo": ["P3_1", "P3_2", "P3_3", "P4_1", "P4_2", "P4_3", "P4_4",
+                         "P15_1", "P15_2", "P15_3", "P15_4", "P5_1", "P5_2", "P5_3", "P5_4"],
+            "Falta de control sobre el trabajo": ["P7_1", "P7_2", "P7_3", "P7_4", "P7_5",
+                                          "P7_6", "P8_1", "P8_2", "P9_5", "P9_6"],
+            "Jornada de trabajo": ["P6_1", "P6_2"],
+            "Interferencia en la relación trabajo-familia": ["P6_3", "P6_4", "P6_5", "P6_6"],
+            "Liderazgo": ["P9_1", "P9_2", "P9_3", "P9_4", "P10_1", "P10_2", "P10_3", "P10_4", "P10_5"],
+            "Relaciones en el trabajo": ["P11_1", "P11_2", "P11_3", "P11_4", "P11_5",
+                                 "P17_1", "P17_2", "P17_3", "P17_4"],
+            "Violencia": ["P13_1", "P13_2", "P13_3", "P13_4", "P13_5", "P13_6", "P13_7", "P13_8"],
+            "Reconocimiento del desempeño": ["P12_1", "P12_2", "P12_3", "P12_4", "P12_5", "P12_6"],
+            "Insuficiente sentido de pertenencia e inestabilidad": ["P12_7", "P12_9", "P12_10", "P12_8"]
+    }
+
+
+    # Entrenamiento de modelos por dominio
+    modelos_dominios = {}
     for dominio, preguntas in dominios_reales.items():
-        st.subheader(f"{dominio}")
-        respuestas_usuario[dominio] = {}
-        for pregunta in preguntas:
-            respuestas_usuario[dominio][pregunta] = st.radio(
-                f"{pregunta}", ["Siempre", "Casi siempre", "Algunas veces", "Casi nunca", "Nunca"], key=f"{dominio}_{pregunta}"
-            )
-    submit = st.form_submit_button("Obtener Diagnóstico")
-
-if submit:
-    diagnosticos = {}
-    for dominio, respuestas in respuestas_usuario.items():
-        datos_convertidos = {
-            pregunta: escala_likert_positiva.get(respuesta, np.nan) if pregunta in preguntas_likert_positiva else escala_likert_negativa.get(respuesta, np.nan)
-            for pregunta, respuesta in respuestas.items()
-        }
-        df_usuario = pd.DataFrame([datos_convertidos])
-        modelo = modelos_dominios.get(dominio)
-        diagnosticos[dominio] = modelo.predict(df_usuario)[0] if modelo else "No disponible"
-
-    st.subheader("Diagnóstico de Riesgo por Dominio")
-    for dominio, riesgo in diagnosticos.items():
-        st.write(f"**{dominio}:** Nivel de riesgo predicho: {riesgo}")
+        columna_objetivo = f"{dominio}_Nivel de Riesgo"
+        df_dominio = nuevo_df3_resultado_dominios[preguntas + [columna_objetivo]].dropna()
+        X = df_dominio.drop(columns=[columna_objetivo])
+        y = df_dominio[columna_objetivo]
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+        modelo = DecisionTreeClassifier(max_depth=4, random_state=42)
+        modelo.fit(X_train, y_train)
+        y_pred = modelo.predict(X_test)
+        modelos_dominios[dominio] = modelo
     
-    riesgo_total = np.mean([valor for valor in diagnosticos.values() if isinstance(valor, (int, float))])
-    st.write(f"**Riesgo Total Promedio:** {riesgo_total:.2f}")
+        # Mostrar precisión del modelo
+        st.write(f"Modelo de {dominio} - Precisión: {accuracy_score(y_test, y_pred):.2%}")
+    
+        # Visualizar árbol de decisión
+        fig, ax = plt.subplots(figsize=(10, 6))
+        plot_tree(modelo, feature_names=X.columns, class_names=np.unique(y).astype(str), filled=True, rounded=True, ax=ax)
+        st.pyplot(fig)
+
+    # ----------------------------
+    # FORMULARIO INTERACTIVO
+    # ----------------------------
+    st.subheader("Formulario de Evaluación de Riesgo")
+    with st.form("diagnostico_form"):
+        respuestas_usuario = {}
+        for dominio, preguntas in dominios_reales.items():
+            st.subheader(f"{dominio}")
+            respuestas_usuario[dominio] = {}
+            for pregunta in preguntas:
+                respuestas_usuario[dominio][pregunta] = st.radio(
+                    f"{pregunta}", ["Siempre", "Casi siempre", "Algunas veces", "Casi nunca", "Nunca"], key=f"{dominio}_{pregunta}"
+                )
+        submit = st.form_submit_button("Obtener Diagnóstico")
+
+    if submit:
+        diagnosticos = {}
+        for dominio, respuestas in respuestas_usuario.items():
+            datos_convertidos = {
+                pregunta: escala_likert_positiva.get(respuesta, np.nan) if pregunta in preguntas_likert_positiva else escala_likert_negativa.get(respuesta, np.nan)
+                for pregunta, respuesta in respuestas.items()
+            }
+            df_usuario = pd.DataFrame([datos_convertidos])
+            modelo = modelos_dominios.get(dominio)
+            diagnosticos[dominio] = modelo.predict(df_usuario)[0] if modelo else "No disponible"
+
+        st.subheader("Diagnóstico de Riesgo por Dominio")
+        for dominio, riesgo in diagnosticos.items():
+            st.write(f"**{dominio}:** Nivel de riesgo predicho: {riesgo}")
+    
+        riesgo_total = np.mean([valor for valor in diagnosticos.values() if isinstance(valor, (int, float))])
+        st.write(f"**Riesgo Total Promedio:** {riesgo_total:.2f}")
 
 
 
