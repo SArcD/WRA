@@ -1705,10 +1705,10 @@ elif paginas == "Análisis":
     import matplotlib.pyplot as plt
 
     # Escalas Likert
-    escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas Veces": 2, "Casi nunca": 1, "Nunca": 0}    
+    escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas Veces": 2, "Casi nunca": 1, "Nunca": 0}
     escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas Veces": 2, "Casi nunca": 3, "Nunca": 4}
 
-    # Diccionario de dominios y sus preguntas
+    # Diccionario de dominios
     dominios_reales = {
         "Condiciones en el ambiente de trabajo": ["P2_1", "P2_2", "P2_3", "P2_4", "P2_5"],
         "Carga de trabajo": ["P3_1", "P3_2", "P3_3", "P4_1", "P4_2", "P4_3", "P4_4", "P15_1", "P15_2", "P15_3", "P15_4", "P5_1", "P5_2", "P5_3", "P5_4"],
@@ -1722,84 +1722,71 @@ elif paginas == "Análisis":
         "Insuficiente sentido de pertenencia e inestabilidad": ["P12_7", "P12_9", "P12_10", "P12_8"]
     }
 
-    st.title("Árboles de Decisión para Predecir el Nivel de Riesgo")
+    st.title("Árboles de Decisión para Predecir el Nivel de Riesgo por Dominio")
 
-    # Diccionario para almacenar modelos de cada dominio
-    modelos_dominios = {}
-
-    # Entrenar un modelo de árbol de decisión para cada dominio
     if not df_reductos.empty:
-        for dominio, preguntas in dominios_reales.items():
-            st.subheader(f"📊 Modelo para: {dominio}")
+        columnas_a_excluir = ["Folio", "CT"]
+        df_reductos_numerico = df_reductos.drop(columns=columnas_a_excluir, errors="ignore").copy()
 
-            # Filtrar preguntas disponibles en `df_reductos`
-            preguntas_validas = [p for p in preguntas if p in df_reductos.columns]
-            if not preguntas_validas:
-                st.warning(f"No hay preguntas disponibles para el dominio '{dominio}'. Omitiendo...")
-                continue
-        
-            X = df_reductos[preguntas_validas]
-            y = df_reductos["Nivel de Riesgo"]
-        
-            # Dividir en entrenamiento y prueba
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-        
-            # Crear y entrenar el modelo
-            model = DecisionTreeClassifier(max_depth=4, random_state=42)
-            model.fit(X_train, y_train)
-            modelos_dominios[dominio] = model  # Guardar el modelo
-        
-            # Evaluación
-            y_pred = model.predict(X_test)
-            accuracy = accuracy_score(y_test, y_pred)
-            st.write(f"**Precisión del modelo**: {accuracy:.2%}")
-        
-            # Visualización del árbol de decisión
-            fig, ax = plt.subplots(figsize=(12, 8))
-            plot_tree(model, feature_names=X.columns, class_names=model.classes_.astype(str), filled=True, rounded=True, fontsize=8, ax=ax)
-            ax.set_title(f"Árbol de Decisión - {dominio}")
-            st.pyplot(fig)
+        # Convertir respuestas a escala numérica
+        for columna in df_reductos_numerico.columns:
+            if columna in escala_likert_positiva:
+                df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_positiva).fillna(np.nan)
+            elif columna in escala_likert_negativa:
+                df_reductos_numerico[columna] = df_reductos_numerico[columna].map(escala_likert_negativa).fillna(np.nan)
 
+        if "Nivel de Riesgo" in df_reductos_numerico.columns:
+            modelos_dominios = {}
+
+            for dominio, preguntas in dominios_reales.items():
+                preguntas_validas = [p for p in preguntas if p in df_reductos_numerico.columns]
+                if not preguntas_validas:
+                    st.warning(f"No hay preguntas disponibles para el dominio '{dominio}'. Omitiendo...")
+                    continue
+
+                st.subheader(f"📊 Modelo para: {dominio}")
+
+                X = df_reductos_numerico[preguntas_validas]
+                y = df_reductos_numerico["Nivel de Riesgo"]
+
+                # **Eliminar valores nulos**
+                X = X.dropna()
+                y = y.loc[X.index]  # Asegurar alineación con X
+
+                # **Verificar si `y` tiene al menos dos clases**
+                if len(y.unique()) < 2:
+                    st.warning(f"El dominio '{dominio}' no tiene suficiente variabilidad en la variable objetivo. Omitiendo...")
+                    continue
+
+                # Dividir datos en entrenamiento y prueba
+                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+                # **Verificar que X_train no esté vacío**
+                if X_train.empty or y_train.empty:
+                    st.warning(f"No hay suficientes datos para entrenar el modelo de '{dominio}'. Omitiendo...")
+                    continue
+
+                # Entrenar modelo
+                model = DecisionTreeClassifier(max_depth=4, random_state=42)
+                model.fit(X_train, y_train)
+                modelos_dominios[dominio] = model
+
+                # Evaluar el modelo
+                y_pred = model.predict(X_test)
+                accuracy = accuracy_score(y_test, y_pred)
+                st.write(f"**Precisión del modelo**: {accuracy:.2%}")
+
+                # Visualizar árbol de decisión
+                fig, ax = plt.subplots(figsize=(10, 6))
+                plot_tree(model, feature_names=X.columns, class_names=model.classes_.astype(str), filled=True, rounded=True, ax=ax)
+                st.pyplot(fig)
+
+            st.success("Modelos generados correctamente.")
+
+        else:
+            st.warning("El DataFrame no contiene la columna 'Nivel de Riesgo'.")
     else:
         st.warning("No se ha generado el DataFrame con preguntas reducidas.")
-
-    # ----------------------
-    # FORMULARIO INTERACTIVO
-    # ----------------------
-    st.subheader("📋 Formulario de Evaluación de Riesgo")
-    with st.form("diagnostico_form"):
-        respuestas_usuario = {}
-        for dominio, preguntas in dominios_reales.items():
-            st.subheader(f"{dominio}")
-            respuestas_usuario[dominio] = {}
-            for pregunta in preguntas:
-                respuestas_usuario[dominio][pregunta] = st.radio(
-                    f"{pregunta}", ["Siempre", "Casi siempre", "Algunas veces", "Casi nunca", "Nunca"], key=f"{dominio}_{pregunta}"
-                )
-        submit = st.form_submit_button("Obtener Diagnóstico")
-
-    # ----------------------
-    # DIAGNÓSTICO USUARIO
-    # ----------------------
-    if submit:
-        diagnosticos = {}
-        for dominio, respuestas in respuestas_usuario.items():
-            datos_convertidos = {
-                pregunta: escala_likert_positiva.get(respuesta, np.nan) if pregunta in preguntas_likert_positiva else escala_likert_negativa.get(respuesta, np.nan)
-                for pregunta, respuesta in respuestas.items()
-            }
-            df_usuario = pd.DataFrame([datos_convertidos])
-            modelo = modelos_dominios.get(dominio)
-            diagnosticos[dominio] = modelo.predict(df_usuario)[0] if modelo else "No disponible"
-
-        st.subheader("🔍 Diagnóstico de Riesgo por Dominio")
-        for dominio, riesgo in diagnosticos.items():
-            st.write(f"**{dominio}:** Nivel de riesgo predicho: {riesgo}")
-    
-        riesgo_total = np.mean([valor for valor in diagnosticos.values() if isinstance(valor, (int, float))])
-        st.write(f"**Riesgo Total Promedio:** {riesgo_total:.2f}")
-
-
 
 
 
