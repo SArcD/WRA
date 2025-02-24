@@ -1044,7 +1044,7 @@ elif paginas == "Análisis":
 
     st.markdown("""A continuación se muestra el **reducto** para cada uno de los dominios en el cuestionario de **riesgo laboral**""")
         
-        
+    @st.cache_data
     # Función para encontrar el reducto para un dominio
     def find_reduct_for_domain(domain_questions, df, threshold=0.9):
         best_match = 0
