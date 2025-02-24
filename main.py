@@ -1721,90 +1721,90 @@ elif paginas == "Análisis":
         """
     )
     
-    # Verificar que existan los reductos y los modelos de dominio en session_state
-    if "reductos" not in st.session_state:
-        st.error("No se encontraron los reductos. Por favor, ejecuta la sección de análisis primero.")
-    elif "domain_models" not in st.session_state:
-        st.error("No se encontraron los modelos de dominio. Por favor, entrena los modelos en la sección de análisis.")
-    else:
+    ## Verificar que existan los reductos y los modelos de dominio en session_state
+    #if "reductos" not in st.session_state:
+    #    st.error("No se encontraron los reductos. Por favor, ejecuta la sección de análisis primero.")
+    #elif "domain_models" not in st.session_state:
+    #    st.error("No se encontraron los modelos de dominio. Por favor, entrena los modelos en la sección de análisis.")
+    #else:
         # Recuperar variables guardadas
-        reductos = st.session_state["reductos"]             # Diccionario: {dominio: [pregunta1, pregunta2, ...]}
-        domain_models = st.session_state["domain_models"]   # Diccionario: {dominio: modelo de árbol entrenado}
-        preguntas_dict = st.session_state.get("preguntas", {})  # Opcional, para mostrar etiquetas descriptivas
+    #    reductos = st.session_state["reductos"]             # Diccionario: {dominio: [pregunta1, pregunta2, ...]}
+    #    domain_models = st.session_state["domain_models"]   # Diccionario: {dominio: modelo de árbol entrenado}
+    #    preguntas_dict = st.session_state.get("preguntas", {})  # Opcional, para mostrar etiquetas descriptivas
 
         # Escalas Likert para conversión de respuestas
-        escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas Veces": 2, "Casi nunca": 1, "Nunca": 0}
-        escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas Veces": 2, "Casi nunca": 3, "Nunca": 4}
+   #     escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas Veces": 2, "Casi nunca": 1, "Nunca": 0}
+   #     escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas Veces": 2, "Casi nunca": 3, "Nunca": 4}
 
-        # Listas de preguntas según la escala (se pueden ajustar según tu cuestionario)
-        preguntas_likert_positiva = [
-            "P2_1", "P2_4", "P7_1", "P7_2", "P7_3", "P7_4", "P7_5", "P7_6",
-            "P8_2", "P9_1", "P9_2", "P9_3", "P9_4", "P9_5", "P9_6",
-            "P10_1", "P10_2", "P10_3", "P10_4", "P10_5"
-        ]
-        preguntas_likert_negativa = [
-            "P2_2", "P2_3", "P2_5", "P3_1", "P3_2", "P3_3",
-            "P4_1", "P4_2", "P4_3", "P4_4", "P5_1", "P5_2", "P5_3", "P5_4"
-        ]
+   #     # Listas de preguntas según la escala (se pueden ajustar según tu cuestionario)
+   #     preguntas_likert_positiva = [
+   #         "P2_1", "P2_4", "P7_1", "P7_2", "P7_3", "P7_4", "P7_5", "P7_6",
+   #         "P8_2", "P9_1", "P9_2", "P9_3", "P9_4", "P9_5", "P9_6",
+   #         "P10_1", "P10_2", "P10_3", "P10_4", "P10_5"
+   #     ]
+   #     preguntas_likert_negativa = [
+   #         "P2_2", "P2_3", "P2_5", "P3_1", "P3_2", "P3_3",
+   #         "P4_1", "P4_2", "P4_3", "P4_4", "P5_1", "P5_2", "P5_3", "P5_4"
+   #     ]
 
-        # Crear un formulario único que incluya un bloque por dominio
-        with st.form("diagnostico_interactivo_form", clear_on_submit=False):
-            respuestas_usuario = {}  # Estructura: {dominio: {pregunta: respuesta, ...}, ...}
-            st.markdown("### Responde las preguntas para cada dominio")
-            for dominio, preguntas_reducto in reductos.items():
-                st.subheader(f"Dominio: {dominio}")
-                respuestas_usuario[dominio] = {}
-                for pregunta in preguntas_reducto:
-                    # Obtener una etiqueta descriptiva si se tiene en el diccionario
-                    etiqueta = preguntas_dict.get(pregunta, pregunta)
-                    # Cada pregunta se responde mediante un radio button
-                    respuestas_usuario[dominio][pregunta] = st.radio(
-                        f"{etiqueta}",
-                        options=["Siempre", "Casi siempre", "Algunas Veces", "Casi nunca", "Nunca"],
-                        key=f"{dominio}_{pregunta}"
-                    )
-            submit_diagnostico = st.form_submit_button("Obtener Diagnóstico")
+    # Crear un formulario único que incluya un bloque por dominio
+    with st.form("diagnostico_interactivo_form", clear_on_submit=False):
+        respuestas_usuario = {}  # Estructura: {dominio: {pregunta: respuesta, ...}, ...}
+        st.markdown("### Responde las preguntas para cada dominio")
+        for dominio, preguntas_reducto in reductos.items():
+            st.subheader(f"Dominio: {dominio}")
+            respuestas_usuario[dominio] = {}
+            for pregunta in preguntas_reducto:
+                # Obtener una etiqueta descriptiva si se tiene en el diccionario
+                etiqueta = preguntas_dict.get(pregunta, pregunta)
+                # Cada pregunta se responde mediante un radio button
+                respuestas_usuario[dominio][pregunta] = st.radio(
+                    f"{etiqueta}",
+                    options=["Siempre", "Casi siempre", "Algunas Veces", "Casi nunca", "Nunca"],
+                    key=f"{dominio}_{pregunta}"
+                )
+        submit_diagnostico = st.form_submit_button("Obtener Diagnóstico")
 
-        if submit_diagnostico:
-            diagnosticos = {}  # Guardará el riesgo predicho por cada dominio
-            # Iterar por cada dominio para procesar las respuestas y predecir
-            for dominio, respuestas in respuestas_usuario.items():
-                datos_convertidos = {}
-                for pregunta, respuesta in respuestas.items():
-                    # Convertir la respuesta en valor numérico según la escala
-                    if pregunta in preguntas_likert_positiva:
-                        valor = escala_likert_positiva.get(respuesta, np.nan)
-                    elif pregunta in preguntas_likert_negativa:
-                        valor = escala_likert_negativa.get(respuesta, np.nan)
-                    else:
-                        # Por defecto se usa la escala positiva si no se identifica la pregunta
-                        valor = escala_likert_positiva.get(respuesta, np.nan)
-                    datos_convertidos[pregunta] = valor
-
-                # Convertir el diccionario en un DataFrame de una fila
-                df_usuario = pd.DataFrame([datos_convertidos])
-                # Recuperar el modelo de árbol para el dominio
-                modelo = domain_models.get(dominio)
-                if modelo is None:
-                    st.warning(f"No se encontró modelo para el dominio {dominio}.")
-                    diagnosticos[dominio] = "No disponible"
+    if submit_diagnostico:
+        diagnosticos = {}  # Guardará el riesgo predicho por cada dominio
+        # Iterar por cada dominio para procesar las respuestas y predecir
+        for dominio, respuestas in respuestas_usuario.items():
+            datos_convertidos = {}
+            for pregunta, respuesta in respuestas.items():
+                # Convertir la respuesta en valor numérico según la escala
+                if pregunta in preguntas_likert_positiva:
+                    valor = escala_likert_positiva.get(respuesta, np.nan)
+                elif pregunta in preguntas_likert_negativa:
+                    valor = escala_likert_negativa.get(respuesta, np.nan)
                 else:
-                    prediccion = modelo.predict(df_usuario)[0]
-                    diagnosticos[dominio] = prediccion
+                    # Por defecto se usa la escala positiva si no se identifica la pregunta
+                    valor = escala_likert_positiva.get(respuesta, np.nan)
+                datos_convertidos[pregunta] = valor
 
-            # Mostrar los resultados por dominio
-            st.subheader("Diagnóstico por Dominio")
-            for dominio, riesgo in diagnosticos.items():
-                st.write(f"**{dominio}:** Nivel de riesgo predicho: {riesgo}")
-
-            # (Opcional) Agregar un diagnóstico global, por ejemplo, calculando la media
-            # Se asume que los niveles de riesgo son numéricos; ajusta según corresponda
-            niveles = [valor for valor in diagnosticos.values() if isinstance(valor, (int, float))]
-            if niveles:
-                riesgo_global = np.mean(niveles)
-                st.write(f"**Diagnóstico Global:** Promedio de riesgo: {riesgo_global:.2f}")
+            # Convertir el diccionario en un DataFrame de una fila
+            df_usuario = pd.DataFrame([datos_convertidos])
+            # Recuperar el modelo de árbol para el dominio
+            modelo = domain_models.get(dominio)
+            if modelo is None:
+                st.warning(f"No se encontró modelo para el dominio {dominio}.")
+                diagnosticos[dominio] = "No disponible"
             else:
-                st.write("No se pudo calcular un diagnóstico global.")
+                prediccion = modelo.predict(df_usuario)[0]
+                diagnosticos[dominio] = prediccion
+
+        # Mostrar los resultados por dominio
+        st.subheader("Diagnóstico por Dominio")
+        for dominio, riesgo in diagnosticos.items():
+            st.write(f"**{dominio}:** Nivel de riesgo predicho: {riesgo}")
+
+        # (Opcional) Agregar un diagnóstico global, por ejemplo, calculando la media
+        # Se asume que los niveles de riesgo son numéricos; ajusta según corresponda
+        niveles = [valor for valor in diagnosticos.values() if isinstance(valor, (int, float))]
+        if niveles:
+            riesgo_global = np.mean(niveles)
+            st.write(f"**Diagnóstico Global:** Promedio de riesgo: {riesgo_global:.2f}")
+        else:
+            st.write("No se pudo calcular un diagnóstico global.")
 
 
 
