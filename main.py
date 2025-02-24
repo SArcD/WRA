@@ -1,17 +1,3 @@
-#import streamlit as st
-
-# Crear un menú de navegación en la barra lateral
-#opcion = st.sidebar.radio("Selecciona una página", ["Inicio", "Acerca de", "Contacto"])
-
-#if opcion == "Inicio":
-#    st.title("Página de Inicio")
-#    st.write("Bienvenido a la página de inicio.")
-#elif opcion == "Acerca de":
-#    st.title("Acerca de")
-#    st.write("Aquí encontrarás información sobre nosotros.")
-#elif opcion == "Contacto":
-#    st.title("Contacto")
-#    st.write("Ponte en contacto con nosotros.")
 import streamlit as st
 import pandas as pd
 
@@ -1726,145 +1712,94 @@ import matplotlib.pyplot as plt
 from sklearn.tree import DecisionTreeClassifier, plot_tree
 from itertools import combinations
 
-# ---------------------------
-# 1️⃣ CÁLCULO DEL REDUCTO
-# ---------------------------
 
-st.title("Análisis y Evaluación de Factores de Riesgo Laboral")
+import streamlit as st
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
 
-st.markdown(
-    """
-    Esta sección analiza los reductos en cada dominio del cuestionario, 
-    entrenando modelos de árboles de decisión y permitiendo una evaluación interactiva.
-    """
-)
+# Configuración inicial
+st.title("Evaluación de Riesgo Laboral con Árboles de Decisión")
+st.markdown("Este formulario interactivo predice el nivel de riesgo basado en un modelo de árbol de decisión para cada dominio.")
 
-#@st.cache_data
-#def indiscernibility(attr, table):
-#    u_ind = {}
-#    for i in table.index:
-#        attr_values = tuple(table.loc[i, attr])
-#        u_ind.setdefault(attr_values, set()).add(i)
-#    return list(u_ind.values())
-
-#def compare_partitions(original, test):
-#    score = 0
-#    for orig_set in original:
-#        best_match = 0
-#        for test_set in test:
-#            similarity = len(orig_set.intersection(test_set)) / len(orig_set.union(test_set))
-#            best_match = max(best_match, similarity)
-#        score += best_match * len(orig_set)
-#    total_size = sum(len(group) for group in original)
-#    return score / total_size if total_size > 0 else 0
-
-#@st.cache_data
-#def find_reduct_for_domain(domain_questions, df, threshold=0.9):
-#    best_match, best_subset = 0, None
-#    original_partition = indiscernibility(domain_questions, df)
-
-#    for i in range(1, len(domain_questions) + 1):
-#        for subset in combinations(domain_questions, i):
-#            test_partition = indiscernibility(list(subset), df)
-#            match_score = compare_partitions(original_partition, test_partition)
-#            if match_score > best_match:
-#                best_match, best_subset = match_score, subset
-#            if best_match >= threshold:
-#                return list(best_subset)
-
-#    return list(best_subset)
-
-# Diccionario de preguntas por dominio
-#dominios_reales = {
-#    "Condiciones en el ambiente de trabajo": ["P2_1", "P2_2", "P2_3", "P2_4", "P2_5"],
-#    "Carga de trabajo": ["P3_1", "P3_2", "P3_3", "P4_1", "P4_2", "P4_3", "P4_4", "P5_1", "P5_2", "P5_3", "P5_4"],
-#    "Liderazgo": ["P9_1", "P9_2", "P9_3", "P9_4", "P10_1", "P10_2", "P10_3", "P10_4"],
-#}
-
-# Cargar el DataFrame de respuestas
-#nuevo_df3_resultado = st.session_state.get("nuevo_df3_resultado")
-
-#if nuevo_df3_resultado is not None:
-#    reductos = {dominio: find_reduct_for_domain(preguntas, nuevo_df3_resultado) for dominio, preguntas in dominios_reales.items()}
-#    st.session_state["reductos"] = reductos
-#    st.success("Reductos calculados correctamente.")
-
-#    st.subheader("Reductos encontrados")
-#    for dominio, preguntas in reductos.items():
-#        st.write(f"**{dominio}**: {preguntas}")
-#else:
-#    st.error("No se ha encontrado el DataFrame de respuestas.")
-
-# ---------------------------
-# 2️⃣ ENTRENAMIENTO DEL MODELO
-# ---------------------------
-
-#st.subheader("Entrenamiento de Modelos de Árbol de Decisión")
-
-#if nuevo_df3_resultado is not None:
-#    domain_models = {}
-#    for dominio, preguntas_reducto in reductos.items():
-#        if preguntas_reducto is None:
- #           continue
-
- #       df_reducto = nuevo_df3_resultado[preguntas_reducto + [f"{dominio}_Nivel de Riesgo"]].dropna()
- #       X = df_reducto[preguntas_reducto]
-  #      y = df_reducto[f"{dominio}_Nivel de Riesgo"]
-
- #       model = DecisionTreeClassifier(max_depth=4, random_state=42)
- #       model.fit(X, y)
- #       domain_models[dominio] = model
-
- #       st.write(f"Modelo entrenado para **{dominio}**.")
-#
-#    st.session_state["domain_models"] = domain_models
-#else:
-#    st.error("No se han encontrado datos para entrenar los modelos.")
-
-# ---------------------------
-# 3️⃣ FORMULARIO INTERACTIVO PARA EL DIAGNÓSTICO
-# ---------------------------
-
-st.subheader("Evaluación Interactiva del Usuario")
-
-#if "reductos" not in st.session_state or "domain_models" not in st.session_state:
-#    st.error("Ejecute el análisis de reductos y el entrenamiento de modelos antes de usar el formulario.")
-#else:
-#reductos = st.session_state["reductos"]
-#domain_models = st.session_state["domain_models"]
-
+# Escalas Likert
 #escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas veces": 2, "Casi nunca": 1, "Nunca": 0}
 #escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas veces": 2, "Casi nunca": 3, "Nunca": 4}
 
-with st.form("diagnostico_interactivo_form", clear_on_submit=False):
-    respuestas_usuario = {}
-    for dominio, preguntas_reducto in reductos.items():
-        st.subheader(f"Dominio: {dominio}")
-        respuestas_usuario[dominio] = {}
-        for pregunta in preguntas_reducto:
-            respuestas_usuario[dominio][pregunta] = st.radio(
-                f"{pregunta}", ["Siempre", "Casi siempre", "Algunas veces", "Casi nunca", "Nunca"],
-                key=f"{dominio}_{pregunta}"
-            )
-    submit_diagnostico = st.form_submit_button("Obtener Diagnóstico")
+# Preguntas en las escalas Likert positiva y negativa
+#preguntas_likert_positiva = ["P2_1", "P2_4", "P7_1", "P7_2", "P7_3", "P7_4", "P7_5", "P7_6"]
+#preguntas_likert_negativa = ["P2_2", "P2_3", "P2_5", "P3_1", "P3_2", "P3_3", "P4_1", "P4_2"]
 
-if submit_diagnostico:
+# Diccionario de dominios y sus preguntas reducidas
+#dominios_reales = {
+#    "Condiciones en el ambiente de trabajo": ["P2_1", "P2_2", "P2_3", "P2_4", "P2_5"],
+#    "Carga de trabajo": ["P3_1", "P3_2", "P3_3", "P4_1", "P4_2", "P4_3", "P4_4"],
+#    "Liderazgo": ["P9_1", "P9_2", "P9_3", "P9_4", "P10_1", "P10_2"]
+#}
+
+# Simulación de datos (Reemplazar con datos reales)
+#nuevo_df3_resultado_dominios = pd.DataFrame(
+#    np.random.randint(0, 5, size=(100, sum(len(v) for v in dominios_reales.values()) + len(dominios_reales))),
+#    columns=[col for cols in dominios_reales.values() for col in cols] + [f"{dom}_Nivel de Riesgo" for dom in dominios_reales.keys()]
+#)
+
+# Entrenamiento de modelos por dominio
+modelos_dominios = {}
+for dominio, preguntas in dominios_reales.items():
+    columna_objetivo = f"{dominio}_Nivel de Riesgo"
+    df_dominio = nuevo_df3_resultado_dominios[preguntas + [columna_objetivo]].dropna()
+    X = df_dominio.drop(columns=[columna_objetivo])
+    y = df_dominio[columna_objetivo]
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+    modelo = DecisionTreeClassifier(max_depth=4, random_state=42)
+    modelo.fit(X_train, y_train)
+    y_pred = modelo.predict(X_test)
+    modelos_dominios[dominio] = modelo
+    
+    # Mostrar precisión del modelo
+    st.write(f"Modelo de {dominio} - Precisión: {accuracy_score(y_test, y_pred):.2%}")
+    
+    # Visualizar árbol de decisión
+    fig, ax = plt.subplots(figsize=(10, 6))
+    plot_tree(modelo, feature_names=X.columns, class_names=np.unique(y).astype(str), filled=True, rounded=True, ax=ax)
+    st.pyplot(fig)
+
+# ----------------------------
+# FORMULARIO INTERACTIVO
+# ----------------------------
+st.subheader("Formulario de Evaluación de Riesgo")
+with st.form("diagnostico_form"):
+    respuestas_usuario = {}
+    for dominio, preguntas in dominios_reales.items():
+        st.subheader(f"{dominio}")
+        respuestas_usuario[dominio] = {}
+        for pregunta in preguntas:
+            respuestas_usuario[dominio][pregunta] = st.radio(
+                f"{pregunta}", ["Siempre", "Casi siempre", "Algunas veces", "Casi nunca", "Nunca"], key=f"{dominio}_{pregunta}"
+            )
+    submit = st.form_submit_button("Obtener Diagnóstico")
+
+if submit:
     diagnosticos = {}
     for dominio, respuestas in respuestas_usuario.items():
-        datos_convertidos = {pregunta: escala_likert_positiva.get(respuesta, np.nan) if pregunta in escala_likert_positiva else escala_likert_negativa.get(respuesta, np.nan) for pregunta, respuesta in respuestas.items()}
+        datos_convertidos = {
+            pregunta: escala_likert_positiva.get(respuesta, np.nan) if pregunta in preguntas_likert_positiva else escala_likert_negativa.get(respuesta, np.nan)
+            for pregunta, respuesta in respuestas.items()
+        }
         df_usuario = pd.DataFrame([datos_convertidos])
-
-        modelo = domain_models.get(dominio)
+        modelo = modelos_dominios.get(dominio)
         diagnosticos[dominio] = modelo.predict(df_usuario)[0] if modelo else "No disponible"
 
-    st.subheader("Diagnóstico por Dominio")
+    st.subheader("Diagnóstico de Riesgo por Dominio")
     for dominio, riesgo in diagnosticos.items():
         st.write(f"**{dominio}:** Nivel de riesgo predicho: {riesgo}")
+    
+    riesgo_total = np.mean([valor for valor in diagnosticos.values() if isinstance(valor, (int, float))])
+    st.write(f"**Riesgo Total Promedio:** {riesgo_total:.2f}")
 
-    niveles = [valor for valor in diagnosticos.values() if isinstance(valor, (int, float))]
-    if niveles:
-        riesgo_global = np.mean(niveles)
-        st.write(f"**Diagnóstico Global:** Promedio de riesgo: {riesgo_global:.2f}")
 
 
 
