@@ -1759,6 +1759,7 @@ elif paginas == "Análisis":
                 # Evaluar el modelo
                 y_pred = model.predict(X_test)
                 accuracy = accuracy_score(y_test, y_pred)
+                precisiones_dominios[dominio] = accuracy  # Guardar precisión
                 st.write(f"**Precisión del modelo**: {accuracy:.2%}")
 
                 # Visualizar árbol de decisión
