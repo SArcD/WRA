@@ -1718,7 +1718,7 @@ elif paginas == "Análisis":
     input_columns = st.session_state["input_columns"]
 #elif pages == "Formulario interactivo":
 
-elif paginas == "Formulario de Evaluación":
+elif paginas == "Formulario interactivo":
     st.title("Evaluación Personal de Riesgo Laboral")
     st.markdown("Responde las siguientes preguntas de acuerdo a tu experiencia en el trabajo para conocer tu nivel de riesgo laboral.")
 
