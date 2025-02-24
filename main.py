@@ -1713,29 +1713,30 @@ elif paginas == "Análisis":
     else:
         st.warning(f"La columna '{columna_objetivo}' no está en `nuevo_df3_resultado_dominios`.")
 
-
-    model = st.session_state["decision_model"]
-    input_columns = st.session_state["input_columns"]
-#elif pages == "Formulario interactivo":
-
-elif paginas == "Formulario interactivo":
-    st.title("Evaluación Personal de Riesgo Laboral")
-    st.markdown("Responde las siguientes preguntas de acuerdo a tu experiencia en el trabajo para conocer tu nivel de riesgo laboral.")
-
-    # Verificar que el modelo y la lista de preguntas estén disponibles en session_state
-    if "decision_model" not in st.session_state or "input_columns" not in st.session_state:
-        st.error("No se ha encontrado el modelo de evaluación. Por favor, entrena el modelo en la sección de análisis.")
+    st.title("Diagnóstico Interactivo de Riesgo Laboral por Dominio")
+    st.markdown(
+        """
+        Responde las preguntas mínimas (reducto) para cada dominio del cuestionario y obtén un diagnóstico 
+        individual en cada área. Al finalizar se mostrará también un resumen global.
+        """
+    )
+    
+    # Verificar que existan los reductos y los modelos de dominio en session_state
+    if "reductos" not in st.session_state:
+        st.error("No se encontraron los reductos. Por favor, ejecuta la sección de análisis primero.")
+    elif "domain_models" not in st.session_state:
+        st.error("No se encontraron los modelos de dominio. Por favor, entrena los modelos en la sección de análisis.")
     else:
-        model = st.session_state["decision_model"]
-        input_columns = st.session_state["input_columns"]
-        # Opcional: Diccionario de descripciones para cada pregunta
-        preguntas = st.session_state.get("preguntas", {})
+        # Recuperar variables guardadas
+        reductos = st.session_state["reductos"]             # Diccionario: {dominio: [pregunta1, pregunta2, ...]}
+        domain_models = st.session_state["domain_models"]   # Diccionario: {dominio: modelo de árbol entrenado}
+        preguntas_dict = st.session_state.get("preguntas", {})  # Opcional, para mostrar etiquetas descriptivas
 
-        # Definir las escalas Likert para conversión de respuestas
+        # Escalas Likert para conversión de respuestas
         escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas Veces": 2, "Casi nunca": 1, "Nunca": 0}
         escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas Veces": 2, "Casi nunca": 3, "Nunca": 4}
 
-        # Listas de preguntas según su escala (puedes ajustarlas según tu modelo)
+        # Listas de preguntas según la escala (se pueden ajustar según tu cuestionario)
         preguntas_likert_positiva = [
             "P2_1", "P2_4", "P7_1", "P7_2", "P7_3", "P7_4", "P7_5", "P7_6",
             "P8_2", "P9_1", "P9_2", "P9_3", "P9_4", "P9_5", "P9_6",
@@ -1746,47 +1747,65 @@ elif paginas == "Formulario interactivo":
             "P4_1", "P4_2", "P4_3", "P4_4", "P5_1", "P5_2", "P5_3", "P5_4"
         ]
 
-        # Crear el formulario con st.form para agrupar las entradas del usuario
-        with st.form("evaluacion_formulario", clear_on_submit=False):
-            respuestas = {}
-            for pregunta in input_columns:
-                # Usar la descripción si está disponible; de lo contrario, se usa la clave de la pregunta
-                label = preguntas.get(pregunta, pregunta)
-                respuestas[pregunta] = st.radio(
-                    label,
-                    options=["Siempre", "Casi siempre", "Algunas Veces", "Casi nunca", "Nunca"],
-                    key=pregunta
-                )
-            submit = st.form_submit_button("Evaluar mi riesgo")
+        # Crear un formulario único que incluya un bloque por dominio
+        with st.form("diagnostico_interactivo_form", clear_on_submit=False):
+            respuestas_usuario = {}  # Estructura: {dominio: {pregunta: respuesta, ...}, ...}
+            st.markdown("### Responde las preguntas para cada dominio")
+            for dominio, preguntas_reducto in reductos.items():
+                st.subheader(f"Dominio: {dominio}")
+                respuestas_usuario[dominio] = {}
+                for pregunta in preguntas_reducto:
+                    # Obtener una etiqueta descriptiva si se tiene en el diccionario
+                    etiqueta = preguntas_dict.get(pregunta, pregunta)
+                    # Cada pregunta se responde mediante un radio button
+                    respuestas_usuario[dominio][pregunta] = st.radio(
+                        f"{etiqueta}",
+                        options=["Siempre", "Casi siempre", "Algunas Veces", "Casi nunca", "Nunca"],
+                        key=f"{dominio}_{pregunta}"
+                    )
+            submit_diagnostico = st.form_submit_button("Obtener Diagnóstico")
 
-        if submit:
-            # Convertir las respuestas a valores numéricos según la escala correspondiente
-            datos_usuario = {}
-            for pregunta in input_columns:
-                respuesta = respuestas[pregunta]
-                if pregunta in preguntas_likert_positiva:
-                    valor = escala_likert_positiva.get(respuesta, np.nan)
-                elif pregunta in preguntas_likert_negativa:
-                    valor = escala_likert_negativa.get(respuesta, np.nan)
+        if submit_diagnostico:
+            diagnosticos = {}  # Guardará el riesgo predicho por cada dominio
+            # Iterar por cada dominio para procesar las respuestas y predecir
+            for dominio, respuestas in respuestas_usuario.items():
+                datos_convertidos = {}
+                for pregunta, respuesta in respuestas.items():
+                    # Convertir la respuesta en valor numérico según la escala
+                    if pregunta in preguntas_likert_positiva:
+                        valor = escala_likert_positiva.get(respuesta, np.nan)
+                    elif pregunta in preguntas_likert_negativa:
+                        valor = escala_likert_negativa.get(respuesta, np.nan)
+                    else:
+                        # Por defecto se usa la escala positiva si no se identifica la pregunta
+                        valor = escala_likert_positiva.get(respuesta, np.nan)
+                    datos_convertidos[pregunta] = valor
+
+                # Convertir el diccionario en un DataFrame de una fila
+                df_usuario = pd.DataFrame([datos_convertidos])
+                # Recuperar el modelo de árbol para el dominio
+                modelo = domain_models.get(dominio)
+                if modelo is None:
+                    st.warning(f"No se encontró modelo para el dominio {dominio}.")
+                    diagnosticos[dominio] = "No disponible"
                 else:
-                    # En caso de que no se identifique la escala, se asume la escala positiva
-                    valor = escala_likert_positiva.get(respuesta, np.nan)
-                datos_usuario[pregunta] = valor
+                    prediccion = modelo.predict(df_usuario)[0]
+                    diagnosticos[dominio] = prediccion
 
-            # Convertir los datos a un DataFrame (una única fila)
-            df_usuario = pd.DataFrame([datos_usuario])
+            # Mostrar los resultados por dominio
+            st.subheader("Diagnóstico por Dominio")
+            for dominio, riesgo in diagnosticos.items():
+                st.write(f"**{dominio}:** Nivel de riesgo predicho: {riesgo}")
 
-            # Utilizar el modelo de árbol para predecir el nivel de riesgo
-            nivel_riesgo = model.predict(df_usuario)[0]
-            st.success(f"Tu nivel de riesgo laboral es: {nivel_riesgo}")
+            # (Opcional) Agregar un diagnóstico global, por ejemplo, calculando la media
+            # Se asume que los niveles de riesgo son numéricos; ajusta según corresponda
+            niveles = [valor for valor in diagnosticos.values() if isinstance(valor, (int, float))]
+            if niveles:
+                riesgo_global = np.mean(niveles)
+                st.write(f"**Diagnóstico Global:** Promedio de riesgo: {riesgo_global:.2f}")
+            else:
+                st.write("No se pudo calcular un diagnóstico global.")
 
-            # (Opcional) Mostrar un gráfico de radar comparativo de tu perfil de respuestas
-            # Por ejemplo, si tienes promedios de referencia almacenados en session_state:
-            if "perfil_referencia" in st.session_state:
-                perfil_referencia = st.session_state["perfil_referencia"]
-                # Calcular el vector del usuario en función de dominios o categorías
-                # Aquí se puede implementar la lógica para crear un radar comparativo.
-                # [Código para generar gráfico de radar, si se requiere]
 
 
         
