@@ -1827,44 +1827,44 @@ st.markdown(
 
 st.subheader("Evaluación Interactiva del Usuario")
 
-if "reductos" not in st.session_state or "domain_models" not in st.session_state:
-    st.error("Ejecute el análisis de reductos y el entrenamiento de modelos antes de usar el formulario.")
-else:
-    reductos = st.session_state["reductos"]
-    domain_models = st.session_state["domain_models"]
+#if "reductos" not in st.session_state or "domain_models" not in st.session_state:
+#    st.error("Ejecute el análisis de reductos y el entrenamiento de modelos antes de usar el formulario.")
+#else:
+#reductos = st.session_state["reductos"]
+#domain_models = st.session_state["domain_models"]
 
-    escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas veces": 2, "Casi nunca": 1, "Nunca": 0}
-    escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas veces": 2, "Casi nunca": 3, "Nunca": 4}
+#escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas veces": 2, "Casi nunca": 1, "Nunca": 0}
+#escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas veces": 2, "Casi nunca": 3, "Nunca": 4}
 
-    with st.form("diagnostico_interactivo_form", clear_on_submit=False):
-        respuestas_usuario = {}
-        for dominio, preguntas_reducto in reductos.items():
-            st.subheader(f"Dominio: {dominio}")
-            respuestas_usuario[dominio] = {}
-            for pregunta in preguntas_reducto:
-                respuestas_usuario[dominio][pregunta] = st.radio(
-                    f"{pregunta}", ["Siempre", "Casi siempre", "Algunas veces", "Casi nunca", "Nunca"],
-                    key=f"{dominio}_{pregunta}"
-                )
-        submit_diagnostico = st.form_submit_button("Obtener Diagnóstico")
+with st.form("diagnostico_interactivo_form", clear_on_submit=False):
+    respuestas_usuario = {}
+    for dominio, preguntas_reducto in reductos.items():
+        st.subheader(f"Dominio: {dominio}")
+        respuestas_usuario[dominio] = {}
+        for pregunta in preguntas_reducto:
+            respuestas_usuario[dominio][pregunta] = st.radio(
+                f"{pregunta}", ["Siempre", "Casi siempre", "Algunas veces", "Casi nunca", "Nunca"],
+                key=f"{dominio}_{pregunta}"
+            )
+    submit_diagnostico = st.form_submit_button("Obtener Diagnóstico")
 
-    if submit_diagnostico:
-        diagnosticos = {}
-        for dominio, respuestas in respuestas_usuario.items():
-            datos_convertidos = {pregunta: escala_likert_positiva.get(respuesta, np.nan) if pregunta in escala_likert_positiva else escala_likert_negativa.get(respuesta, np.nan) for pregunta, respuesta in respuestas.items()}
-            df_usuario = pd.DataFrame([datos_convertidos])
+if submit_diagnostico:
+    diagnosticos = {}
+    for dominio, respuestas in respuestas_usuario.items():
+        datos_convertidos = {pregunta: escala_likert_positiva.get(respuesta, np.nan) if pregunta in escala_likert_positiva else escala_likert_negativa.get(respuesta, np.nan) for pregunta, respuesta in respuestas.items()}
+        df_usuario = pd.DataFrame([datos_convertidos])
 
-            modelo = domain_models.get(dominio)
-            diagnosticos[dominio] = modelo.predict(df_usuario)[0] if modelo else "No disponible"
+        modelo = domain_models.get(dominio)
+        diagnosticos[dominio] = modelo.predict(df_usuario)[0] if modelo else "No disponible"
 
-        st.subheader("Diagnóstico por Dominio")
-        for dominio, riesgo in diagnosticos.items():
-            st.write(f"**{dominio}:** Nivel de riesgo predicho: {riesgo}")
+    st.subheader("Diagnóstico por Dominio")
+    for dominio, riesgo in diagnosticos.items():
+        st.write(f"**{dominio}:** Nivel de riesgo predicho: {riesgo}")
 
-        niveles = [valor for valor in diagnosticos.values() if isinstance(valor, (int, float))]
-        if niveles:
-            riesgo_global = np.mean(niveles)
-            st.write(f"**Diagnóstico Global:** Promedio de riesgo: {riesgo_global:.2f}")
+    niveles = [valor for valor in diagnosticos.values() if isinstance(valor, (int, float))]
+    if niveles:
+        riesgo_global = np.mean(niveles)
+        st.write(f"**Diagnóstico Global:** Promedio de riesgo: {riesgo_global:.2f}")
 
 
 
