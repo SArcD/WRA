@@ -1723,6 +1723,8 @@ elif paginas == "Análisis":
 
         if "Nivel de Riesgo" in df_reductos_numerico.columns:
             modelos_dominios = {}
+            precisiones_dominios = {}
+
 
             for dominio, preguntas in dominios_reales.items():
                 preguntas_validas = [p for p in preguntas if p in df_reductos_numerico.columns]
