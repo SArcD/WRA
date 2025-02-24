@@ -1779,7 +1779,7 @@ elif paginas == "Análisis":
             # Crear el modelo del árbol de decisión
             model = DecisionTreeClassifier(max_depth=4, random_state=42)
             model.fit(X, y)
-
+            
             # Visualizar el árbol de decisión
             fig, ax = plt.subplots(figsize=(12, 8))
             plot_tree(
@@ -1799,6 +1799,82 @@ elif paginas == "Análisis":
         st.warning(f"La columna '{columna_objetivo}' no está en `nuevo_df3_resultado_dominios`.")
 
 
+    model = st.session_state["decision_model"]
+    input_columns = st.session_state["input_columns"]
+#elif pages == "Formulario interactivo":
+
+elif paginas == "Formulario interactivo":
+    st.title("Formulario interactivo para evaluar tu nivel de riesgo laboral")
+    st.markdown("Responde las siguientes preguntas de acuerdo a tu experiencia en el trabajo.")
+
+    # Verificar que el modelo y las columnas de entrada estén disponibles en session state
+    if "decision_model" not in st.session_state or "input_columns" not in st.session_state:
+        st.error("El modelo de árbol de decisión no está disponible. Por favor, entrena el modelo en la sección correspondiente.")
+    else:
+        model = st.session_state["decision_model"]
+        input_columns = st.session_state["input_columns"]
+
+        # Opcional: recuperar el diccionario de preguntas si se almacenó previamente para mostrar la descripción
+        preguntas_dict = st.session_state.get("preguntas", {})  # Ejemplo: {"P2_1": "¿El espacio de trabajo es seguro?", ...}
+
+        # Recuperar o definir las listas de preguntas para cada escala
+        if "preguntas_likert_positiva" in st.session_state and "preguntas_likert_negativa" in st.session_state:
+            preguntas_pos = st.session_state["preguntas_likert_positiva"]
+            preguntas_neg = st.session_state["preguntas_likert_negativa"]
+        else:
+            preguntas_pos = [
+                "P2_1", "P2_4", "P7_1", "P7_2", "P7_3", "P7_4", "P7_5", "P7_6",
+                "P8_2", "P9_1", "P9_2", "P9_3", "P9_4", "P9_5", "P9_6",
+                "P10_1", "P10_2", "P10_3", "P10_4", "P10_5", "P11_1", "P11_2",
+                "P11_3", "P11_4", "P11_5", "P12_1", "P12_2", "P12_3", "P12_4",
+                "P12_5", "P12_6", "P12_7", "P12_8", "P12_9", "P12_10", "P13_1"
+            ]
+            preguntas_neg = [
+                "P2_2", "P2_3", "P2_5", "P3_1", "P3_2", "P3_3", "P4_1", "P4_2",
+                "P4_3", "P4_4", "P5_1", "P5_2", "P5_3", "P5_4", "P6_1", "P6_2",
+                "P6_3", "P6_4", "P6_5", "P6_6", "P8_1", "P13_2", "P13_3", "P13_4",
+                "P13_5", "P13_6", "P13_7", "P13_8", "P15_1", "P15_2", "P15_3",
+                "P15_4", "P17_1", "P17_2", "P17_3", "P17_4"
+            ]
+
+        # Definir los diccionarios de conversión para las escalas Likert
+        escala_likert_positiva = {"Siempre": 4, "Casi siempre": 3, "Algunas Veces": 2, "Casi nunca": 1, "Nunca": 0}
+        escala_likert_negativa = {"Siempre": 0, "Casi siempre": 1, "Algunas Veces": 2, "Casi nunca": 3, "Nunca": 4}
+
+        # Crear el formulario interactivo
+        with st.form("formulario_riesgo", clear_on_submit=False):
+            respuestas = {}
+            for col in input_columns:
+                # Usar la descripción almacenada o, en su defecto, la clave de la pregunta
+                label = preguntas_dict.get(col, col)
+                respuestas[col] = st.radio(label,
+                                             options=["Siempre", "Casi siempre", "Algunas Veces", "Casi nunca", "Nunca"],
+                                             key=col)
+            submit = st.form_submit_button("Evaluar riesgo")
+
+            if submit:
+                # Convertir las respuestas a valores numéricos según la escala correspondiente
+                input_data = {}
+                for col in input_columns:
+                    resp = respuestas[col]
+                    if col in preguntas_pos:
+                        valor = escala_likert_positiva.get(resp, np.nan)
+                    elif col in preguntas_neg:
+                        valor = escala_likert_negativa.get(resp, np.nan)
+                    else:
+                        # En caso de que la pregunta no se identifique, se asume escala positiva
+                        valor = escala_likert_positiva.get(resp, np.nan)
+                    input_data[col] = valor
+
+                # Convertir el diccionario a un DataFrame (una sola fila)
+                df_input = pd.DataFrame([input_data])
+
+                # Predecir el nivel de riesgo utilizando el modelo de árbol
+                nivel_riesgo = model.predict(df_input)[0]
+                st.success(f"El nivel de riesgo asignado es: {nivel_riesgo}")
+
+                # (Opcional) Guardar en session state la respuesta para usarla en otra sección
+                st.session_state["ultima_prediccion"] = nivel_riesgo
 
 
         
