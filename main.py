@@ -1782,44 +1782,44 @@ st.markdown(
 #}
 
 # Cargar el DataFrame de respuestas
-nuevo_df3_resultado = st.session_state.get("nuevo_df3_resultado")
+#nuevo_df3_resultado = st.session_state.get("nuevo_df3_resultado")
 
-if nuevo_df3_resultado is not None:
-    reductos = {dominio: find_reduct_for_domain(preguntas, nuevo_df3_resultado) for dominio, preguntas in dominios_reales.items()}
-    st.session_state["reductos"] = reductos
-    st.success("Reductos calculados correctamente.")
+#if nuevo_df3_resultado is not None:
+#    reductos = {dominio: find_reduct_for_domain(preguntas, nuevo_df3_resultado) for dominio, preguntas in dominios_reales.items()}
+#    st.session_state["reductos"] = reductos
+#    st.success("Reductos calculados correctamente.")
 
-    st.subheader("Reductos encontrados")
-    for dominio, preguntas in reductos.items():
-        st.write(f"**{dominio}**: {preguntas}")
-else:
-    st.error("No se ha encontrado el DataFrame de respuestas.")
+#    st.subheader("Reductos encontrados")
+#    for dominio, preguntas in reductos.items():
+#        st.write(f"**{dominio}**: {preguntas}")
+#else:
+#    st.error("No se ha encontrado el DataFrame de respuestas.")
 
 # ---------------------------
 # 2️⃣ ENTRENAMIENTO DEL MODELO
 # ---------------------------
 
-st.subheader("Entrenamiento de Modelos de Árbol de Decisión")
+#st.subheader("Entrenamiento de Modelos de Árbol de Decisión")
 
-if nuevo_df3_resultado is not None:
-    domain_models = {}
-    for dominio, preguntas_reducto in reductos.items():
-        if preguntas_reducto is None:
-            continue
+#if nuevo_df3_resultado is not None:
+#    domain_models = {}
+#    for dominio, preguntas_reducto in reductos.items():
+#        if preguntas_reducto is None:
+ #           continue
 
-        df_reducto = nuevo_df3_resultado[preguntas_reducto + [f"{dominio}_Nivel de Riesgo"]].dropna()
-        X = df_reducto[preguntas_reducto]
-        y = df_reducto[f"{dominio}_Nivel de Riesgo"]
+ #       df_reducto = nuevo_df3_resultado[preguntas_reducto + [f"{dominio}_Nivel de Riesgo"]].dropna()
+ #       X = df_reducto[preguntas_reducto]
+  #      y = df_reducto[f"{dominio}_Nivel de Riesgo"]
 
-        model = DecisionTreeClassifier(max_depth=4, random_state=42)
-        model.fit(X, y)
-        domain_models[dominio] = model
+ #       model = DecisionTreeClassifier(max_depth=4, random_state=42)
+ #       model.fit(X, y)
+ #       domain_models[dominio] = model
 
-        st.write(f"Modelo entrenado para **{dominio}**.")
-
-    st.session_state["domain_models"] = domain_models
-else:
-    st.error("No se han encontrado datos para entrenar los modelos.")
+ #       st.write(f"Modelo entrenado para **{dominio}**.")
+#
+#    st.session_state["domain_models"] = domain_models
+#else:
+#    st.error("No se han encontrado datos para entrenar los modelos.")
 
 # ---------------------------
 # 3️⃣ FORMULARIO INTERACTIVO PARA EL DIAGNÓSTICO
