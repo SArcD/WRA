@@ -1753,6 +1753,9 @@ elif paginas == "Análisis":
                 # Identificar características importantes
                 features_importances = model.feature_importances_
                 features_usadas = np.array(X.columns)[features_importances > 0]
+                # Convertir a lista de strings explícitamente antes de usarlo en el diccionario
+                features_usadas = list(map(str, features_usadas))
+
                 importances_usadas = features_importances[features_importances > 0]
 
                 # Guardar las preguntas utilizadas en el modelo
@@ -1763,6 +1766,25 @@ elif paginas == "Análisis":
                 }).sort_values(by="Importancia", ascending=False)
                 preguntas_modelos[dominio] = preguntas_utilizadas
 
+
+                # Guardar las preguntas utilizadas en el modelo
+                preguntas_utilizadas = pd.DataFrame({
+                "Pregunta": features_usadas,
+                "Importancia": importances_usadas,
+                "Descripción": [preguntas.get(col, "Descripción no disponible") for col in features_usadas]
+                }).sort_values(by="Importancia", ascending=False)
+
+                preguntas_modelos[dominio] = preguntas_utilizadas
+
+
+                
+                # Mostrar preguntas utilizadas
+                #preguntas_utilizadas = pd.DataFrame({
+                #    "Pregunta": X.columns,
+                #    "Descripción": [preguntas.get(col, "Descripción no disponible") for col in X.columns]
+                #})
+
+                
                 st.write("### Preguntas Utilizadas en el Modelo")
                 st.dataframe(preguntas_utilizadas)
 
