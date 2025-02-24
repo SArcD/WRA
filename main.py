@@ -1017,6 +1017,7 @@ elif paginas == "Análisis":
             """)
 
     # Función para calcular la relación de indiscernibilidad
+    @st.cache_data
     def indiscernibility(attr, table):
         u_ind = {}
         for i in table.index:
@@ -1028,6 +1029,7 @@ elif paginas == "Análisis":
         return list(u_ind.values())
 
     # Función para calcular la similitud entre particiones usando Jaccard
+    @st.cache_data
     def compare_partitions(original, test):
         score = 0
         for orig_set in original:
@@ -1102,6 +1104,7 @@ elif paginas == "Análisis":
     import matplotlib.pyplot as plt
     from matplotlib_venn import venn2
 
+    @st.cache_data
     # Función para generar un diagrama de Venn comparando dos clasificaciones
     def generate_venn(original_partition, reduced_partition, domain_name):
         # Convertir particiones en conjuntos únicos
@@ -1736,40 +1739,40 @@ st.markdown(
     """
 )
 
-@st.cache_data
-def indiscernibility(attr, table):
-    u_ind = {}
-    for i in table.index:
-        attr_values = tuple(table.loc[i, attr])
-        u_ind.setdefault(attr_values, set()).add(i)
-    return list(u_ind.values())
+#@st.cache_data
+#def indiscernibility(attr, table):
+#    u_ind = {}
+#    for i in table.index:
+#        attr_values = tuple(table.loc[i, attr])
+#        u_ind.setdefault(attr_values, set()).add(i)
+#    return list(u_ind.values())
 
-def compare_partitions(original, test):
-    score = 0
-    for orig_set in original:
-        best_match = 0
-        for test_set in test:
-            similarity = len(orig_set.intersection(test_set)) / len(orig_set.union(test_set))
-            best_match = max(best_match, similarity)
-        score += best_match * len(orig_set)
-    total_size = sum(len(group) for group in original)
-    return score / total_size if total_size > 0 else 0
+#def compare_partitions(original, test):
+#    score = 0
+#    for orig_set in original:
+#        best_match = 0
+#        for test_set in test:
+#            similarity = len(orig_set.intersection(test_set)) / len(orig_set.union(test_set))
+#            best_match = max(best_match, similarity)
+#        score += best_match * len(orig_set)
+#    total_size = sum(len(group) for group in original)
+#    return score / total_size if total_size > 0 else 0
 
-@st.cache_data
-def find_reduct_for_domain(domain_questions, df, threshold=0.9):
-    best_match, best_subset = 0, None
-    original_partition = indiscernibility(domain_questions, df)
+#@st.cache_data
+#def find_reduct_for_domain(domain_questions, df, threshold=0.9):
+#    best_match, best_subset = 0, None
+#    original_partition = indiscernibility(domain_questions, df)
 
-    for i in range(1, len(domain_questions) + 1):
-        for subset in combinations(domain_questions, i):
-            test_partition = indiscernibility(list(subset), df)
-            match_score = compare_partitions(original_partition, test_partition)
-            if match_score > best_match:
-                best_match, best_subset = match_score, subset
-            if best_match >= threshold:
-                return list(best_subset)
+#    for i in range(1, len(domain_questions) + 1):
+#        for subset in combinations(domain_questions, i):
+#            test_partition = indiscernibility(list(subset), df)
+#            match_score = compare_partitions(original_partition, test_partition)
+#            if match_score > best_match:
+#                best_match, best_subset = match_score, subset
+#            if best_match >= threshold:
+#                return list(best_subset)
 
-    return list(best_subset)
+#    return list(best_subset)
 
 # Diccionario de preguntas por dominio
 #dominios_reales = {
