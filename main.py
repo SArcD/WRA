@@ -1774,6 +1774,43 @@ elif paginas == "Análisis":
         st.warning("No se ha generado el DataFrame con preguntas reducidas.")
 
 
+    # ----------------------
+    # FORMULARIO INTERACTIVO
+    # ----------------------
+    st.subheader("📋 Formulario de Evaluación de Riesgo")
+    with st.form("diagnostico_form"):
+        respuestas_usuario = {}
+        for dominio, preguntas in dominios_reales.items():
+            st.subheader(f"{dominio}")
+            respuestas_usuario[dominio] = {}
+            for pregunta in preguntas:
+                respuestas_usuario[dominio][pregunta] = st.radio(
+                    f"{pregunta}", ["Siempre", "Casi siempre", "Algunas veces", "Casi nunca", "Nunca"], key=f"{dominio}_{pregunta}"
+                )
+        submit = st.form_submit_button("Obtener Diagnóstico")
+
+    # ----------------------
+    # DIAGNÓSTICO USUARIO
+    # ----------------------
+    if submit:
+        diagnosticos = {}
+        for dominio, respuestas in respuestas_usuario.items():
+            datos_convertidos = {
+                pregunta: escala_likert_positiva.get(respuesta, np.nan) if pregunta in preguntas_likert_positiva else escala_likert_negativa.get(respuesta, np.nan)
+                for pregunta, respuesta in respuestas.items()
+            }
+            df_usuario = pd.DataFrame([datos_convertidos])
+            modelo = modelos_dominios.get(dominio)
+            diagnosticos[dominio] = modelo.predict(df_usuario)[0] if modelo else "No disponible"
+
+        st.subheader("🔍 Diagnóstico de Riesgo por Dominio")
+        for dominio, riesgo in diagnosticos.items():
+            st.write(f"**{dominio}:** Nivel de riesgo predicho: {riesgo}")
+    
+        riesgo_total = np.mean([valor for valor in diagnosticos.values() if isinstance(valor, (int, float))])
+        st.write(f"**Riesgo Total Promedio:** {riesgo_total:.2f}")
+
+
 
 
         #################
